@@ -1,5 +1,4 @@
-# Fundamental
+# ML-modules
 
-The Fundamental plugin pack gives you a basic foundation to create simple synthesizers, route and analyze signals, complement other more complicated modules, and build some not-so-simple patches using brute force (lots of modules).
-They are also a great reference for creating your own plugins in C++.
-
+This package will contribute some utiliy modules, such as voltage quantizers, trigger utilities, etc.
+Work is currently in progress, and the software is curretly unsupported and undocumented.
