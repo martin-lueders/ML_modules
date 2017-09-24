@@ -70,11 +70,11 @@ QuantizerWidget::QuantizerWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(9,  50), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
-	addInput(createInput<PJ301MPort>(Vec(10, 90), module, Quant::IN1_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 130), module, Quant::OUT1_OUTPUT));
+	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
+	addInput(createInput<PJ301MPort>(Vec(10, 105), module, Quant::IN1_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, Quant::OUT1_OUTPUT));
 
-	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(9, 200), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
-	addInput(createInput<PJ301MPort>(Vec(10, 240), module, Quant::IN2_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 280), module, Quant::OUT2_OUTPUT));
+	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
+	addInput(createInput<PJ301MPort>(Vec(10, 245), module, Quant::IN2_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(10, 290), module, Quant::OUT2_OUTPUT));
 }

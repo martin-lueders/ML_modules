@@ -22,13 +22,14 @@ struct TrigBuf : Module {
 
 	void step();
 
-	bool arm[2];
+	float arm1, arm2;
 
-	SchmittTrigger armTrigger[2];
-	SchmittTrigger trigTrigger[2];
+	SchmittTrigger armTrigger1, armTrigger2;
+	SchmittTrigger trigTrigger1, trigTrigger2;
 
 	void initialize(){
-		for(int i=0; i<2; i++) {arm[i]=false;}
+		arm1=0.0;
+		arm2=0.0;
 	};
 
 };
@@ -43,53 +44,90 @@ TrigBuf::TrigBuf() {
 
 void TrigBuf::step() {
 
-	float out;
+	float out1, out2;
 
-	for(int i=0; i<2; i++) {
+	bool trig1 = false;
+       
+	out1 = 0.0;
+	out2 = 0.0;
 
-		out = 0.0;
 
-		if( inputs[ARM1_INPUT+i] ) {
-			if( armTrigger[i].process(*inputs[ARM1_INPUT+i]) ) { arm[i]=true; }
-		};
-
-		if( inputs[TRIG1_INPUT+i]) {
-			if( trigTrigger[i].process(*inputs[TRIG1_INPUT+i]) ) {
-
-				if(arm[i]) {
-					out    = 10.0;
-					arm[i] = false;
-				};
-			};
-		};
-
-		setf(outputs[OUT1_OUTPUT+i],out);
+	if( inputs[ARM1_INPUT] ) {
+		if( armTrigger1.process(*inputs[ARM1_INPUT]) ) { 
+			arm1 = 10.0;
+			if ( !inputs[ARM2_INPUT] ) arm2 = 10.0;
+	       	}
+	} else {
+		arm1 = 0.0;
 	};
 
+	if( inputs[TRIG1_INPUT]) {
+
+		trig1 = trigTrigger1.process(*inputs[TRIG1_INPUT]);
+
+	        if(trig1) {
+
+			if(arm1 > 5.0) {
+				out1 = 10.0;
+				arm1 = 0.0;
+			};
+		};
+	};
+
+	if( inputs[ARM2_INPUT] ) {
+		if( armTrigger2.process(*inputs[ARM2_INPUT]) ) { arm2 = 10.0; }
+	};
+
+	if( inputs[TRIG2_INPUT] ) {
+
+		if( trigTrigger2.process(*inputs[TRIG2_INPUT]) ) {
+
+			if(arm2 > 5.0) {
+				out2 = 10.0;
+				arm2 = 0.0;
+			};
+		};
+	} else {
+
+		if (trig1) {
+
+			if(arm2 > 5.0) {
+				out2 = 10.0;
+				arm2 = 0.0;
+			};
+		};
+	};
+
+
+	setf(outputs[OUT1_OUTPUT],out1);
+	setf(outputs[OUT2_OUTPUT],out2);
 };
+
 
 
 TrigBufWidget::TrigBufWidget() {
 
 	TrigBuf *module = new TrigBuf();
 	setModule(module);
-	box.size = Vec(15*3, 380);
+	box.size = Vec(15*4, 380);
 
 	{
 		Panel *panel = new LightPanel();
 		panel->box.size = box.size;
-		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantizer.png");
+		panel->backgroundImage = Image::load("plugins/ML_modules/res/TrigBuf.png");
 		addChild(panel);
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 50),    module, TrigBuf::ARM1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 90),    module, TrigBuf::TRIG1_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 130), module, TrigBuf::OUT1_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 62),    module, TrigBuf::ARM1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::TRIG1_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, TrigBuf::OUT1_OUTPUT));
+	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 66), &module->arm1));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 200),   module, TrigBuf::ARM2_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 240),   module, TrigBuf::TRIG2_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 280), module, TrigBuf::OUT2_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 218),   module, TrigBuf::ARM2_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::TRIG2_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(10, 305), module, TrigBuf::OUT2_OUTPUT));
+	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 222), &module->arm2));
 }

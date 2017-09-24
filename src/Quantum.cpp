@@ -47,7 +47,28 @@ struct Quantum : Module {
 		last_semi   = 0;
         }
 
+        json_t *toJson() {
+                json_t *rootJ = json_object();
+
+                json_t *scaleJ = json_array();
+                for (int i = 0; i < 12; i++) {
+                        json_t *semiJ = json_boolean((bool) semiState[i]);
+                        json_array_append_new(scaleJ, semiJ);
+                }
+                json_object_set_new(rootJ, "scale", scaleJ);
+
+                return rootJ;
+        }
+
+        void fromJson(json_t *rootJ) {
+                json_t *scaleJ = json_object_get(rootJ, "scale");
+                for (int i = 0; i < 12; i++) {
+                        json_t *semiJ = json_array_get(scaleJ, i);
+                        semiState[i] = !!json_boolean_value(semiJ);
+                }
+        }
 	
+
 };
 
 
@@ -82,7 +103,6 @@ void Quantum::step() {
 	int semi_t = round( 12.0*(t - 1.0*octave_t) );
 
 
-	bool changed = !( (octave==last_octave)&&(semi==last_semi));
 
 	int tmp_semi=(semi-semi_t)%12;
 	if(tmp_semi<0) tmp_semi+=12;
@@ -90,6 +110,7 @@ void Quantum::step() {
 	if( semiState[tmp_semi] ) 
 	{ 
 //		valid=true; 
+		bool changed = !( (octave==last_octave)&&(semi==last_semi));
 		gate = 10.0; 
 		quantized = 1.0*octave + semi/12.0;
 		if(changed) trigger=10.0;
@@ -113,31 +134,32 @@ void Quantum::step() {
 QuantumWidget::QuantumWidget() {
 	Quantum *module = new Quantum();
 	setModule(module);
-	box.size = Vec(15*6, 380);
+	box.size = Vec(15*8, 380);
 
 	{
 		Panel *panel = new LightPanel();
 		panel->box.size = box.size;
-//		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantum.png");
+		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantum.png");
 		addChild(panel);
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(55, 90), module, Quantum::IN_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(55, 130), module, Quantum::OUT_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(23, 42), module, Quantum::IN_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(72, 42), module, Quantum::OUT_OUTPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(55, 200), module, Quantum::TRANSPOSE_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(55, 240), module, Quantum::GATE_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(55, 280), module, Quantum::TRIGGER_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(72, 90), module, Quantum::TRANSPOSE_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(72, 150), module, Quantum::GATE_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(72, 210), module, Quantum::TRIGGER_OUTPUT));
 
-	static const float LED_X[12] = {10,20,10,20,10,10,20,10,20,10,20,10};
-	static const float LED_Y[12] = {240,220,200,180,160,140,120,100,80,60,40,20};
+	static const float LED_X[12] = {16,16,16,16,16,16,16,16,16,16,16,16};
+// static const float LED_Y[12] = {240,220,200,180,160,140,120,100,80,60,40,20};
+	static const float offset_y = 332;
 
 	for(int i=0; i<12; i++) {
-		addParam(createParam<LEDButton>(Vec(LED_X[i], LED_Y[i]+50), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(LED_X[i]+5, LED_Y[i]+5+50), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
+		addParam(createParam<LEDButton>(Vec(LED_X[i], -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(LED_X[i]+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
 
 	}
 
