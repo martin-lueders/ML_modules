@@ -36,9 +36,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="-28.632813"
-     inkscape:cy="157.89602"
+     inkscape:zoom="4"
+     inkscape:cx="61.720023"
+     inkscape:cy="219.06752"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -50,10 +50,10 @@
      showguides="true"
      inkscape:snap-to-guides="false"
      objecttolerance="20"
-     inkscape:window-width="1130"
+     inkscape:window-width="1022"
      inkscape:window-height="1107"
-     inkscape:window-x="591"
-     inkscape:window-y="0"
+     inkscape:window-x="629"
+     inkscape:window-y="15"
      inkscape:window-maximized="0"
      gridtolerance="17"
      inkscape:snap-perpendicular="false"
@@ -146,32 +146,36 @@
          y="36.875889">pose</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222227px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335;"
-       x="22.263945"
-       y="50.281464"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       x="22.225"
+       y="65.087502"
        id="text857-0"><tspan
          sodipodi:role="line"
-         id="tspan862">Trigger</tspan><tspan
+         id="tspan862"
+         x="22.225"
+         y="65.087502">Trigger</tspan><tspan
          sodipodi:role="line"
-         id="tspan864"></tspan></text>
+         id="tspan864"
+         x="22.225"
+         y="68.61528" /></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222227px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335;"
-       x="22.263945"
-       y="65.627312"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       x="22.225"
+       y="49.741665"
        id="text857-0-6"><tspan
          sodipodi:role="line"
          id="tspan915"
-         x="22.263945"
-         y="65.627312">Gate</tspan><tspan
+         x="22.225"
+         y="49.741665">Gate</tspan><tspan
          sodipodi:role="line"
          id="tspan917"
-         x="22.263945"
-         y="69.15509" /><tspan
+         x="22.225"
+         y="53.269444" /><tspan
          sodipodi:role="line"
          id="tspan919"
-         x="22.263945"
-         y="72.682869" /></text>
+         x="22.225"
+         y="56.797222" /></text>
     <rect
        id="rect26-7-3-4-6-4"
        width="7.937499"
@@ -306,13 +310,13 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333359px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="6.3876066"
-       y="204.54886"
+       x="6.4306154"
+       y="204.62112"
        id="text3757"><tspan
          sodipodi:role="line"
          id="tspan3755"
-         x="6.3876066"
-         y="204.54886"
+         x="6.4306154"
+         y="204.62112"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333359px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458335">Quantum</tspan></text>
     <rect
        id="rect26-7-3-4-6"

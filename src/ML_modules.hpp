@@ -20,6 +20,9 @@ struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget();
 };
 
+struct SeqSwictWidget : ModuleWidget {
+	SeqSwitchWidget();
+};
 
 // struct MultWidget : ModuleWidget {
 // 	MultWidget();
