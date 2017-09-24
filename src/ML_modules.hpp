@@ -14,6 +14,8 @@ struct QuantizerWidget : ModuleWidget {
 
 struct QuantumWidget : ModuleWidget {
 	QuantumWidget();
+	json_t *toJsonData();
+	void fromJsonData(json_t *root);
 };
 
 struct TrigBufWidget : ModuleWidget {

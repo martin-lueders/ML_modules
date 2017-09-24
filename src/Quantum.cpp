@@ -47,12 +47,22 @@ struct Quantum : Module {
 		last_semi   = 0;
         }
 
+	void randomize() {
+		for (int i = 0; i<12; i++) {
+			semiState[i] = (randomf() > 0.5);
+			semiLight[i] = semiState[i]?1.0:0.0;
+		};
+		last_octave = 0;
+		last_semi   = 0;
+
+	}
+
         json_t *toJson() {
                 json_t *rootJ = json_object();
 
                 json_t *scaleJ = json_array();
                 for (int i = 0; i < 12; i++) {
-                        json_t *semiJ = json_boolean((bool) semiState[i]);
+                        json_t *semiJ = json_integer( (int) semiState[i]);
                         json_array_append_new(scaleJ, semiJ);
                 }
                 json_object_set_new(rootJ, "scale", scaleJ);
@@ -64,7 +74,8 @@ struct Quantum : Module {
                 json_t *scaleJ = json_object_get(rootJ, "scale");
                 for (int i = 0; i < 12; i++) {
                         json_t *semiJ = json_array_get(scaleJ, i);
-                        semiState[i] = !!json_boolean_value(semiJ);
+                        semiState[i] = !!json_integer_value(semiJ);
+			semiLight[i] = semiState[i]?1.0:0.0;
                 }
         }
 	
@@ -89,7 +100,6 @@ void Quantum::step() {
 
 	}
 
-//	bool valid = false;
 	float gate = 0, trigger=0;
 	float quantized;
 
@@ -109,7 +119,6 @@ void Quantum::step() {
 
 	if( semiState[tmp_semi] ) 
 	{ 
-//		valid=true; 
 		bool changed = !( (octave==last_octave)&&(semi==last_semi));
 		gate = 10.0; 
 		quantized = 1.0*octave + semi/12.0;
@@ -118,7 +127,6 @@ void Quantum::step() {
 		last_semi   = semi;
 
 	} else {
-//		valid = false;
 		quantized = 1.0*last_octave + last_semi/12.0;
 	};
 

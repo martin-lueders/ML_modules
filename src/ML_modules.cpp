@@ -5,7 +5,7 @@
 
 struct ML_modulesPlugin : Plugin {
 	ML_modulesPlugin() {
-		slug = "ML Modules";
+		slug = "ML_Modules";
 		name = "ML Modules";
 		createModel<QuantizerWidget>(this, "Quantizer", "Quantizer (h-bar)");
 		createModel<QuantumWidget>(this, "Quantum", "Quantum");
