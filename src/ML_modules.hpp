@@ -22,7 +22,7 @@ struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget();
 };
 
-struct SeqSwichtWidget : ModuleWidget {
+struct SeqSwitchWidget : ModuleWidget {
 	SeqSwitchWidget();
 };
 
