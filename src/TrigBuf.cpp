@@ -18,7 +18,8 @@ struct TrigBuf : Module {
 		NUM_OUTPUTS
 	};
 
-	TrigBuf();
+//	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+	TrigBuf() ;
 
 	void step();
 
@@ -34,12 +35,12 @@ struct TrigBuf : Module {
 
 };
 
-
 TrigBuf::TrigBuf() {
 	params.resize(NUM_PARAMS);
 	inputs.resize(NUM_INPUTS);
 	outputs.resize(NUM_OUTPUTS);
-}
+};
+
 
 
 void TrigBuf::step() {
@@ -112,9 +113,10 @@ TrigBufWidget::TrigBufWidget() {
 	box.size = Vec(15*4, 380);
 
 	{
-		Panel *panel = new LightPanel();
+		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->backgroundImage = Image::load("plugins/ML_modules/res/TrigBuf.png");
+	//	panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigBuf.svg")));
+		panel->setBackground(SVG::load("plugins/ML_modules/res/TrigBuf.svg"));
 		addChild(panel);
 	}
 

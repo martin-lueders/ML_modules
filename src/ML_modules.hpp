@@ -3,6 +3,7 @@
 
 using namespace rack;
 
+// extern Plugin *plugin;
 
 ////////////////////
 // module widgets
@@ -22,9 +23,9 @@ struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget();
 };
 
-struct SeqSwitchWidget : ModuleWidget {
-	SeqSwitchWidget();
-};
+//struct SeqSwitchWidget : ModuleWidget {
+//	SeqSwitchWidget();
+//};
 
 // struct MultWidget : ModuleWidget {
 // 	MultWidget();

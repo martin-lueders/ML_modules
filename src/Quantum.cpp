@@ -29,7 +29,9 @@ struct Quantum : Module {
 		NUM_OUTPUTS
 	};
 
-	Quantum();
+//	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+	Quantum() ;
+
 	void step();
 
 	int last_octave, last_semi;
@@ -87,7 +89,7 @@ Quantum::Quantum() {
 	params.resize(NUM_PARAMS);
 	inputs.resize(NUM_INPUTS);
 	outputs.resize(NUM_OUTPUTS);
-}
+};
 
 
 void Quantum::step() {
@@ -145,9 +147,10 @@ QuantumWidget::QuantumWidget() {
 	box.size = Vec(15*8, 380);
 
 	{
-		Panel *panel = new LightPanel();
+		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantum.png");
+//		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
+		panel->setBackground(SVG::load("plugins/ML_modules/res/Quantum.svg"));
 		addChild(panel);
 	}
 

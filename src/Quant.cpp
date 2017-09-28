@@ -18,18 +18,19 @@ struct Quant : Module {
 		NUM_OUTPUTS
 	};
 
+//	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
 	Quant();
 	void step();
 };
-
 
 Quant::Quant() {
 	params.resize(NUM_PARAMS);
 	inputs.resize(NUM_INPUTS);
 	outputs.resize(NUM_OUTPUTS);
-}
+};
 
-static void stepChannel(const float *in, float amount, float *out) {
+
+static void stepChannel(const float *in, const float amount, float *out) {
 
 	float v = getf(in);
 // 	float v2 = v + 1.0/24.0; 
@@ -61,9 +62,10 @@ QuantizerWidget::QuantizerWidget() {
 	box.size = Vec(15*3, 380);
 
 	{
-		Panel *panel = new LightPanel();
+		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantizer.png");
+//		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantizer.svg")));
+		panel->setBackground(SVG::load("plugins/ML_modules/res/Quantizer.svg"));
 		addChild(panel);
 	}
 
