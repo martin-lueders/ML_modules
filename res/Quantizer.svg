@@ -16,7 +16,7 @@
    id="svg8"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="Quantizer.svg"
-   inkscape:export-filename="E:\Users\Martin\Documents\Rack_Source\rack\plugins\ML_modules\res\Quantizer.png"
+   inkscape:export-filename="E:\Users\Martin\Documents\Rack_Source\Rack\plugins\ML-modules\res\Quantizer.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
   <defs
@@ -50,10 +50,10 @@
      showguides="true"
      inkscape:snap-to-guides="false"
      objecttolerance="20"
-     inkscape:window-width="877"
-     inkscape:window-height="1082"
-     inkscape:window-x="998"
-     inkscape:window-y="12"
+     inkscape:window-width="795"
+     inkscape:window-height="1057"
+     inkscape:window-x="110"
+     inkscape:window-y="19"
      inkscape:window-maximized="0"
      gridtolerance="17"
      inkscape:snap-perpendicular="false"
@@ -79,7 +79,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
