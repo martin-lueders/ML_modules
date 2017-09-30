@@ -147,18 +147,10 @@ QuantumWidget::QuantumWidget() {
 	box.size = Vec(15*8, 380);
 
 	{
-<<<<<<< HEAD
-		Panel *panel = new LightPanel();
-		//SVGPanel *panel = new SVGPanel();
-		panel->box.size = box.size;
-		panel->backgroundImage = Image::load("plugins/ML_modules/res/Quantum.png");
-		//panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
-=======
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
 //		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
 		panel->setBackground(SVG::load("plugins/ML_modules/res/Quantum.svg"));
->>>>>>> origin/develop
 		addChild(panel);
 	}
 

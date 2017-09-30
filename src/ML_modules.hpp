@@ -3,11 +3,7 @@
 
 using namespace rack;
 
-<<<<<<< HEAD
-extern Plugin *plugin;
-=======
 // extern Plugin *plugin;
->>>>>>> origin/develop
 
 ////////////////////
 // module widgets
