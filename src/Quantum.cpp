@@ -20,6 +20,9 @@ struct Quantum : Module {
 	enum InputIds {
 		IN_INPUT,
 		TRANSPOSE_INPUT,
+		NOTE_INPUT,
+		SET_INPUT,
+		RESET_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -37,7 +40,7 @@ struct Quantum : Module {
 	int last_octave, last_semi;
 
 	bool semiState[12];
-	SchmittTrigger semiTriggers[12];
+	SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
 	float semiLight[12];
 
         void initialize() {
@@ -108,16 +111,36 @@ void Quantum::step() {
 	float v=getf(inputs[IN_INPUT]);
 	float t=getf(inputs[TRANSPOSE_INPUT]);
 
+	float n=getf(inputs[NOTE_INPUT]);
+
+
+
+
 	int octave   = round(v);
 	int octave_t = round(t);
+	int octave_n = round(n);
 
 	int semi   = round( 12.0*(v - 1.0*octave) );
 	int semi_t = round( 12.0*(t - 1.0*octave_t) );
+	int semi_n = round( 12.0*(n - 1.0*octave_n) ) - semi_t;
 
 
 
 	int tmp_semi=(semi-semi_t)%12;
 	if(tmp_semi<0) tmp_semi+=12;
+	if(semi_n<0) semi_n+=12;
+
+
+       	if( inputs[RESET_INPUT] ) {
+                if( resetTrigger.process(*inputs[RESET_INPUT]) ) initialize();
+        };
+
+	if( inputs[SET_INPUT] ) {
+		if( setTrigger.process(*inputs[SET_INPUT] ) ) {
+			semiState[semi_n] = !semiState[semi_n];
+			semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
+		}
+	};
 
 	if( semiState[tmp_semi] ) 
 	{ 
@@ -157,20 +180,25 @@ QuantumWidget::QuantumWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(23, 42), module, Quantum::IN_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(72, 42), module, Quantum::OUT_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(19, 42), module, Quantum::IN_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(76, 42), module, Quantum::OUT_OUTPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(72, 90), module, Quantum::TRANSPOSE_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(72, 150), module, Quantum::GATE_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(72, 210), module, Quantum::TRIGGER_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(76, 90), module, Quantum::TRANSPOSE_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(76, 140), module, Quantum::GATE_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(76, 180), module, Quantum::TRIGGER_OUTPUT));
 
-	static const float LED_X[12] = {16,16,16,16,16,16,16,16,16,16,16,16};
+	addInput(createInput<PJ301MPort>(Vec(76, 226), module, Quantum::NOTE_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(76, 266), module, Quantum::SET_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(76, 312), module, Quantum::RESET_INPUT));
+
+// static const float LED_X[12] = {16,16,16,16,16,16,16,16,16,16,16,16};
 // static const float LED_Y[12] = {240,220,200,180,160,140,120,100,80,60,40,20};
+	static const float offset_x = 23;
 	static const float offset_y = 332;
 
 	for(int i=0; i<12; i++) {
-		addParam(createParam<LEDButton>(Vec(LED_X[i], -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(LED_X[i]+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
+		addParam(createParam<LEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(offset_x+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
 
 	}
 
