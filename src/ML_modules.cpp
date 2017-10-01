@@ -14,6 +14,7 @@ struct ML_modulesPlugin : Plugin {
 		createModel<QuantumWidget>(this, "Quantum", "Quantum");
 		createModel<TrigBufWidget>(this, "TrigBuf", "Trigger Buffer");
 		createModel<SeqSwitchWidget>(this, "SeqSwitch", "Sequential Switch");
+		createModel<ShiftRegisterWidget>(this, "ShiftRegister", "Shift Register");
 	}
 };
 

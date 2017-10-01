@@ -191,8 +191,6 @@ QuantumWidget::QuantumWidget() {
 	addInput(createInput<PJ301MPort>(Vec(76, 266), module, Quantum::SET_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(76, 312), module, Quantum::RESET_INPUT));
 
-// static const float LED_X[12] = {16,16,16,16,16,16,16,16,16,16,16,16};
-// static const float LED_Y[12] = {240,220,200,180,160,140,120,100,80,60,40,20};
 	static const float offset_x = 23;
 	static const float offset_y = 332;
 
