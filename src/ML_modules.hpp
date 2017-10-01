@@ -23,17 +23,7 @@ struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget();
 };
 
-//struct SeqSwitchWidget : ModuleWidget {
-//	SeqSwitchWidget();
-//};
+struct SeqSwitchWidget : ModuleWidget {
+	SeqSwitchWidget();
+};
 
-// struct MultWidget : ModuleWidget {
-// 	MultWidget();
-// };
-
-
-//struct SEQGWidget : ModuleWidget {
-//	SEQGWidget();
-//	json_t *toJsonData();
-//	void fromJsonData(json_t *root);
-//};

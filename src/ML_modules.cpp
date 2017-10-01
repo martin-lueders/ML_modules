@@ -13,7 +13,7 @@ struct ML_modulesPlugin : Plugin {
 		createModel<QuantizerWidget>(this, "Quantizer", "Quantizer (h-bar)");
 		createModel<QuantumWidget>(this, "Quantum", "Quantum");
 		createModel<TrigBufWidget>(this, "TrigBuf", "Trigger Buffer");
-//		// createModel<SEQGWidget>(this, "SEQ-Gate", "SEQ-Gate");
+		createModel<SeqSwitchWidget>(this, "SeqSwitch", "Sequential Switch");
 	}
 };
 
