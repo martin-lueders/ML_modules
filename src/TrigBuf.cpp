@@ -23,7 +23,7 @@ struct TrigBuf : Module {
 
 	void step();
 
-	float arm1, arm2;
+	float arm1=0, arm2=0;
 
 	SchmittTrigger armTrigger1, armTrigger2;
 	SchmittTrigger trigTrigger1, trigTrigger2;

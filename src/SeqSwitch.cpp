@@ -41,7 +41,7 @@ struct SeqSwitch : Module {
 	void step();
 
 //	int numSteps;
-	int position;
+	int position=0;
 
 	float stepLights[8] = {};
 

@@ -37,11 +37,11 @@ struct Quantum : Module {
 
 	void step();
 
-	int last_octave, last_semi;
+	int last_octave=0, last_semi=0;
 
-	bool semiState[12];
+	bool semiState[12] = {};
 	SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
-	float semiLight[12];
+	float semiLight[12] = {};
 
         void initialize() {
                 for (int i = 0; i < 12; i++) {
