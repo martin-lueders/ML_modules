@@ -1,11 +1,11 @@
-# ML-modules
+# ML_modules
 
-![](https://github.com/martin-lueders/ML-modules/blob/master/images/ML_modules.png)
+![](https://github.com/martin-lueders/ML_modules/blob/master/images/ML_modules.png)
 
 This package will contribute some utiliy modules, such as voltage quantizers, trigger utilities, etc.
 Work is currently in progress.
 
 A short description of the available modules is on my wiki:
 
-https://github.com/martin-lueders/ML-modules/wiki
+https://github.com/martin-lueders/ML_modules/wiki
 
