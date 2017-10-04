@@ -118,8 +118,8 @@ ShiftRegisterWidget::ShiftRegisterWidget() {
 	};
 
 
-	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 58), module, ShiftRegister::TRIGGER_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 58), module, ShiftRegister::IN_INPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 94), module, ShiftRegister::IN_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 94), module, ShiftRegister::TRIGGER_INPUT));
 
 }

@@ -30,3 +30,8 @@ struct SeqSwitchWidget : ModuleWidget {
 struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget();
 };
+
+struct TestWidget : ModuleWidget {
+	TestWidget();
+};
+
