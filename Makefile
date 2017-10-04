@@ -5,7 +5,7 @@ include ../../plugin.mk
 
 
 dist: all
-	mkdir -p dist/ML-Modules
-	cp LICENSE* dist/ML_Modules/
-	cp plugin.* dist/ML_Modules/
-	cp -R res dist/ML_Modules/
+	mkdir -p dist/ML_modules
+	cp LICENSE* dist/ML_modules/
+	cp plugin.* dist/ML_modules/
+	cp -R res dist/ML_modules/
