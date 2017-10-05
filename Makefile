@@ -1,3 +1,8 @@
+# this flag selects the rack version to compile against.
+# 
+# possible values are v032 and v040
+
+FLAGS += -D v040
 
 SOURCES = $(wildcard src/*.cpp)
 

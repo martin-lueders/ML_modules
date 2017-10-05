@@ -18,21 +18,43 @@ struct Quant : Module {
 		NUM_OUTPUTS
 	};
 
-//	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#ifdef v032
 	Quant();
+#endif
+#ifdef v040
+	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#endif
+
 	void step();
 };
 
+#ifdef v032
 Quant::Quant() {
 	params.resize(NUM_PARAMS);
 	inputs.resize(NUM_INPUTS);
 	outputs.resize(NUM_OUTPUTS);
 };
+#endif
 
-
+#ifdef v032
 static void stepChannel(const float *in, const float amount, float *out) {
+#endif
 
+#ifdef v040
+static void stepChannel(Input &in, Param &p_amount, Output &out) {
+#endif
+
+
+#ifdef v032
 	float v = getf(in);
+#endif
+
+#ifdef v040
+	float v = in.value;
+
+	float amount = p_amount.value;
+#endif
+
 // 	float v2 = v + 1.0/24.0; 
 
 	// extract octave information (integer part of voltage):
@@ -47,7 +69,14 @@ static void stepChannel(const float *in, const float amount, float *out) {
 	float quantized = 1.0*octave + semi/12.0;
         float result = quantized + amount*(v-quantized);
 
+#ifdef v032
 	setf(out, result);
+#endif
+
+#ifdef v40
+	out.value = result;
+#endif
+
 }
 
 void Quant::step() {
@@ -64,8 +93,13 @@ QuantizerWidget::QuantizerWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-//		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantizer.svg")));
+#ifdef v032
 		panel->setBackground(SVG::load("plugins/ML_modules/res/Quantizer.svg"));
+#endif
+
+#ifdef v040
+		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantizer.svg")));
+#endif
 		addChild(panel);
 	}
 

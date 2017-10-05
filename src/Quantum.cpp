@@ -32,8 +32,13 @@ struct Quantum : Module {
 		NUM_OUTPUTS
 	};
 
-//	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#ifdef v032
 	Quantum() ;
+#endif
+
+#ifdef v040
+	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#endif
 
 	void step();
 
@@ -87,18 +92,25 @@ struct Quantum : Module {
 
 };
 
-
+#ifdef v032
 Quantum::Quantum() {
 	params.resize(NUM_PARAMS);
 	inputs.resize(NUM_INPUTS);
 	outputs.resize(NUM_OUTPUTS);
 };
+#endif
 
 
 void Quantum::step() {
 
 	for(int i=0; i<12; i++) {
+#ifdef v032
 		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i])) {
+#endif
+
+#ifdef v040
+		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].value)) {
+#endif
                         semiState[i] = !semiState[i];
                 }
 		semiLight[i] = semiState[i]?1.0:0.0;
@@ -108,10 +120,17 @@ void Quantum::step() {
 	float gate = 0, trigger=0;
 	float quantized;
 
+#ifdef v032
 	float v=getf(inputs[IN_INPUT]);
 	float t=getf(inputs[TRANSPOSE_INPUT]);
-
 	float n=getf(inputs[NOTE_INPUT]);
+#endif
+
+#ifdef v040
+	float v=inputs[IN_INPUT].value;
+	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
+	float n=inputs[NOTE_INPUT].value;
+#endif
 
 
 
@@ -130,17 +149,36 @@ void Quantum::step() {
 	if(tmp_semi<0) tmp_semi+=12;
 	if(semi_n<0) semi_n+=12;
 
-
+#ifdef v032
        	if( inputs[RESET_INPUT] ) {
                 if( resetTrigger.process(*inputs[RESET_INPUT]) ) initialize();
         };
+#endif
 
+#ifdef v040
+       	if( inputs[RESET_INPUT].active ) {
+                if( resetTrigger.process(inputs[RESET_INPUT].value) ) initialize();
+        };
+#endif
+
+#ifdef v032
 	if( inputs[SET_INPUT] ) {
 		if( setTrigger.process(*inputs[SET_INPUT] ) ) {
 			semiState[semi_n] = !semiState[semi_n];
 			semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
 		}
 	};
+#endif
+
+#ifdef v040
+	if( inputs[SET_INPUT].active ) {
+		if( setTrigger.process(inputs[SET_INPUT].value ) ) {
+			semiState[semi_n] = !semiState[semi_n];
+			semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
+		}
+	};
+#endif
+
 
 	if( semiState[tmp_semi] ) 
 	{ 
@@ -155,10 +193,17 @@ void Quantum::step() {
 		quantized = 1.0*last_octave + last_semi/12.0;
 	};
 
-
+#ifdef v032
 	setf(outputs[OUT_OUTPUT], quantized);
 	setf(outputs[GATE_OUTPUT], gate);
 	setf(outputs[TRIGGER_OUTPUT], trigger);
+#endif
+
+#ifdef v040
+	outputs[OUT_OUTPUT].value = quantized;
+	outputs[GATE_OUTPUT].value = gate;
+	outputs[TRIGGER_OUTPUT].value = trigger;
+#endif
 
 }
 
@@ -172,8 +217,12 @@ QuantumWidget::QuantumWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-//		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
+#ifdef v032
 		panel->setBackground(SVG::load("plugins/ML_modules/res/Quantum.svg"));
+#endif
+#ifdef v040
+		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
+#endif
 		addChild(panel);
 	}
 

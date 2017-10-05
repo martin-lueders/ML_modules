@@ -3,7 +3,9 @@
 
 using namespace rack;
 
-// extern Plugin *plugin;
+#ifdef v040
+extern Plugin *plugin;
+#endif
 
 ////////////////////
 // module widgets
