@@ -73,7 +73,7 @@ static void stepChannel(Input &in, Param &p_amount, Output &out) {
 	setf(out, result);
 #endif
 
-#ifdef v40
+#ifdef v040
 	out.value = result;
 #endif
 
