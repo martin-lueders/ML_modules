@@ -28,7 +28,10 @@ struct TrigBuf : Module {
 
 	void step();
 
-	float arm1=0, arm2=0;
+	float arm1=0.0, arm2=0.0;
+	float out1=0.0, out2=0.0;
+
+	bool fired1=false, fired2=false;
 
 	SchmittTrigger armTrigger1, armTrigger2;
 	SchmittTrigger trigTrigger1, trigTrigger2;
@@ -36,6 +39,8 @@ struct TrigBuf : Module {
 	void initialize(){
 		arm1=0.0;
 		arm2=0.0;
+		out1=0.0;
+		out2=0.0;
 	};
 
 };
@@ -52,12 +57,10 @@ TrigBuf::TrigBuf() {
 
 void TrigBuf::step() {
 
-	float out1, out2;
 
 	bool trig1 = false;
+	bool trig2 = false;
        
-	out1 = 0.0;
-	out2 = 0.0;
 
 #ifdef v032
 	if( inputs[ARM1_INPUT] ) {
@@ -84,33 +87,28 @@ void TrigBuf::step() {
 
 
 #ifdef v032
-	if( inputs[TRIG1_INPUT]) {
-
-		trig1 = trigTrigger1.process(*inputs[TRIG1_INPUT]);
-
-	        if(trig1) {
-
-			if(arm1 > 5.0) {
-				out1 = 10.0;
-				arm1 = 0.0;
-			};
-		};
-	};
+	if( inputs[TRIG1_INPUT]) trigTrigger1.process(*inputs[TRIG1_INPUT]);
+#endif
+#ifdef v040
+	if( inputs[TRIG1_INPUT].active) trigTrigger1.process(inputs[TRIG1_INPUT].value);
 #endif
 
-#ifdef v040
-	if( inputs[TRIG1_INPUT].active ) {
-		trig1 = trigTrigger1.process(inputs[TRIG1_INPUT].value);
+	trig1 = (trigTrigger1.state == SchmittTrigger::HIGH);
 
-	        if(trig1) {
-
-			if(arm1 > 5.0) {
-				out1 = 10.0;
-				arm1 = 0.0;
-			};
+        if(trig1) {
+		if(arm1 > 5.0) {
+			out1 = 10.0;
+		} else {
+			out1 = 0.0;
+		};
+	}
+	else {
+		if(out1 > 5.0) {
+			arm1 = 0.0;
+			out1 = 0.0;
 		};
 	};
-#endif	
+
 
 
 #ifdef v032
@@ -128,28 +126,32 @@ void TrigBuf::step() {
 
 #ifdef v032
 	if( inputs[TRIG2_INPUT] ) {
-
-		if( trigTrigger2.process(*inputs[TRIG2_INPUT]) ) {
+		trigTrigger2.process(*inputs[TRIG2_INPUT]) ; 
+		trig2 = (trigTrigger2.state == SchmittTrigger::HIGH);
+	} else {
+		trig2 = trig1;
+	};
 #endif
 
 #ifdef v040
 	if( inputs[TRIG2_INPUT].active ) {
-
-		if( trigTrigger2.process(inputs[TRIG2_INPUT].value) ) {
+		trigTrigger2.process(inputs[TRIG2_INPUT].value);
+		trig2 = (trigTrigger2.state == SchmittTrigger::HIGH);
+	} else {
+		trig2 = trig1;
+	}
 #endif			
-			if(arm2 > 5.0) {
-				out2 = 10.0;
-				arm2 = 0.0;
-			};
+
+	if (trig2) {
+
+		if(arm2 > 5.0) out2 = 10.0;
+		else {
+			out2 = 0.0;
 		};
 	} else {
-
-		if (trig1) {
-
-			if(arm2 > 5.0) {
-				out2 = 10.0;
-				arm2 = 0.0;
-			};
+		if(out2 > 5.0) {
+			arm2 = 0.0;
+			out2 = 0.0;
 		};
 	};
 
