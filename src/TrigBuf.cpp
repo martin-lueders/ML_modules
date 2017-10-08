@@ -88,12 +88,13 @@ void TrigBuf::step() {
 
 #ifdef v032
 	if( inputs[TRIG1_INPUT]) trigTrigger1.process(*inputs[TRIG1_INPUT]);
+	trig = (trigTrigger1:state == SchmittTrigger::HIGH);
 #endif
 #ifdef v040
 	if( inputs[TRIG1_INPUT].active) trigTrigger1.process(inputs[TRIG1_INPUT].value);
+	trig1 = (trigTrigger1.isHigh());
 #endif
 
-	trig1 = (trigTrigger1.state == SchmittTrigger::HIGH);
 
         if(trig1) {
 		if(arm1 > 5.0) {
@@ -127,7 +128,7 @@ void TrigBuf::step() {
 #ifdef v032
 	if( inputs[TRIG2_INPUT] ) {
 		trigTrigger2.process(*inputs[TRIG2_INPUT]) ; 
-		trig2 = (trigTrigger2.state == SchmittTrigger::HIGH);
+		trig2 = (trigTrigger2.isHigh())
 	} else {
 		trig2 = trig1;
 	};
@@ -136,7 +137,7 @@ void TrigBuf::step() {
 #ifdef v040
 	if( inputs[TRIG2_INPUT].active ) {
 		trigTrigger2.process(inputs[TRIG2_INPUT].value);
-		trig2 = (trigTrigger2.state == SchmittTrigger::HIGH);
+		trig2 = trigTrigger2.isHigh();
 	} else {
 		trig2 = trig1;
 	}
