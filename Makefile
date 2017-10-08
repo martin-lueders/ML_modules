@@ -4,7 +4,7 @@
 
 FLAGS += -D v032
 
-SOURCES = $(wildcard src/*.cpp)
+SOURCES = $(wildcard src/*.cpp freeverb/*.cpp)
 
 include ../../plugin.mk
 

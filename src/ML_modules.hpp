@@ -33,7 +33,7 @@ struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget();
 };
 
-struct TestWidget : ModuleWidget {
-	TestWidget();
+struct FreeVerbWidget : ModuleWidget {
+	FreeVerbWidget();
 };
 

@@ -5,7 +5,7 @@
 
 Plugin *plugin;
 
-#ifdef V032
+#ifdef v032
 struct ML_modulesPlugin : Plugin {
 	ML_modulesPlugin() {
 		slug = "ML_Modules";
@@ -15,6 +15,7 @@ struct ML_modulesPlugin : Plugin {
 		createModel<TrigBufWidget>(this, "TrigBuf", "Trigger Buffer");
 		createModel<SeqSwitchWidget>(this, "SeqSwitch", "Sequential Switch");
 		createModel<ShiftRegisterWidget>(this, "ShiftRegister", "Shift Register");
+		createModel<FreeVerbWidget>(this, "FreeVerb", "FreeVerb");
 	}
 };
 
@@ -36,6 +37,7 @@ void init(rack::Plugin *p) {
  	createModel<TrigBufWidget>(plugin, "TrigBuf", "Trigger Buffer");
 	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch");
 	createModel<ShiftRegisterWidget>(plugin, "ShiftRegister", "Shift Register");
+	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
 
  }
 
