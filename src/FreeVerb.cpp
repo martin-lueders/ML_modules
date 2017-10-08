@@ -125,7 +125,7 @@ void FreeVerb::step() {
 	if(inputs[FREEZE_INPUT].active) {
 		freeze = inputs[FREEZE_INPUT].value > 1.0;
 	} else {
-		if(buttonTrigger.process(params[FREEZE_INPUT].value)) freeze = !freeze;
+		if(buttonTrigger.process(params[FREEZE_PARAM].value)) freeze = !freeze;
 	};
 
 #endif
