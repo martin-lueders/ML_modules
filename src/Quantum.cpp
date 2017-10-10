@@ -42,6 +42,8 @@ struct Quantum : Module {
 
 	void step();
 
+	PulseGenerator pulse;
+
 	int last_octave=0, last_semi=0;
 
 	bool semiState[12] = {};
@@ -185,7 +187,8 @@ void Quantum::step() {
 		bool changed = !( (octave==last_octave)&&(semi==last_semi));
 		gate = 10.0; 
 		quantized = 1.0*octave + semi/12.0;
-		if(changed) trigger=10.0;
+//		  if(changed) trigger=10.0;
+		if(changed) pulse.trigger(0.001);
 		last_octave = octave;
 		last_semi   = semi;
 
@@ -193,6 +196,7 @@ void Quantum::step() {
 		quantized = 1.0*last_octave + last_semi/12.0;
 	};
 
+	trigger = pulse.process(1.0/gSampleRate) ? 10.0 : 0.0;
 #ifdef v032
 	setf(outputs[OUT_OUTPUT], quantized);
 	setf(outputs[GATE_OUTPUT], gate);
