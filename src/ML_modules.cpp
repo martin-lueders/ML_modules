@@ -16,6 +16,7 @@ struct ML_modulesPlugin : Plugin {
 		createModel<SeqSwitchWidget>(this, "SeqSwitch", "Sequential Switch");
 		createModel<ShiftRegisterWidget>(this, "ShiftRegister", "Shift Register");
 		createModel<FreeVerbWidget>(this, "FreeVerb", "FreeVerb");
+		createModel<Sum8Widget>(this, "Sum8", "Sum8");
 	}
 };
 
@@ -38,6 +39,7 @@ void init(rack::Plugin *p) {
 	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch");
 	createModel<ShiftRegisterWidget>(plugin, "ShiftRegister", "Shift Register");
 	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
+	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
 
  }
 

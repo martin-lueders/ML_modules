@@ -37,3 +37,7 @@ struct FreeVerbWidget : ModuleWidget {
 	FreeVerbWidget();
 };
 
+struct Sum8Widget : ModuleWidget {
+	Sum8Widget();
+};
+
