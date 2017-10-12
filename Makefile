@@ -2,8 +2,8 @@
 # 
 # possible values are v032 and v040
 
-#FLAGS += -D v040
-FLAGS += -D v032
+FLAGS += -D v040
+#FLAGS += -D v032
 
 SOURCES = $(wildcard src/*.cpp freeverb/*.cpp)
 

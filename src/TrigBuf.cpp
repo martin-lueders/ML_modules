@@ -1,5 +1,8 @@
 #include "ML_modules.hpp"
 
+#ifdef v040
+#include "dsp/digital.hpp"
+#endif
 
 struct TrigBuf : Module {
 	enum ParamIds {

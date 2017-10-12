@@ -1,7 +1,9 @@
 #include "ML_modules.hpp"
 #include <math.h>
-#include "dsp.hpp"
 
+#ifdef v032
+#include "dsp.hpp"
+#endif
 
 Plugin *plugin;
 

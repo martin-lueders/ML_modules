@@ -95,12 +95,12 @@ Sum8Widget::Sum8Widget() {
 
 
 
-	const float offset_y = 70, delta_y = 26, offset_x=11;
+	const float offset_y = 70, delta_y = 26, offset_x=10.5;
 
 	for( int i=0; i<8; i++) addInput(createInput<PJ301MPort>(Vec(offset_x, offset_y + i*delta_y  ),    module, Sum8::IN1_INPUT+i));
 
 
-	addOutput(createOutput<PJ301MPort>(Vec(offset_x, 310), module, Sum8::OUT_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(offset_x, 320), module, Sum8::OUT_OUTPUT));
 
 
 }
