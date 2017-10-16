@@ -41,3 +41,6 @@ struct Sum8Widget : ModuleWidget {
 	Sum8Widget();
 };
 
+struct ConstantsWidget : ModuleWidget {
+	ConstantsWidget();
+};
