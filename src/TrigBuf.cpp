@@ -11,8 +11,8 @@ struct TrigBuf : Module {
 	enum InputIds {
 		ARM1_INPUT,
 		ARM2_INPUT,
-		TRIG1_INPUT,
-		TRIG2_INPUT,
+		GATE1_INPUT,
+		GATE2_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -34,17 +34,28 @@ struct TrigBuf : Module {
 	float arm1=0.0, arm2=0.0;
 	float out1=0.0, out2=0.0;
 
-	bool fired1=false, fired2=false;
+	bool gate1=false, gate2=false;
+	bool delayed1=false, delayed2=false;
 
 	SchmittTrigger armTrigger1, armTrigger2;
-	SchmittTrigger trigTrigger1, trigTrigger2;
+	SchmittTrigger gateTrigger1, gateTrigger2;
 
 	void initialize(){
 		arm1=0.0;
 		arm2=0.0;
 		out1=0.0;
 		out2=0.0;
+		gate1=false;
+		gate2=false;
+		delayed1=false;
+		delayed2=false;
 	};
+
+private:
+
+	bool neg_slope(bool gate, bool last_gate) { return (gate!=last_gate) && last_gate; }
+
+
 
 };
 
@@ -61,45 +72,50 @@ TrigBuf::TrigBuf() {
 void TrigBuf::step() {
 
 
-	bool trig1 = false;
-	bool trig2 = false;
+	bool last_gate1 = gate1;
+	bool last_gate2 = gate2;
        
 
 #ifdef v032
 	if( inputs[ARM1_INPUT] ) {
 		if( armTrigger1.process(*inputs[ARM1_INPUT]) ) { 
-			arm1 = 10.0;
-			if ( !inputs[ARM2_INPUT] ) arm2 = 10.0;
+			if (!gate1) {arm1 = 10.0;}
+			else { 
+				arm1 = 0.0;
+				delayed1 = true;
+			};
 	       	}
 	} else {
 		arm1 = 0.0;
 	};
+	
+	if( inputs[GATE1_INPUT]) gateTrigger1.process(*inputs[GATE1_INPUT]);
+	gate1 = (gateTrigger1.state == 2);
 #endif
 
 #ifdef v040
+
+	if( inputs[GATE1_INPUT].active) gateTrigger1.process(inputs[GATE1_INPUT].value);
+	gate1 = (gateTrigger1.isHigh());
+
 	if( inputs[ARM1_INPUT].active ) {
 		if( armTrigger1.process(inputs[ARM1_INPUT].value) ) { 
-			arm1 = 10.0;
-			if ( !inputs[ARM2_INPUT].active ) arm2 = 10.0;
+			if (!gate1) {arm1 = 10.0;}
+			else { 
+				// arm1 = 0.0;
+				delayed1 = true;
+			};
+
 	       	}
 	} else {
 		arm1 = 0.0;
 	};
+
 #endif
 
 
 
-#ifdef v032
-	if( inputs[TRIG1_INPUT]) trigTrigger1.process(*inputs[TRIG1_INPUT]);
-	trig1 = (trigTrigger1.state == 2);
-#endif
-#ifdef v040
-	if( inputs[TRIG1_INPUT].active) trigTrigger1.process(inputs[TRIG1_INPUT].value);
-	trig1 = (trigTrigger1.isHigh());
-#endif
-
-
-        if(trig1) {
+        if(gate1) {
 		if(arm1 > 5.0) {
 			out1 = 10.0;
 		} else {
@@ -113,40 +129,61 @@ void TrigBuf::step() {
 		};
 	};
 
+	if( delayed1 && neg_slope(gate1, last_gate1) ) {
+
+		arm1 = 10.0;
+		delayed1 = false;
+
+	};
+
 
 
 #ifdef v032
+
+	if( inputs[GATE2_INPUT] ) {
+		gateTrigger2.process(*inputs[GATE2_INPUT]) ; 
+		gate2 = (gateTrigger2.state==2);
+	} else {
+		gate2 = gate1;
+	};
+
 	if( inputs[ARM2_INPUT] ) {
-		if( armTrigger2.process(*inputs[ARM2_INPUT]) ) { arm2 = 10.0; }
+		if( armTrigger2.process(*inputs[ARM2_INPUT]) ) {
+			if (!gate2) {arm2 = 10.0;}
+			else { 
+				arm2 = 0.0;
+				delayed2 = true;
+			};
+	} else {
+		arm2 = arm1;
 	};
+
 #endif
 
-
 #ifdef v040
+
+	if( inputs[GATE2_INPUT].active ) {
+		gateTrigger2.process(inputs[GATE2_INPUT].value);
+		gate2 = gateTrigger2.isHigh();
+	} else {
+		gate2 = gate1;
+	};
+
 	if( inputs[ARM2_INPUT].active ) {
-		if( armTrigger2.process(inputs[ARM2_INPUT].value) ) { arm2 = 10.0; }
-	};
-#endif
-
-#ifdef v032
-	if( inputs[TRIG2_INPUT] ) {
-		trigTrigger2.process(*inputs[TRIG2_INPUT]) ; 
-		trig2 = (trigTrigger2.state==2);
+		if( armTrigger2.process(inputs[ARM2_INPUT].value) ) { 
+			if (gate2) {arm2 = 10.0;}
+			else { 
+				arm2 = 0.0;
+				delayed2 = true;
+			};
+		};
 	} else {
-		trig2 = trig1;
+		arm2 = arm1;
 	};
-#endif
 
-#ifdef v040
-	if( inputs[TRIG2_INPUT].active ) {
-		trigTrigger2.process(inputs[TRIG2_INPUT].value);
-		trig2 = trigTrigger2.isHigh();
-	} else {
-		trig2 = trig1;
-	}
 #endif			
 
-	if (trig2) {
+	if (gate2) {
 
 		if(arm2 > 5.0) out2 = 10.0;
 		else {
@@ -157,6 +194,13 @@ void TrigBuf::step() {
 			arm2 = 0.0;
 			out2 = 0.0;
 		};
+	};
+
+	if( delayed2 && neg_slope(gate2, last_gate2) ) {
+
+		arm2 = 10.0;
+		delayed2 = false;
+
 	};
 
 #ifdef v032
@@ -195,12 +239,12 @@ TrigBufWidget::TrigBufWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
 	addInput(createInput<PJ301MPort>(Vec(10, 62),    module, TrigBuf::ARM1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::TRIG1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::GATE1_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, TrigBuf::OUT1_OUTPUT));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 66), &module->arm1));
 
 	addInput(createInput<PJ301MPort>(Vec(10, 218),   module, TrigBuf::ARM2_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::TRIG2_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::GATE2_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 305), module, TrigBuf::OUT2_OUTPUT));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 222), &module->arm2));
 }

@@ -68,7 +68,7 @@ ConstantsWidget::ConstantsWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-	//	panel->setBackground(SVG::load(assetPlugin(plugin,"res/Constants.svg")));
+		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Constants.svg")));
 
 		addChild(panel);
 	}
@@ -79,7 +79,7 @@ ConstantsWidget::ConstantsWidget() {
 
 
 
-	const float offset_y = 70, delta_y = 26, offset_xL=10.5, offset_xR=30.5;
+	const float offset_y = 65, delta_y = 40, offset_xL=10, offset_xR=55;
 
 
 	for(int i=0; i<7; i++) {
