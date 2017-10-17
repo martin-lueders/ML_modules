@@ -29,6 +29,10 @@ struct SeqSwitchWidget : ModuleWidget {
 	SeqSwitchWidget();
 };
 
+struct SeqSwitch2Widget : ModuleWidget {
+	SeqSwitch2Widget();
+};
+
 struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget();
 };
@@ -44,3 +48,4 @@ struct Sum8Widget : ModuleWidget {
 struct ConstantsWidget : ModuleWidget {
 	ConstantsWidget();
 };
+

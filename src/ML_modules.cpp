@@ -38,7 +38,8 @@ void init(rack::Plugin *p) {
  	createModel<QuantizerWidget>(plugin, "Quantizer", "Quantizer (h-bar)");
  	createModel<QuantumWidget>(plugin, "Quantum", "Quantum");
  	createModel<TrigBufWidget>(plugin, "TrigBuf", "Trigger Buffer");
-	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch");
+	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch 8->1");
+	createModel<SeqSwitch2Widget>(plugin, "SeqSwitch2", "Sequential Switch 1->8");
 	createModel<ShiftRegisterWidget>(plugin, "ShiftRegister", "Shift Register");
 	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
 	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
