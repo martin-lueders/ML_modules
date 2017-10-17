@@ -177,10 +177,10 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
 #ifdef v032		
-		panel->setBackground(SVG::load("plugins/ML_modules/res/SeqSwitch.svg"));
+		panel->setBackground(SVG::load("plugins/ML_modules/res/SeqSwitch2.svg"));
 #endif
 #ifdef v040
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/SeqSwitch.svg")));
+		panel->setBackground(SVG::load(assetPlugin(plugin,"res/SeqSwitch2.svg")));
 #endif
 		addChild(panel);
 	}
