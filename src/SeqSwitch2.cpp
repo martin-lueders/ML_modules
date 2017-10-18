@@ -59,6 +59,26 @@ struct SeqSwitch2 : Module {
 
 	OutMode outMode = ZERO;
 
+	json_t *toJson() {
+
+		json_t *rootJ = json_object();
+
+		// outMode:
+	
+		json_object_set_new(rootJ, "outMode", json_integer(outMode));
+
+		return rootJ;
+	};
+	
+	void fromJson(json_t *rootJ) {
+
+		// outMode:
+
+		json_t *outModeJ = json_object_get(rootJ, "outMode");
+		if(outModeJ) outMode = (OutMode) json_integer_value(outModeJ);
+	};
+
+
 };
 
 
