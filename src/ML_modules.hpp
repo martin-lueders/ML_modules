@@ -31,6 +31,7 @@ struct SeqSwitchWidget : ModuleWidget {
 
 struct SeqSwitch2Widget : ModuleWidget {
 	SeqSwitch2Widget();
+	Menu *createContextMenu();
 };
 
 struct ShiftRegisterWidget : ModuleWidget {

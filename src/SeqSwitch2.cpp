@@ -52,13 +52,20 @@ struct SeqSwitch2 : Module {
 		for(int i=0; i<8; i++) stepLights[i] = 0.0;
 	};
 
+	enum OutMode {
+		ZERO,
+		LAST,
+	};
+
+	OutMode outMode = ZERO;
+
 };
 
 
 
 void SeqSwitch2::step() {
 
-	for(int i=0; i<8; i++) outs[i]=0.0;
+	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0; }
 
 	int numSteps = round(clampf(params[NUM_STEPS].value,1.0,8.0));
 	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clampf(inputs[NUMSTEPS_INPUT].value,1.0,8.0));
@@ -164,4 +171,49 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch2::POS_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(76, 320), module, SeqSwitch2::IN_INPUT));
 
-}
+};
+
+struct SeqSwitch2OutModeItem : MenuItem {
+
+	SeqSwitch2 *seqSwitch2;
+	SeqSwitch2::OutMode outMode;
+
+	void onAction() {
+		seqSwitch2->outMode = outMode;
+	};
+
+	void step() {
+		rightText = (seqSwitch2->outMode == outMode)? "✔" : "";
+	};
+
+
+};
+
+Menu *SeqSwitch2Widget::createContextMenu() {
+
+	Menu *menu = ModuleWidget::createContextMenu();
+
+	MenuLabel *spacerLabel = new MenuLabel();
+	menu->pushChild(spacerLabel);
+
+	SeqSwitch2 *seqSwitch2 = dynamic_cast<SeqSwitch2*>(module);
+	assert(seqSwitch2);
+
+	MenuLabel *modeLabel = new MenuLabel();
+	modeLabel->text = "Output Mode";
+	menu->pushChild(modeLabel);
+
+	SeqSwitch2OutModeItem *zeroItem = new SeqSwitch2OutModeItem();
+	zeroItem->text = "Zero";	
+	zeroItem->seqSwitch2 = seqSwitch2;
+	zeroItem->outMode = SeqSwitch2::ZERO;
+	menu->pushChild(zeroItem);
+
+	SeqSwitch2OutModeItem *lastItem = new SeqSwitch2OutModeItem();
+	lastItem->text = "Last";	
+	lastItem->seqSwitch2 = seqSwitch2;
+	lastItem->outMode = SeqSwitch2::LAST;
+	menu->pushChild(lastItem);
+
+	return menu;
+};
