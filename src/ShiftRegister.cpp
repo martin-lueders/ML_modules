@@ -47,7 +47,13 @@ struct ShiftRegister : Module {
 
 	SchmittTrigger upTrigger, downTrigger, setTrigger;
 
+#ifdef v_dev
 	void reset() override {
+#endif
+
+#ifdef v040
+	void initialize() override {
+#endif
 		position=0;
 		for(int i=0; i<8; i++) {
 			stepLights[i] = 0.0;

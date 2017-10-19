@@ -44,7 +44,12 @@ struct Quantum : Module {
 	SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
 	float semiLight[12] = {};
 
+#ifdef v_dev
         void reset() override {
+#endif
+#ifdef v040
+        void initialize() override {
+#endif
                 for (int i = 0; i < 12; i++) {
                         semiState[i] = false;
 			semiLight[i] = 0.0;
@@ -151,7 +156,11 @@ void Quantum::step() {
 		quantized = 1.0*last_octave + last_semi/12.0;
 	};
 
-	trigger = pulse.process(1.0/engineGetSampleRate()) ? 10.0 : 0.0;
+#ifdef v_dev
+	float gSampleRate = engineGetSampleRate();
+#endif
+
+	trigger = pulse.process(1.0/gSampleRate) ? 10.0 : 0.0;
 
 
 	outputs[OUT_OUTPUT].value = quantized;

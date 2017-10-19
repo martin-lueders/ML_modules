@@ -33,7 +33,13 @@ struct TrigBuf : Module {
 	SchmittTrigger armTrigger1, armTrigger2;
 	SchmittTrigger gateTrigger1, gateTrigger2;
 
+#ifdef v_dev
 	void reset() override {
+#endif
+
+#ifdef v040
+	void initialize() override {
+#endif
 		arm1=0.0;
 		arm2=0.0;
 		out1=0.0;

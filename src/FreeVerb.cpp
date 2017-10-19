@@ -33,7 +33,11 @@ struct FreeVerb : Module {
 
 	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
 
-		reverb.init(engineGetSampleRate());
+#ifdef v_dev
+	float gSampleRate = engineGetSampleRate();
+#endif	
+
+		reverb.init(gSampleRate);
 
 	};
 
@@ -47,7 +51,11 @@ struct FreeVerb : Module {
 
 void FreeVerb::onSampleRateChange() {
 
-	reverb.init(engineGetSampleRate());
+#ifdef v_dev
+	float gSampleRate = engineGetSampleRate();
+#endif	
+
+	reverb.init(gSampleRate);
 
 };
 

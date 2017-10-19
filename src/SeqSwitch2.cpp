@@ -47,7 +47,13 @@ struct SeqSwitch2 : Module {
 
 	SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
 
+#ifdef v_dev
 	void reset() override {
+#endif
+
+#ifdef v040
+	void initialize() override {
+#endif
 		position=0;
 		for(int i=0; i<8; i++) stepLights[i] = 0.0;
 	};
