@@ -38,7 +38,7 @@ struct SeqSwitch2 : Module {
 
 	SeqSwitch2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
 
-	void step();
+	void step() override;
 
 	int position=0;
 
@@ -47,7 +47,7 @@ struct SeqSwitch2 : Module {
 
 	SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
 
-	void initialize(){
+	void reset() override {
 		position=0;
 		for(int i=0; i<8; i++) stepLights[i] = 0.0;
 	};
@@ -59,7 +59,7 @@ struct SeqSwitch2 : Module {
 
 	OutMode outMode = ZERO;
 
-	json_t *toJson() {
+	json_t *toJson() override {
 
 		json_t *rootJ = json_object();
 
@@ -70,7 +70,7 @@ struct SeqSwitch2 : Module {
 		return rootJ;
 	};
 	
-	void fromJson(json_t *rootJ) {
+	void fromJson(json_t *rootJ) override {
 
 		// outMode:
 
@@ -136,12 +136,7 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-#ifdef v032		
-		panel->setBackground(SVG::load("plugins/ML_modules/res/SeqSwitch2.svg"));
-#endif
-#ifdef v040
 		panel->setBackground(SVG::load(assetPlugin(plugin,"res/SeqSwitch2.svg")));
-#endif
 		addChild(panel);
 	}
 
@@ -198,11 +193,11 @@ struct SeqSwitch2OutModeItem : MenuItem {
 	SeqSwitch2 *seqSwitch2;
 	SeqSwitch2::OutMode outMode;
 
-	void onAction() {
+	void onAction() override {
 		seqSwitch2->outMode = outMode;
 	};
 
-	void step() {
+	void step() override {
 		rightText = (seqSwitch2->outMode == outMode)? "✔" : "";
 	};
 

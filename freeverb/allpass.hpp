@@ -65,7 +65,7 @@ inline float allpass::process(float input, float feedback)
 	float bufout;
 	
 	bufout = buffer[bufidx];
-	undenormalise(bufout);
+//	undenormalise(bufout);
 	
 	output = -input + bufout;
 	buffer[bufidx] = input + (bufout*feedback);

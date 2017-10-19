@@ -1,8 +1,6 @@
 #include "ML_modules.hpp"
 
-#ifdef v040
 #include "dsp/digital.hpp"
-#endif
 
 struct SeqSwitch : Module {
 	enum ParamIds {
@@ -38,13 +36,8 @@ struct SeqSwitch : Module {
 		NUM_OUTPUTS
 	};
 
-#ifdef v032
-	SeqSwitch() ;
-#endif
-#ifdef v040
 	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
-#endif
-	void step();
+	void step() override;
 
 	int position=0;
 
@@ -52,61 +45,21 @@ struct SeqSwitch : Module {
 
 	SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
 
-	void initialize(){
+	void reset() override {
 		position=0;
 		for(int i=0; i<8; i++) stepLights[i] = 0.0;
 	};
 
 };
 
-#ifdef v032
-SeqSwitch::SeqSwitch() {
-	params.resize(NUM_PARAMS);
-	inputs.resize(NUM_INPUTS);
-	outputs.resize(NUM_OUTPUTS);
-};
-#endif
-
-
 
 void SeqSwitch::step() {
 
 	float out=0.0;
 
-#ifdef v032
-	int numSteps = round(clampf(params[NUM_STEPS],1.0,8.0));
-	if( inputs[NUMSTEPS_INPUT] ) numSteps = round(clampf(getf(inputs[NUMSTEPS_INPUT]),1.0,8.0));
-
-#endif
-
-#ifdef v040
 	int numSteps = round(clampf(params[NUM_STEPS].value,1.0,8.0));
 	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clampf(inputs[NUMSTEPS_INPUT].value,1.0,8.0));
-#endif
 
-#ifdef v032
-	if( inputs[POS_INPUT] ) {
-
-		position = round( clampf( getf(inputs[POS_INPUT]),0.0,8.0))/8.0 * (numSteps-1) ; 
-
-	} else {
-
-		if( inputs[TRIGUP_INPUT] ) {
-			if (upTrigger.process(*inputs[TRIGUP_INPUT]) ) position++;
-		}
-
-		if( inputs[TRIGDN_INPUT] ) {
-			if (downTrigger.process(*inputs[TRIGDN_INPUT]) ) position--;
-		}
-
-		if( inputs[RESET_INPUT] ) {
-			if (resetTrigger.process(*inputs[RESET_INPUT]) ) position = 0;
-		}
-
-	};
-#endif
-
-#ifdef v040
 	if( inputs[POS_INPUT].active ) {
 
 		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
@@ -126,43 +79,22 @@ void SeqSwitch::step() {
 		}
 
 	};
-#endif
 
 
 	for(int i=0; i<numSteps; i++) {
-#ifdef v032
-		if( stepTriggers[i].process(params[STEP1_PARAM+i])) position = i;
-#endif
-#ifdef v040
 		if( stepTriggers[i].process(params[STEP1_PARAM+i].value)) position = i;
-#endif
 
 	};
 
 	while( position < 0 )         position += numSteps;
 	while( position >= numSteps ) position -= numSteps;
 
-#ifdef v032
-	if( inputs[IN1_INPUT+position] ) {
-		out = getf(inputs[IN1_INPUT+position]);
-	} else {
-		out = 0.0;
-	};
-#endif
-
-#ifdef v040
 	out = inputs[IN1_INPUT+position].normalize(0.0);
-#endif
 
 	for(int i=0; i<8; i++) stepLights[i] = (i==position)?1.0:0.0;
 
-#ifdef v032
-	setf(outputs[OUT1_OUTPUT],out);
-#endif
 
-#ifdef v040
 	outputs[OUT1_OUTPUT].value = out;
-#endif
 };
 
 
@@ -176,12 +108,7 @@ SeqSwitchWidget::SeqSwitchWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-#ifdef v032		
-		panel->setBackground(SVG::load("plugins/ML_modules/res/SeqSwitch.svg"));
-#endif
-#ifdef v040
 		panel->setBackground(SVG::load(assetPlugin(plugin,"res/SeqSwitch.svg")));
-#endif
 		addChild(panel);
 	}
 

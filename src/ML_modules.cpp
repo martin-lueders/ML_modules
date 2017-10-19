@@ -1,33 +1,9 @@
 #include "ML_modules.hpp"
 #include <math.h>
 
-#ifdef v032
-#include "dsp.hpp"
-#endif
-
 Plugin *plugin;
 
-#ifdef v032
-struct ML_modulesPlugin : Plugin {
-	ML_modulesPlugin() {
-		slug = "ML_Modules";
-		name = "ML Modules";
-		createModel<QuantizerWidget>(this, "Quantizer", "Quantizer (h-bar)");
-		createModel<QuantumWidget>(this, "Quantum", "Quantum");
-		createModel<TrigBufWidget>(this, "TrigBuf", "Trigger Buffer");
-		createModel<SeqSwitchWidget>(this, "SeqSwitch", "Sequential Switch");
-		createModel<ShiftRegisterWidget>(this, "ShiftRegister", "Shift Register");
-		createModel<FreeVerbWidget>(this, "FreeVerb", "FreeVerb");
-		createModel<Sum8Widget>(this, "Sum8", "Sum8");
-	}
-};
 
-Plugin* init() {
-	return new ML_modulesPlugin();
-};
-#endif
-
-#ifdef v040
 
 void init(rack::Plugin *p) {
  	plugin = p;
@@ -47,7 +23,6 @@ void init(rack::Plugin *p) {
 
  }
 
-#endif
 
 
 

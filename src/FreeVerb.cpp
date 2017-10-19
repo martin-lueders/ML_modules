@@ -1,9 +1,7 @@
 #include "ML_modules.hpp"
 #include "../freeverb/revmodel.hpp"
 
-#ifdef v040
 #include "dsp/digital.hpp"
-#endif
 
 struct FreeVerb : Module {
 	enum ParamIds {
@@ -32,45 +30,24 @@ struct FreeVerb : Module {
 
 	SchmittTrigger buttonTrigger;
 
-#ifdef v032
-	float old_samplerate;
-#endif
 
-#ifdef v032
-	FreeVerb() ;
-#endif
-#ifdef v040
 	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
 
-		reverb.init(gSampleRate);
+		reverb.init(engineGetSampleRate());
 
 	};
-#endif
 
-	void step();
+	void step() override;
 
-	void onSampleRateChange();
+	void onSampleRateChange() override;
 
-	void initialize(){
-	};
 
 };
 
-#ifdef v032
-FreeVerb::FreeVerb() {
-
-	params.resize(NUM_PARAMS);
-	inputs.resize(NUM_INPUTS);
-	outputs.resize(NUM_OUTPUTS);
-
-	reverb.init(gSampleRate);
-
-};
-#endif
 
 void FreeVerb::onSampleRateChange() {
 
-	reverb.init(gSampleRate);
+	reverb.init(engineGetSampleRate());
 
 };
 
@@ -85,32 +62,6 @@ void FreeVerb::step() {
 	bool  old_freeze = freeze;
 
 
-#ifdef v032
-	float input = clampf(getf(inputs[IN_INPUT]),-10.0,10.0);
-
-	if(inputs[ROOMSIZE_INPUT]) {
-		roomsize = clampf(getf(inputs[ROOMSIZE_INPUT])/8.0, 0.0, 1.0);
-	} else {
-		roomsize = params[ROOMSIZE_PARAM];
-	};
-
-	if(inputs[DAMP_INPUT]) {
-		damp = clampf(getf(inputs[DAMP_INPUT])/8.0, 0.0, 1.0);
-	} else {
-		damp = params[DAMP_PARAM];
-	};
-
-	if(inputs[FREEZE_INPUT]) {
-		freeze = getf(inputs[FREEZE_INPUT]) > 1.0;
-	} else {
-		if(buttonTrigger.process(params[FREEZE_PARAM])) freeze = !freeze;
-	};
-
-	if(old_samplerate != gSampleRate) reverb.init(gSampleRate);
-	old_samplerate = gSampleRate;
-#endif
-
-#ifdef v040
 	float input = clampf(inputs[IN_INPUT].value,-10.0,10.0);
 
 	if(inputs[ROOMSIZE_INPUT].active) {
@@ -131,7 +82,6 @@ void FreeVerb::step() {
 		if(buttonTrigger.process(params[FREEZE_PARAM].value)) freeze = !freeze;
 	};
 
-#endif
 
 	if( old_damp != damp ) reverb.setdamp(damp);
 	if( old_roomsize != roomsize) reverb.setroomsize(roomsize);
@@ -143,15 +93,8 @@ void FreeVerb::step() {
 	reverb.process(input, out1, out2);
 
 
-#ifdef v032
-	setf(outputs[OUT1_OUTPUT],out1);
-	setf(outputs[OUT2_OUTPUT],out2);
-#endif
-
-#ifdef v040
 	outputs[OUT1_OUTPUT].value = out1;
 	outputs[OUT2_OUTPUT].value = out2;
-#endif
 };
 
 
@@ -165,12 +108,7 @@ FreeVerbWidget::FreeVerbWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-#ifdef v032
-		panel->setBackground(SVG::load("plugins/ML_modules/res/FreeVerb.svg"));
-#endif
-#ifdef v040
 		panel->setBackground(SVG::load(assetPlugin(plugin,"res/FreeVerb.svg")));
-#endif
 		addChild(panel);
 	}
 

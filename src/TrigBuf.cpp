@@ -1,8 +1,6 @@
 #include "ML_modules.hpp"
 
-#ifdef v040
 #include "dsp/digital.hpp"
-#endif
 
 struct TrigBuf : Module {
 	enum ParamIds {
@@ -21,15 +19,10 @@ struct TrigBuf : Module {
 		NUM_OUTPUTS
 	};
 
-#ifdef v040
 	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
-#endif
 
-#ifdef v032	
-	TrigBuf() ;
-#endif
 
-	void step();
+	void step() override;
 
 	float arm1=0.0, arm2=0.0;
 	float out1=0.0, out2=0.0;
@@ -40,7 +33,7 @@ struct TrigBuf : Module {
 	SchmittTrigger armTrigger1, armTrigger2;
 	SchmittTrigger gateTrigger1, gateTrigger2;
 
-	void initialize(){
+	void reset() override {
 		arm1=0.0;
 		arm2=0.0;
 		out1=0.0;
@@ -56,16 +49,8 @@ private:
 	bool neg_slope(bool gate, bool last_gate) { return (gate!=last_gate) && last_gate; }
 
 
-
 };
 
-#ifdef v032
-TrigBuf::TrigBuf() {
-	params.resize(NUM_PARAMS);
-	inputs.resize(NUM_INPUTS);
-	outputs.resize(NUM_OUTPUTS);
-};
-#endif
 
 
 
@@ -76,24 +61,7 @@ void TrigBuf::step() {
 	bool last_gate2 = gate2;
        
 
-#ifdef v032
-	if( inputs[ARM1_INPUT] ) {
-		if( armTrigger1.process(*inputs[ARM1_INPUT]) ) { 
-			if (!gate1) {arm1 = 10.0;}
-			else { 
-				arm1 = 0.0;
-				delayed1 = true;
-			};
-	       	}
-	} else {
-		arm1 = 0.0;
-	};
-	
-	if( inputs[GATE1_INPUT]) gateTrigger1.process(*inputs[GATE1_INPUT]);
-	gate1 = (gateTrigger1.state == 2);
-#endif
 
-#ifdef v040
 
 	if( inputs[GATE1_INPUT].active) gateTrigger1.process(inputs[GATE1_INPUT].value);
 	gate1 = (gateTrigger1.isHigh());
@@ -111,7 +79,6 @@ void TrigBuf::step() {
 		arm1 = 0.0;
 	};
 
-#endif
 
 
 
@@ -138,29 +105,7 @@ void TrigBuf::step() {
 
 
 
-#ifdef v032
 
-	if( inputs[GATE2_INPUT] ) {
-		gateTrigger2.process(*inputs[GATE2_INPUT]) ; 
-		gate2 = (gateTrigger2.state==2);
-	} else {
-		gate2 = gate1;
-	};
-
-	if( inputs[ARM2_INPUT] ) {
-		if( armTrigger2.process(*inputs[ARM2_INPUT]) ) {
-			if (!gate2) {arm2 = 10.0;}
-			else { 
-				arm2 = 0.0;
-				delayed2 = true;
-			};
-	} else {
-		arm2 = arm1;
-	};
-
-#endif
-
-#ifdef v040
 
 	if( inputs[GATE2_INPUT].active ) {
 		gateTrigger2.process(inputs[GATE2_INPUT].value);
@@ -181,7 +126,6 @@ void TrigBuf::step() {
 		arm2 = arm1;
 	};
 
-#endif			
 
 	if (gate2) {
 
@@ -203,15 +147,9 @@ void TrigBuf::step() {
 
 	};
 
-#ifdef v032
-	setf(outputs[OUT1_OUTPUT],out1);
-	setf(outputs[OUT2_OUTPUT],out2);
-#endif
 
-#ifdef v040
 	outputs[OUT1_OUTPUT].value = out1;
 	outputs[OUT2_OUTPUT].value = out2;
-#endif
 
 };
 
@@ -226,12 +164,7 @@ TrigBufWidget::TrigBufWidget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-#ifdef v032		
-		panel->setBackground(SVG::load("plugins/ML_modules/res/TrigBuf.svg"));
-#endif
-#ifdef v040
 		panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigBuf.svg")));
-#endif
 		addChild(panel);
 	}
 

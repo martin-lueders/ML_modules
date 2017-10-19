@@ -29,7 +29,7 @@ struct Constants : Module {
 	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
 
 
-	void step();
+	void step() override;
 
 };
 

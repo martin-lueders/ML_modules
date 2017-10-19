@@ -21,25 +21,12 @@ struct Sum8 : Module {
 		NUM_OUTPUTS
 	};
 
-#ifdef v032
-	Sum8() ;
-#endif
-#ifdef v040
 	Sum8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
-#endif
 
 
-	void step();
+	void step() override;
 
 };
-
-#ifdef v032
-Sum8::Sum8() {
-	params.resize(NUM_PARAMS);
-	inputs.resize(NUM_INPUTS);
-	outputs.resize(NUM_OUTPUTS);
-};
-#endif
 
 
 
@@ -47,24 +34,11 @@ void Sum8::step() {
 
 	float out=0.0;
 
-#ifdef v032
 
-	for(int i=0; i<8; i++) {
-
-		if( inputs[IN1_INPUT+i] ) out +	getf(inputs[IN1_INPUT+i]);
-
-	};
-
-	setf(outputs[OUT_OUTPUT],out);
-#endif
-
-
-#ifdef v040
 
 	for(int i=0; i<8; i++) out += inputs[IN1_INPUT+i].normalize(0.0);
 
 	outputs[OUT_OUTPUT].value = out;
-#endif
 
 };
 
@@ -79,12 +53,7 @@ Sum8Widget::Sum8Widget() {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-#ifdef v032
-		panel->setBackground(SVG::load("plugins/ML_modules/res/Sum8.svg"));
-#endif
-#ifdef v040
 		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Sum8.svg")));
-#endif
 
 		addChild(panel);
 	}
