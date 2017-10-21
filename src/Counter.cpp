@@ -28,14 +28,21 @@ struct Counter : Module {
 #ifdef v040
 	void initialize() override {counter=0; state=false; state2=false;};
 #endif
-#ifdef v_dec
-	void reset() override {counter=0; state=false; state2=false;};
+#ifdef v_dev
+	void reset() override {counter=0; state=false; state2=false; gSampleRate=engineGetSampleRate();};
 #endif
 
 	int counter = 0;
 	bool state = false;
 	bool state2 = false;
 	float stateLight;
+
+#ifdef v_dev	
+	float gSampleRate;
+
+	void onSampleRateChange() override {gSampleRate = engineGetSampleRate();}
+#endif
+
         int max;
   
 	SchmittTrigger startTrigger, gateTrigger, stopTrigger;
