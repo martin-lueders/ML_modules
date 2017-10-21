@@ -20,6 +20,7 @@ void init(rack::Plugin *p) {
 	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
 	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
 	createModel<ConstantsWidget>(plugin, "Constants", "Constants");
+	createModel<CounterWidget>(plugin, "Counter", "Counter");
 
  }
 

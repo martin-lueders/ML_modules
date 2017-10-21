@@ -50,3 +50,7 @@ struct ConstantsWidget : ModuleWidget {
 	ConstantsWidget();
 };
 
+struct CounterWidget : ModuleWidget {
+	CounterWidget();
+};
+
