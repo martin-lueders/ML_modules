@@ -8,6 +8,7 @@ struct Counter : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
+		MAX_INPUT,
 		GATE_INPUT,
 		START_INPUT,
 		STOP_INPUT,
@@ -35,7 +36,8 @@ struct Counter : Module {
 	bool state = false;
 	bool state2 = false;
 	float stateLight;
-
+        int max;
+  
 	SchmittTrigger startTrigger, gateTrigger, stopTrigger;
 	PulseGenerator startPulse, stopPulse;
 };
@@ -45,9 +47,14 @@ struct Counter : Module {
 void Counter::step() {
 
 
+	max = params[MAX_PARAM].value;
+
+
+	if( inputs[MAX_INPUT].active ) max = max * clampf(inputs[MAX_INPUT].value/10.0,0,1.0);
+
 	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) )) {
 		state=true; 
-		counter=0;
+		counter=gateTrigger.isHigh()?1:0;
 		startPulse.trigger(0.001);
 	};
 
@@ -60,7 +67,7 @@ void Counter::step() {
 
 		if(state) counter++; 
 
-		if(counter > params[MAX_PARAM].value) {
+		if(counter > max) {
 			
 			counter = 0;
 			state   = false;
@@ -79,13 +86,61 @@ void Counter::step() {
 	outputs[START_OUTPUT].value = start;
 	outputs[STOP_OUTPUT].value = stop;
 
-}
+};
+
+struct NumberDisplayWidget : TransparentWidget {
+
+  int *value;
+  std::shared_ptr<Font> font;
+
+  NumberDisplayWidget() {
+    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+  };
+
+  void draw(NVGcontext *vg) {
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0x44, 0x44, 0x44);
+    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(vg, backgroundColor);
+    nvgFill(vg);
+    nvgStrokeWidth(vg, 1.0);
+    nvgStrokeColor(vg, borderColor);
+    nvgStroke(vg);
+
+    nvgFontSize(vg, 18);
+    nvgFontFaceId(vg, font->handle);
+    nvgTextLetterSpacing(vg, 2.5);
+
+    std::string to_display = std::to_string(*value);
+    Vec textPos = Vec(6.0f, 17.0f);
+
+    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
+    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
+    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+
+    textColor = nvgRGB(0xda, 0xe9, 0x29);
+    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
+    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+
+    textColor = nvgRGB(0xf0, 0x00, 0x00);
+    nvgFillColor(vg, textColor);
+    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+  }
+};
+
+
+
+
+  
+  
 
 
 CounterWidget::CounterWidget() {
 	Counter *module = new Counter();
 	setModule(module);
-	box.size = Vec(15*3, 380);
+	box.size = Vec(15*6, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
@@ -94,17 +149,36 @@ CounterWidget::CounterWidget() {
 		addChild(panel);
 	}
 
+
+	
+
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(9,  60), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addInput(createInput<PJ301MPort>(Vec(53, 87), module, Counter::MAX_INPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 100), module, Counter::GATE_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 135), module, Counter::START_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 170), module, Counter::STOP_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(13, 168), module, Counter::GATE_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(10, 200), module, Counter::GATE_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 235), module, Counter::START_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 270), module, Counter::STOP_OUTPUT));
+
+	addInput(createInput<PJ301MPort>(Vec(13, 235), module, Counter::START_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 235), module, Counter::START_OUTPUT));
+
+	addInput(createInput<PJ301MPort>(Vec(13, 298), module, Counter::STOP_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 298), module, Counter::STOP_OUTPUT));
+
+	NumberDisplayWidget *display = new NumberDisplayWidget();
+	display->box.pos = Vec(20,56);
+	display->box.size = Vec(50, 20);
+	display->value = &module->max;
+	addChild(display);
+
+	
+	NumberDisplayWidget *display2 = new NumberDisplayWidget();
+	display2->box.pos = Vec(20,145);
+	display2->box.size = Vec(50, 20);
+	display2->value = &module->counter;
+	addChild(display2);
 
 }

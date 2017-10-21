@@ -131,7 +131,12 @@ void Quantum::step() {
 
 
        	if( inputs[RESET_INPUT].active ) {
+#ifdef v040
                 if( resetTrigger.process(inputs[RESET_INPUT].value) ) initialize();
+#endif
+#ifdef v_dev
+                if( resetTrigger.process(inputs[RESET_INPUT].value) ) reset();
+#endif
         };
 
 
