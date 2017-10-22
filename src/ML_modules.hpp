@@ -54,3 +54,6 @@ struct CounterWidget : ModuleWidget {
 	CounterWidget();
 };
 
+struct TrigDelayWidget : ModuleWidget {
+	TrigDelayWidget();
+};

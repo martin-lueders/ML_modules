@@ -21,6 +21,7 @@ void init(rack::Plugin *p) {
 	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
 	createModel<ConstantsWidget>(plugin, "Constants", "Constants");
 	createModel<CounterWidget>(plugin, "Counter", "Counter");
+	createModel<TrigDelayWidget>(plugin, "TrigDelay", "Trigger Delay");
 
  }
 

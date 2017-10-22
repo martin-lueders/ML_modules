@@ -1,6 +1,8 @@
 #include "ML_modules.hpp"
 #include "dsp/digital.hpp"
 
+#include <sstream>
+#include <iomanip>
 
 struct Counter : Module {
 	enum ParamIds {
@@ -120,7 +122,11 @@ struct NumberDisplayWidget : TransparentWidget {
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
 
-    std::string to_display = std::to_string(*value);
+//    std::string to_display = std::to_string(*value);
+    std::stringstream to_display;
+   
+    to_display << std::setw(3) << *value;
+
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
@@ -133,7 +139,7 @@ struct NumberDisplayWidget : TransparentWidget {
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
   }
 };
 
