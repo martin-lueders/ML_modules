@@ -25,7 +25,11 @@ struct TrigDelay : Module {
 		NUM_OUTPUTS
 	};
 
-	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
+#ifdef v_dev	
+	gSampleRate = engineGetSampleRate();	
+#endif	
+	};
 
 
 	void step() override;
@@ -38,6 +42,11 @@ struct TrigDelay : Module {
 
 
 #ifdef v_dev
+
+	float gSampleRate;
+
+	void onSampleRateChange() { gSampleRate = engineGetSampleRate(); }
+
 	void reset() override {
 #endif
 
