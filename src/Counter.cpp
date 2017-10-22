@@ -10,7 +10,7 @@ struct Counter : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
-		MAX_INPUT,
+		LENGTH_INPUT,
 		GATE_INPUT,
 		START_INPUT,
 		STOP_INPUT,
@@ -59,7 +59,7 @@ void Counter::step() {
 	max = params[MAX_PARAM].value;
 
 
-	if( inputs[MAX_INPUT].active ) max = max * clampf(inputs[MAX_INPUT].value/10.0,0,1.0);
+	if( inputs[LENGTH_INPUT].active ) max = max * clampf(inputs[LENGTH_INPUT].value/10.0,0,1.0);
 
 	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) )) {
 		state=true; 
@@ -169,7 +169,7 @@ CounterWidget::CounterWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
 	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
-	addInput(createInput<PJ301MPort>(Vec(53, 87), module, Counter::MAX_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(53, 87), module, Counter::LENGTH_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 168), module, Counter::GATE_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
