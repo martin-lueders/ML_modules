@@ -122,10 +122,10 @@ struct NumberDisplayWidget : TransparentWidget {
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
 
-//    std::string to_display = std::to_string(*value);
-    std::stringstream to_display;
-   
-    to_display << std::setw(3) << *value;
+    std::string to_display = std::to_string(*value);
+
+
+    while(to_display.length()<3) to_display = ' ' + to_display;
 
     Vec textPos = Vec(6.0f, 17.0f);
 
@@ -139,7 +139,7 @@ struct NumberDisplayWidget : TransparentWidget {
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
   }
 };
 
