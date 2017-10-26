@@ -1,6 +1,7 @@
 #include "ML_modules.hpp"
 #include "dsp/digital.hpp"
 
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 
@@ -14,25 +15,28 @@ struct BPMdetect : Module {
 	};
 	enum OutputIds {
 		LFO_OUTPUT,
+		SEQ_OUTPUT,
 		DELAY_OUTPUT,
+		TRIG_OUTPUT,
 		NUM_OUTPUTS
 	};
 
-	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { onSampleRateChange();};
+	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { misses = 0; onSampleRateChange();};
 
 	void step() override;
 
-	int counter = 0;
+	int misses = 0;
 	float timer = 0.0;
 	float seconds = 0.0;
+	float factor = 1.0;
 	float deltaT;
 	float BPM=0.0;
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
 
-
+	inline bool checkBeat(float timer, int mult) { return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.05 ) && misses < 5); }
 #ifdef v040
-	void initialize() override {counter=0; onSampleRateChange(); };
+	void initialize() override {misses=0; onSampleRateChange(); };
 	void onSampleRateChange() override {deltaT = 1.0/gSampleRate;}
 #endif
 
@@ -43,6 +47,7 @@ struct BPMdetect : Module {
 #endif
 
 	SchmittTrigger gateTrigger;
+	PulseGenerator outPulse;
 };
 
 
@@ -51,11 +56,33 @@ void BPMdetect::step() {
 
 	if( inputs[GATE_INPUT].active) {
 
+		if( timer > seconds/factor ) outPulse.trigger(0.001);
+
+
 		if( gateTrigger.process(inputs[GATE_INPUT].value) ) {
 
-			seconds = timer;
+
 			if(timer>0) {
-				seconds = (3*seconds + timer)/4.0;
+				float new_seconds;
+				if(checkBeat(timer,1)) {
+					std::cerr << "mult 1. misses = " << misses << "\n";
+					new_seconds = timer;
+					misses=0;
+				} else if( checkBeat(timer, 2)) { 
+					std::cerr << "mult 2. misses = " << misses << "\n";
+					new_seconds = timer/2.0;
+					misses++;
+				} else if( checkBeat(timer, 3) ){
+					std::cerr << "mult 3. misses = " << misses << "\n";
+					new_seconds = timer/3.0;
+					misses++;
+				} else {
+					std::cerr << "default. misses = " << misses << "\n";
+					new_seconds = timer;
+					misses=0;
+				};
+				
+				seconds = (seconds + 4.0*new_seconds)/5.0;
 				BPM=60.0/seconds;
 
 				lfo_volts = 1.0 - log2(seconds) ;
@@ -71,7 +98,9 @@ void BPMdetect::step() {
 	timer += deltaT;
 
 	outputs[LFO_OUTPUT].value = lfo_volts;
+	outputs[SEQ_OUTPUT].value = lfo_volts-3.0;
 	outputs[DELAY_OUTPUT].value = delay_volts;
+	outputs[TRIG_OUTPUT].value = outPulse.process(deltaT) ? 10.0 : 0.0;
 
 };
 
@@ -101,10 +130,6 @@ struct NumberDisplayWidget2 : TransparentWidget {
     nvgTextLetterSpacing(vg, 2.5);
 
     char display_string[10];
-//    std::string to_display = std::to_string(*value);
-//    std::stringstream to_display;
-   
-//    to_display << std::setw(7) << std::setprecision(2) << *value;
 
     sprintf(display_string,"%6.1f",*value);
 
@@ -112,7 +137,7 @@ struct NumberDisplayWidget2 : TransparentWidget {
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+    nvgText(vg, textPos.x, textPos.y, "~~~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
@@ -120,8 +145,6 @@ struct NumberDisplayWidget2 : TransparentWidget {
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
- //   nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
- //   nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
     nvgText(vg, textPos.x, textPos.y, display_string, NULL);
   }
 };
@@ -148,7 +171,9 @@ BPMdetectWidget::BPMdetectWidget() {
 
 	addInput(createInput<PJ301MPort>(Vec(13, 150), module, BPMdetect::GATE_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(53, 150), module, BPMdetect::LFO_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 200), module, BPMdetect::DELAY_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 200), module, BPMdetect::SEQ_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 250), module, BPMdetect::DELAY_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 300), module, BPMdetect::TRIG_OUTPUT));
 
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();

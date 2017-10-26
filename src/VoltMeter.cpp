@@ -9,27 +9,21 @@ struct VoltMeter : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
-		VOLTS_INPUT,
+		IN1_INPUT,
+		IN2_INPUT,
+		IN3_INPUT,
+		IN4_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
 		NUM_OUTPUTS
 	};
 
-	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { volts = 0.0f; };
+	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { for(int i=0; i<4; i++) volts[i] = 0.0f; };
 
 	void step() override;
 
-	float volts;
-
-
-
-#ifdef v040
-	void initialize() override { volts = 0.0f; };
-#endif
-
-#ifdef v_dev
-#endif
+	float volts[4];
 
 };
 
@@ -37,11 +31,10 @@ struct VoltMeter : Module {
 
 void VoltMeter::step() {
 
-	if( inputs[VOLTS_INPUT].active) {
-
-		volts = 0.9 * volts + 0.1 * inputs[VOLTS_INPUT].value;
-
+	for(int i=0; i<4; i++) {
+		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].normalize(0.0);
 	};
+
 
 
 };
@@ -72,10 +65,6 @@ struct VoltDisplayWidget : TransparentWidget {
     nvgTextLetterSpacing(vg, 2.5);
 
     char display_string[10];
-//    std::string to_display = std::to_string(*value);
-//    std::stringstream to_display;
-   
-//    to_display << std::setw(7) << std::setprecision(2) << *value;
 
     sprintf(display_string,"%6.2f",*value);
 
@@ -91,8 +80,6 @@ struct VoltDisplayWidget : TransparentWidget {
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
- //   nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
- //   nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
     nvgText(vg, textPos.x, textPos.y, display_string, NULL);
   }
 };
@@ -101,7 +88,7 @@ struct VoltDisplayWidget : TransparentWidget {
 VoltMeterWidget::VoltMeterWidget() {
 	VoltMeter *module = new VoltMeter();
 	setModule(module);
-	box.size = Vec(15*10, 380);
+	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
@@ -117,15 +104,18 @@ VoltMeterWidget::VoltMeterWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
 
-	addInput(createInput<PJ301MPort>(Vec(13, 168), module, VoltMeter::VOLTS_INPUT));
+	for(int i=0; i<4; i++) {
+
+		addInput(createInput<PJ301MPort>(Vec(12, 60+i*65), module, VoltMeter::IN1_INPUT+i));
 
 
-	VoltDisplayWidget *display = new VoltDisplayWidget();
-	display->box.pos = Vec(20,56);
-	display->box.size = Vec(100, 20);
-	display->value = &module->volts;
-	addChild(display);
+		VoltDisplayWidget *display = new VoltDisplayWidget();
+		display->box.pos = Vec(10,90+i*65);
+		display->box.size = Vec(100, 20);
+		display->value = &module->volts[i];
+		addChild(display);
 
+	};
 	
 
 }
