@@ -22,6 +22,8 @@ void init(rack::Plugin *p) {
 	createModel<ConstantsWidget>(plugin, "Constants", "Constants");
 	createModel<CounterWidget>(plugin, "Counter", "Counter");
 	createModel<TrigDelayWidget>(plugin, "TrigDelay", "Trigger Delay");
+	createModel<BPMdetectWidget>(plugin, "BPMdetect", "BPM Detect");
+	createModel<VoltMeterWidget>(plugin, "VoltMeter", "Volt Meter");
 
  }
 

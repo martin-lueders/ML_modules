@@ -57,3 +57,11 @@ struct CounterWidget : ModuleWidget {
 struct TrigDelayWidget : ModuleWidget {
 	TrigDelayWidget();
 };
+
+struct BPMdetectWidget : ModuleWidget {
+	BPMdetectWidget();
+};
+
+struct VoltMeterWidget : ModuleWidget {
+	VoltMeterWidget();
+};
