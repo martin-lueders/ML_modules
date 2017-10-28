@@ -43,7 +43,42 @@ struct SeqSwitch : Module {
 
 	float stepLights[8] = {};
 
+
+        const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
+        const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
+
+
 	SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
+
+	enum InputRange {
+                Zero_Eight,
+		Zero_Six,
+                Zero_Ten,
+                MinusFive_Five
+        };
+
+
+        json_t *toJson() override {
+
+                json_t *rootJ = json_object();
+
+                // outMode:
+
+                json_object_set_new(rootJ, "inputRange", json_integer(inputRange));
+
+                return rootJ;
+        };
+
+        void fromJson(json_t *rootJ) override {
+
+                // outMode:
+
+                json_t *inputRangeJ = json_object_get(rootJ, "inputRange");
+                if(inputRangeJ) inputRange = (InputRange) json_integer_value(inputRangeJ);
+        };
+
+
+        InputRange inputRange = Zero_Eight;
 
 #ifdef v_dev
 	void reset() override {
@@ -68,7 +103,12 @@ void SeqSwitch::step() {
 
 	if( inputs[POS_INPUT].active ) {
 
-		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
+//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
+
+                float in_value = clampf( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
+
+                position = round( rescalef( in_value, in_min[inputRange], in_max[inputRange], 0, numSteps-1 ) );
+
 
 	} else {
 
@@ -103,6 +143,61 @@ void SeqSwitch::step() {
 	outputs[OUT1_OUTPUT].value = out;
 };
 
+struct SeqSwitchRangeItem : MenuItem {
+
+        SeqSwitch *seqSwitch;
+        SeqSwitch::InputRange inputRange;
+
+        void onAction() override {
+                seqSwitch->inputRange = inputRange;
+        };
+
+        void step() override {
+                rightText = (seqSwitch->inputRange == inputRange)? "✔" : "";
+        };
+
+};
+
+Menu *SeqSwitchWidget::createContextMenu() {
+
+        Menu *menu = ModuleWidget::createContextMenu();
+
+        MenuLabel *spacerLabel = new MenuLabel();
+        menu->pushChild(spacerLabel);
+
+        SeqSwitch *seqSwitch = dynamic_cast<SeqSwitch*>(module);
+        assert(seqSwitch);
+
+        MenuLabel *modeLabel2 = new MenuLabel();
+        modeLabel2->text = "Input Range";
+        menu->pushChild(modeLabel2);
+
+        SeqSwitchRangeItem *zeroEightItem = new SeqSwitchRangeItem();
+        zeroEightItem->text = "0 - 8V";
+        zeroEightItem->seqSwitch = seqSwitch;
+        zeroEightItem->inputRange = SeqSwitch::Zero_Eight;
+        menu->pushChild(zeroEightItem);
+
+        SeqSwitchRangeItem *zeroSixItem = new SeqSwitchRangeItem();
+        zeroSixItem->text = "0 - 6V";
+        zeroSixItem->seqSwitch = seqSwitch;
+        zeroSixItem->inputRange = SeqSwitch::Zero_Six;
+        menu->pushChild(zeroSixItem);
+
+        SeqSwitchRangeItem *zeroTenItem = new SeqSwitchRangeItem();
+        zeroTenItem->text = "0 - 10V";
+        zeroTenItem->seqSwitch = seqSwitch;
+        zeroTenItem->inputRange = SeqSwitch::Zero_Ten;
+        menu->pushChild(zeroTenItem);
+
+        SeqSwitchRangeItem *fiveFiveItem = new SeqSwitchRangeItem();
+        fiveFiveItem->text = "-5 - 5V";
+        fiveFiveItem->seqSwitch = seqSwitch;
+        fiveFiveItem->inputRange = SeqSwitch::MinusFive_Five;;
+        menu->pushChild(fiveFiveItem);
+
+        return menu;
+};
 
 
 SeqSwitchWidget::SeqSwitchWidget() {

@@ -45,6 +45,9 @@ struct SeqSwitch2 : Module {
 	float stepLights[8] = {};
 	float outs[8] = {};
 
+	const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
+	const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
+
 	SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
 
 #ifdef v_dev
@@ -60,10 +63,19 @@ struct SeqSwitch2 : Module {
 
 	enum OutMode {
 		ZERO,
-		LAST,
+		LAST
 	};
 
 	OutMode outMode = ZERO;
+
+	enum InputRange {
+		Zero_Eight,
+		Zero_Six,
+		Zero_Ten,
+		MinusFive_Five
+  	};
+
+	InputRange inputRange = Zero_Eight;
 
 	json_t *toJson() override {
 
@@ -72,6 +84,7 @@ struct SeqSwitch2 : Module {
 		// outMode:
 	
 		json_object_set_new(rootJ, "outMode", json_integer(outMode));
+		json_object_set_new(rootJ, "inputRange", json_integer(inputRange));
 
 		return rootJ;
 	};
@@ -82,6 +95,9 @@ struct SeqSwitch2 : Module {
 
 		json_t *outModeJ = json_object_get(rootJ, "outMode");
 		if(outModeJ) outMode = (OutMode) json_integer_value(outModeJ);
+
+		json_t *inputRangeJ = json_object_get(rootJ, "inputRange");
+		if(inputRangeJ) inputRange = (InputRange) json_integer_value(inputRangeJ);
 	};
 
 
@@ -98,7 +114,11 @@ void SeqSwitch2::step() {
 
 	if( inputs[POS_INPUT].active ) {
 
-		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
+//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
+
+		float in_value = clampf( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
+
+		position = round( rescalef( in_value, in_min[inputRange], in_max[inputRange], 0, numSteps-1 ) );
 
 	} else {
 
@@ -207,6 +227,20 @@ struct SeqSwitch2OutModeItem : MenuItem {
 		rightText = (seqSwitch2->outMode == outMode)? "✔" : "";
 	};
 
+};
+
+struct SeqSwitch2RangeItem : MenuItem {
+
+	SeqSwitch2 *seqSwitch2;
+	SeqSwitch2::InputRange inputRange;
+
+	void onAction() override {
+		seqSwitch2->inputRange = inputRange;
+	};
+
+	void step() override {
+		rightText = (seqSwitch2->inputRange == inputRange)? "✔" : "";
+	};
 
 };
 
@@ -235,6 +269,34 @@ Menu *SeqSwitch2Widget::createContextMenu() {
 	lastItem->seqSwitch2 = seqSwitch2;
 	lastItem->outMode = SeqSwitch2::LAST;
 	menu->pushChild(lastItem);
+
+	MenuLabel *modeLabel2 = new MenuLabel();
+	modeLabel2->text = "Input Range";
+	menu->pushChild(modeLabel2);
+
+	SeqSwitch2RangeItem *zeroEightItem = new SeqSwitch2RangeItem();
+	zeroEightItem->text = "0 - 8V";	
+	zeroEightItem->seqSwitch2 = seqSwitch2;
+	zeroEightItem->inputRange = SeqSwitch2::Zero_Eight;
+	menu->pushChild(zeroEightItem);
+
+	SeqSwitch2RangeItem *zeroSixItem = new SeqSwitch2RangeItem();
+	zeroSixItem->text = "0 - 6V";	
+	zeroSixItem->seqSwitch2 = seqSwitch2;
+	zeroSixItem->inputRange = SeqSwitch2::Zero_Six;
+	menu->pushChild(zeroSixItem);
+
+	SeqSwitch2RangeItem *zeroTenItem = new SeqSwitch2RangeItem();
+	zeroTenItem->text = "0 - 10V";	
+	zeroTenItem->seqSwitch2 = seqSwitch2;
+	zeroTenItem->inputRange = SeqSwitch2::Zero_Ten;
+	menu->pushChild(zeroTenItem);
+
+	SeqSwitch2RangeItem *fiveFiveItem = new SeqSwitch2RangeItem();
+	fiveFiveItem->text = "-5 - 5V";	
+	fiveFiveItem->seqSwitch2 = seqSwitch2;
+	fiveFiveItem->inputRange = SeqSwitch2::MinusFive_Five;;
+	menu->pushChild(fiveFiveItem);
 
 	return menu;
 };

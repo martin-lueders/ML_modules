@@ -25,6 +25,9 @@ struct TrigBufWidget : ModuleWidget {
 
 struct SeqSwitchWidget : ModuleWidget {
 	SeqSwitchWidget();
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
 };
 
 struct SeqSwitch2Widget : ModuleWidget {
