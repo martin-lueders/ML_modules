@@ -1,12 +1,24 @@
 #include "ML_modules.hpp"
 #include "dsp/digital.hpp"
+#include "math.hpp"
 
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
+inline float nearf(float a, float b, float epsilon = 1e-6) {
+	return fabsf(a - b) <= epsilon;
+};
+
 struct BPMdetect : Module {
 	enum ParamIds {
+		SMOOTH_PARAM,
+		MULT2_PARAM,
+		MULT3_PARAM,
+		SWING2_PARAM,
+		SWING3_PARAM,
+		DELAY1_PARAM,
+		DELAY2_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -17,7 +29,9 @@ struct BPMdetect : Module {
 		LFO_OUTPUT,
 		SEQ_OUTPUT,
 		DELAY_OUTPUT,
-		TRIG_OUTPUT,
+		TRIG1_OUTPUT,
+		TRIG2_OUTPUT,
+		TRIG3_OUTPUT,
 		NUM_OUTPUTS
 	};
 
@@ -26,15 +40,20 @@ struct BPMdetect : Module {
 	void step() override;
 
 	int misses = 0;
+	int count2 = 0;
+	int count3 = 0;
+
 	float timer = 0.0;
+	float timer1 = 0.0;
+	float timer2 = 0.0;
+	float timer3 = 0.0;
 	float seconds = 0.0;
-	float factor = 1.0;
 	float deltaT;
 	float BPM=0.0;
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
 
-	inline bool checkBeat(float timer, int mult) { return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.05 ) && misses < 5); }
+	inline bool checkBeat(float timer, int mult) { return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.1 ) && misses < 4); }
 #ifdef v040
 	void initialize() override {misses=0; onSampleRateChange(); };
 	void onSampleRateChange() override {deltaT = 1.0/gSampleRate;}
@@ -47,60 +66,105 @@ struct BPMdetect : Module {
 #endif
 
 	SchmittTrigger gateTrigger;
-	PulseGenerator outPulse;
+	PulseGenerator outPulse1, outPulse2, outPulse3;
 };
 
 
 
 void BPMdetect::step() {
 
+
+	float mult2 = roundf(params[MULT2_PARAM].value);
+	float mult3 = roundf(params[MULT3_PARAM].value);
+
+	float factor2 = params[SWING2_PARAM].value / mult2;
+	float factor3 = params[SWING3_PARAM].value / mult3;
+
 	if( inputs[GATE_INPUT].active) {
 
-		if( timer > seconds/factor ) outPulse.trigger(0.001);
+		if( timer1 > seconds ) {
+			outPulse1.trigger(0.01);
+			timer1 = 0;
+		}
 
+		if( (timer2 > seconds*factor2) && (count2 < mult2)  ) {
+			if(nearf(factor2,1.0)) std::cerr << timer2 << "\n";
+			outPulse2.trigger(0.01);
+			timer2 = 0;
+			count2++;
+		}
+
+		if( (timer3 > seconds*factor3) && (count3<mult3) ) {
+			outPulse3.trigger(0.01);
+			timer3 = 0;
+			count3++;
+		}
 
 		if( gateTrigger.process(inputs[GATE_INPUT].value) ) {
 
 
 			if(timer>0) {
 				float new_seconds;
-				if(checkBeat(timer,1)) {
-					std::cerr << "mult 1. misses = " << misses << "\n";
-					new_seconds = timer;
-					misses=0;
-				} else if( checkBeat(timer, 2)) { 
-					std::cerr << "mult 2. misses = " << misses << "\n";
-					new_seconds = timer/2.0;
-					misses++;
-				} else if( checkBeat(timer, 3) ){
-					std::cerr << "mult 3. misses = " << misses << "\n";
-					new_seconds = timer/3.0;
-					misses++;
-				} else {
+
+		
+				bool found=false;
+
+				for(int mult=1;  !found && mult < 20; mult++ )  {
+					if(checkBeat(timer, mult)) {
+						new_seconds = timer/mult;
+						if(mult==1) misses=0;
+						else        misses++;
+						found = true;
+					};
+				};
+
+				if( !found ) {
 					std::cerr << "default. misses = " << misses << "\n";
 					new_seconds = timer;
 					misses=0;
-				};
-				
-				seconds = (seconds + 4.0*new_seconds)/5.0;
+				}
+
+			
+				float a = params[SMOOTH_PARAM].value;
+				seconds = ( (1.0-a)*seconds + a*new_seconds);
 				BPM=60.0/seconds;
 
 				lfo_volts = 1.0 - log2(seconds) ;
-				delay_volts = 10.0*(3.0+log10(seconds))/4.0;
-			}
-			timer = 0.0;
 
+				float num   = roundf(params[DELAY1_PARAM].value);
+				float denom = roundf(params[DELAY2_PARAM].value);
+
+				delay_volts = 10.0*(3.0+log10(seconds * num/denom))/4.0;
+			
+				timer = 0.0;
+				timer1 = 0.0;
+				timer2 = 0.0;
+				timer3 = 0.0;
+				count2 = 1;
+				count3 = 1;
+				outPulse1.trigger(0.01);
+				outPulse2.trigger(0.01);
+				outPulse3.trigger(0.01);
+
+			}
 
 		};
 
 	};
 	
 	timer += deltaT;
+	timer1 += deltaT;
+	timer2 += deltaT;
+	timer3 += deltaT;
+
+	outputs[TRIG1_OUTPUT].value = outPulse1.process(deltaT) ? 10.0 : 0.0;
+	outputs[TRIG2_OUTPUT].value = outPulse2.process(deltaT) ? 10.0 : 0.0;
+	outputs[TRIG3_OUTPUT].value = outPulse3.process(deltaT) ? 10.0 : 0.0;
+
 
 	outputs[LFO_OUTPUT].value = lfo_volts;
 	outputs[SEQ_OUTPUT].value = lfo_volts-3.0;
 	outputs[DELAY_OUTPUT].value = delay_volts;
-	outputs[TRIG_OUTPUT].value = outPulse.process(deltaT) ? 10.0 : 0.0;
 
 };
 
@@ -162,22 +226,45 @@ BPMdetectWidget::BPMdetectWidget() {
 		addChild(panel);
 	}
 
+	const float column1 = 15;
+	const float column2 = 61;
+	const float column3 = 110;
+
+	const float row1 = 90;
+	const float row2 = 150;
+	const float row3 = 230;
+	const float row4 = 320;
 
 	
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	addInput(createInput<PJ301MPort>(Vec(13, 150), module, BPMdetect::GATE_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 150), module, BPMdetect::LFO_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 200), module, BPMdetect::SEQ_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 250), module, BPMdetect::DELAY_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 300), module, BPMdetect::TRIG_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1, row1), module, BPMdetect::GATE_INPUT));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row1), module, BPMdetect::TRIG1_OUTPUT));
 
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row2), module, BPMdetect::MULT2_PARAM, 0.0, 8.0, 2.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row2+40), module, BPMdetect::MULT3_PARAM, 0.0, 8.0, 3.0));
+
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row2), module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row2+40), module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
+
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row2), module, BPMdetect::TRIG2_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row2+40), module, BPMdetect::TRIG3_OUTPUT));
+
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row3), module, BPMdetect::LFO_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row3+40), module, BPMdetect::SEQ_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row4), module, BPMdetect::DELAY_OUTPUT));
+
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row4), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row4), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
-	display->box.pos = Vec(20,56);
+	display->box.pos = Vec(25,50);
 	display->box.size = Vec(100, 20);
 	display->value = &module->BPM;
 	addChild(display);
