@@ -2,7 +2,7 @@
 # 
 # possible values are v032 and v040
 
-FLAGS += -D v040
+FLAGS += -D v040 -D TEST
 #FLAGS += -D v_dev
 
 SOURCES = $(wildcard src/*.cpp freeverb/*.cpp)

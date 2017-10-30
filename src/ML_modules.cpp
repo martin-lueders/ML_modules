@@ -17,6 +17,9 @@ void init(rack::Plugin *p) {
 	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch 8->1");
 	createModel<SeqSwitch2Widget>(plugin, "SeqSwitch2", "Sequential Switch 1->8");
 	createModel<ShiftRegisterWidget>(plugin, "ShiftRegister", "Shift Register");
+#ifdef TEST
+	createModel<ShiftRegister2Widget>(plugin, "ShiftRegister2", "Shift Register 2");
+#endif
 	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
 	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
 	createModel<ConstantsWidget>(plugin, "Constants", "Constants");

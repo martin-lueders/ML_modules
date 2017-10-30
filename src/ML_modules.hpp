@@ -41,6 +41,12 @@ struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget();
 };
 
+#ifdef TEST
+struct ShiftRegister2Widget : ModuleWidget {
+	ShiftRegister2Widget();
+};
+#endif
+
 struct FreeVerbWidget : ModuleWidget {
 	FreeVerbWidget();
 };
