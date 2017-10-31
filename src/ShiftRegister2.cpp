@@ -37,7 +37,7 @@ struct ShiftRegister2 : Module {
 
 	void step() override;
 
-
+	int numSteps;
 	float values[32] = {};
 
 	SchmittTrigger trigTrigger;
@@ -60,6 +60,9 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::step() {
 
+	numSteps = roundf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),1.0,5.0)/5.0);
+
+
 	if( inputs[TRIGGER_INPUT].active ) {
 
 		if( trigTrigger.process(inputs[TRIGGER_INPUT].value) ) {
@@ -69,20 +72,19 @@ void ShiftRegister2::step() {
 
 			for(int i=32; i>0; i--) values[i] = values[i-1];
 
-			float p1 = params[PROB1_PARAM].value + inputs[PROB1_INPUT].normalize(0.0);
-			float p2 = params[PROB2_PARAM].value + inputs[PROB2_INPUT].normalize(0.0);
+			float p1 = params[PROB1_PARAM].value + clampf(inputs[PROB1_INPUT].normalize(0.0),-10.0,10.0)/10.0;
+			float p2 = params[PROB2_PARAM].value + clampf(inputs[PROB2_INPUT].normalize(0.0),-10.0,10.0)/10.0;
 
 			bool replace = ( randf() < p1 );
 			bool rnd2 = ( randf() < p2 );
 
-			float a = params[MIX1_PARAM].value;
+			float a = params[MIX1_PARAM].value + clampf(inputs[MIX1_INPUT].normalize(0.0),-10.0,10.0)/10.0;
 
-			int num_steps = roundf(params[NUM_STEPS_PARAM].value);
 
 			if(replace) {
-				values[0] = a* (rnd2?new_in1:new_in2) + (1-a)*values[num_steps];
+				values[0] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps];
 			} else {
-				values[0] = values[num_steps];
+				values[0] = values[numSteps];
 			};
 
 		};
@@ -96,6 +98,51 @@ void ShiftRegister2::step() {
 	outputs[AUX_OUTPUT].value = values[offset];
 };
 
+struct NumberDisplayWidget : TransparentWidget {
+
+  int *value;
+  std::shared_ptr<Font> font;
+
+  NumberDisplayWidget() {
+    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+  };
+
+  void draw(NVGcontext *vg) {
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0x44, 0x44, 0x44);
+    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(vg, backgroundColor);
+    nvgFill(vg);
+    nvgStrokeWidth(vg, 1.0);
+    nvgStrokeColor(vg, borderColor);
+    nvgStroke(vg);
+
+    nvgFontSize(vg, 18);
+    nvgFontFaceId(vg, font->handle);
+    nvgTextLetterSpacing(vg, 2.5);
+
+    std::string to_display = std::to_string(*value);
+
+
+    while(to_display.length()<3) to_display = ' ' + to_display;
+
+    Vec textPos = Vec(6.0f, 17.0f);
+
+    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
+    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
+    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+
+    textColor = nvgRGB(0xda, 0xe9, 0x29);
+    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
+    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+
+    textColor = nvgRGB(0xf0, 0x00, 0x00);
+    nvgFillColor(vg, textColor);
+    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+  }
+};
 
 
 ShiftRegister2Widget::ShiftRegister2Widget() {
@@ -121,7 +168,11 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 	const float offset_y = 140, delta_y = 26, offset_x=12;
 
 
-
+	NumberDisplayWidget *display = new NumberDisplayWidget();
+	display->box.pos = Vec(20,56);
+	display->box.size = Vec(50, 20);
+	display->value = &module->numSteps;
+	addChild(display);
 
 	addInput(createInput<PJ301MPort>(Vec(20,  40), module, ShiftRegister2::IN1_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(60,  40), module, ShiftRegister2::IN2_INPUT));
@@ -136,7 +187,7 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
         addParam(createParam<Davies1900hSmallBlackKnob>(Vec(60,  120), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
         addParam(createParam<Davies1900hSmallBlackKnob>(Vec(60,  160), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
         addParam(createParam<Davies1900hSmallBlackKnob>(Vec(60,  200), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(60,  240), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 0.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(60,  240), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
 
         addParam(createParam<Davies1900hSmallBlackKnob>(Vec(20,  320), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
 
