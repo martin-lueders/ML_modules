@@ -17,6 +17,7 @@ struct QuantumWidget : ModuleWidget {
 	QuantumWidget();
 	json_t *toJsonData() ;
 	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
 };
 
 struct TrigBufWidget : ModuleWidget {

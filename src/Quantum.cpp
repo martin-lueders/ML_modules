@@ -33,6 +33,17 @@ struct Quantum : Module {
 		NUM_OUTPUTS
 	};
 
+	enum Mode {
+		LAST,
+		CLOSEST_UP,
+		CLOSEST_DOWN,
+		UP,
+		DOWN
+	};
+
+	Mode mode = LAST;
+		
+
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
 
 	void step() override;
@@ -89,10 +100,8 @@ struct Quantum : Module {
 			semiLight[i] = semiState[i]?1.0:0.0;
                 }
         }
-	
 
 };
-
 
 
 void Quantum::step() {
@@ -103,17 +112,14 @@ void Quantum::step() {
                         semiState[i] = !semiState[i];
                 }
 		semiLight[i] = semiState[i]?1.0:0.0;
-
 	}
 
 	float gate = 0, trigger=0;
-	float quantized;
-
+	float quantized = 0;
 
 	float v=inputs[IN_INPUT].value;
 	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
 	float n=inputs[NOTE_INPUT].value;
-
 
 	int octave   = round(v);
 	int octave_t = round(t);
@@ -124,8 +130,10 @@ void Quantum::step() {
 	int semi_n = round( 12.0*(n - 1.0*octave_n) ) - semi_t;
 
 
+	// transpose to shifted scale:
 
 	int tmp_semi=(semi-semi_t)%12;
+
 	if(tmp_semi<0) tmp_semi+=12;
 	if(semi_n<0) semi_n+=12;
 
@@ -158,7 +166,32 @@ void Quantum::step() {
 		last_semi   = semi;
 
 	} else {
-		quantized = 1.0*last_octave + last_semi/12.0;
+
+		if(mode==LAST) {
+			quantized = 1.0*last_octave + last_semi/12.0;
+		} else {
+
+			int i_up   = 0;
+			int i_down = 0;
+
+			while( !semiState[tmp_semi+i_up  ] ) i_up++;
+		 	while( !semiState[tmp_semi-i_down] ) i_down++;
+	
+			switch(mode) {	
+			case UP: 		semi = semi+i_up; break;
+			case DOWN: 		semi = semi-i_down; break;
+			case CLOSEST_UP:   	semi = (i_up > i_down)? semi - i_down : semi + i_up; break;
+			case CLOSEST_DOWN: 	semi = (i_down > i_up)? semi + i_up : semi - i_down; break;
+			case LAST:	
+			default:		break;
+			};
+
+			bool changed = !( (octave==last_octave)&&(semi==last_semi));
+			quantized = 1.0*octave + semi/12.0;
+			if(changed) pulse.trigger(0.001);
+			last_octave = octave;
+			last_semi   = semi;
+		};
 	};
 
 #ifdef v_dev
@@ -174,7 +207,67 @@ void Quantum::step() {
 
 }
 
+struct QuantumModeItem : MenuItem {
 
+        Quantum *quantum;
+        Quantum::Mode mode;
+
+        void onAction() override {
+                quantum->mode = mode;
+        };
+
+        void step() override {
+                rightText = (quantum->mode == mode)? "✔" : "";
+        };
+
+};
+
+Menu *QuantumWidget::createContextMenu() {
+
+        Menu *menu = ModuleWidget::createContextMenu();
+
+        MenuLabel *spacerLabel = new MenuLabel();
+        menu->pushChild(spacerLabel);
+
+        Quantum *quantum = dynamic_cast<Quantum*>(module);
+        assert(quantum);
+
+        MenuLabel *modeLabel = new MenuLabel();
+        modeLabel->text = "Mode";
+        menu->pushChild(modeLabel);
+
+        QuantumModeItem *last_Item = new QuantumModeItem();
+        last_Item->text = "Last";
+        last_Item->quantum = quantum;
+        last_Item->mode = Quantum::LAST;
+        menu->pushChild(last_Item);
+
+        QuantumModeItem *up_Item = new QuantumModeItem();
+        up_Item->text = "Up";
+        up_Item->quantum = quantum;
+        up_Item->mode = Quantum::UP;
+        menu->pushChild(up_Item);
+
+        QuantumModeItem *down_Item = new QuantumModeItem();
+        down_Item->text = "Down";
+        down_Item->quantum = quantum;
+        down_Item->mode = Quantum::DOWN;
+        menu->pushChild(down_Item);
+
+        QuantumModeItem *cl_up_Item = new QuantumModeItem();
+        cl_up_Item->text = "Closest, up";
+        cl_up_Item->quantum = quantum;
+        cl_up_Item->mode = Quantum::CLOSEST_UP;
+        menu->pushChild(cl_up_Item);
+
+        QuantumModeItem *cl_dn_Item = new QuantumModeItem();
+        cl_dn_Item->text = "Closest, Down";
+        cl_dn_Item->quantum = quantum;
+        cl_dn_Item->mode = Quantum::CLOSEST_DOWN;
+        menu->pushChild(cl_dn_Item);
+
+	return menu;
+};
 
 QuantumWidget::QuantumWidget() {
 	Quantum *module = new Quantum();
