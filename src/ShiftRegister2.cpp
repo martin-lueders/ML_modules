@@ -59,7 +59,7 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::step() {
 
-	numSteps = roundf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),1.0,5.0)/5.0);
+	numSteps = roundf(clampf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),1.0,5.0)/5.0,1.0,16.0));
 
 
 	if( inputs[TRIGGER_INPUT].active ) {
