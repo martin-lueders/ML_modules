@@ -88,7 +88,10 @@ struct VoltDisplayWidget : TransparentWidget {
 VoltMeterWidget::VoltMeterWidget() {
 	VoltMeter *module = new VoltMeter();
 	setModule(module);
+
 	box.size = Vec(15*8, 380);
+
+//	label = new TextField*[4];
 
 	{
 		SVGPanel *panel = new SVGPanel();
@@ -115,6 +118,10 @@ VoltMeterWidget::VoltMeterWidget() {
 		display->value = &module->volts[i];
 		addChild(display);
 
+//		label[i] = new TextField();
+//		label[i]->box.pos = Vec(50,60+i*65);
+//		label[i]->box.size = Vec(60,30);
+//		addChild(label[i]);
 	};
 	
 

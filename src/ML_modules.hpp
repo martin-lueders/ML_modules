@@ -42,11 +42,9 @@ struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget();
 };
 
-#ifdef TEST
 struct ShiftRegister2Widget : ModuleWidget {
 	ShiftRegister2Widget();
 };
-#endif
 
 struct FreeVerbWidget : ModuleWidget {
 	FreeVerbWidget();
@@ -54,6 +52,10 @@ struct FreeVerbWidget : ModuleWidget {
 
 struct Sum8Widget : ModuleWidget {
 	Sum8Widget();
+};
+
+struct SH8Widget : ModuleWidget {
+	SH8Widget();
 };
 
 struct ConstantsWidget : ModuleWidget {
@@ -74,4 +76,9 @@ struct BPMdetectWidget : ModuleWidget {
 
 struct VoltMeterWidget : ModuleWidget {
 	VoltMeterWidget();
+	TextField ** label;
+};
+
+struct OctaFlopWidget : ModuleWidget {
+	OctaFlopWidget();
 };

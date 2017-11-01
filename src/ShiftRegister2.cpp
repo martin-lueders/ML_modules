@@ -5,7 +5,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#ifdef TEST
 
 struct ShiftRegister2 : Module {
 	enum ParamIds {
@@ -171,7 +170,7 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 
 
 	IntDisplayWidget *display = new IntDisplayWidget();
-	display->box.pos = Vec(50,50);
+	display->box.pos = Vec(65,50);
 	display->box.size = Vec(40, 20);
 	display->value = &module->numSteps;
 	addChild(display);
@@ -199,4 +198,3 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 	addOutput(createOutput<PJ301MPort>(Vec(column2, 320 ),    module, ShiftRegister2::AUX_OUTPUT));
 }
 
-#endif
