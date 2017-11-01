@@ -98,12 +98,12 @@ void ShiftRegister2::step() {
 	outputs[AUX_OUTPUT].value = values[offset];
 };
 
-struct NumberDisplayWidget : TransparentWidget {
+struct IntDisplayWidget : TransparentWidget {
 
   int *value;
   std::shared_ptr<Font> font;
 
-  NumberDisplayWidget() {
+  IntDisplayWidget() {
     font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
   };
 
@@ -123,24 +123,26 @@ struct NumberDisplayWidget : TransparentWidget {
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
 
-    std::string to_display = std::to_string(*value);
+//    std::string to_display = std::to_string( (unsigned) *value);
 
+    char displayStr[3];
+//    while(to_display.length()<1) to_display = ' ' + to_display;
 
-    while(to_display.length()<3) to_display = ' ' + to_display;
+    sprintf(displayStr, "%2u", (unsigned) *value);
 
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+    nvgText(vg, textPos.x, textPos.y, "~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+    nvgText(vg, textPos.x, textPos.y, "\\\\", NULL);
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+    nvgText(vg, textPos.x, textPos.y, displayStr,  NULL);
   }
 };
 
@@ -165,35 +167,36 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 
 
 
-	const float column1 = 20, column2 = 70;
+	const float column1 = 20, column2 = 75;
 
 
-	NumberDisplayWidget *display = new NumberDisplayWidget();
-	display->box.pos = Vec(20,56);
-	display->box.size = Vec(50, 20);
+	IntDisplayWidget *display = new IntDisplayWidget();
+	display->box.pos = Vec(50,50);
+	display->box.size = Vec(40, 20);
 	display->value = &module->numSteps;
 	addChild(display);
 
-	addInput(createInput<PJ301MPort>(Vec(column1,  40), module, ShiftRegister2::IN1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column2,  40), module, ShiftRegister2::IN2_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1,  50), module, ShiftRegister2::TRIGGER_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1,  90), module, ShiftRegister2::NUM_STEPS_INPUT));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  90), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
-	addInput(createInput<PJ301MPort>(Vec(column1,  80), module, ShiftRegister2::TRIGGER_INPUT));
-
-	addInput(createInput<PJ301MPort>(Vec(column1,  120), module, ShiftRegister2::NUM_STEPS_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  160), module, ShiftRegister2::PROB1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  200), module, ShiftRegister2::PROB2_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  240), module, ShiftRegister2::MIX1_INPUT));
-
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  120), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  160), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  200), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  240), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
-
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  320), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
+	addInput(createInput<PJ301MPort>(Vec(column1,  160), module, ShiftRegister2::IN1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column2,  160), module, ShiftRegister2::IN2_INPUT));
 
 
-	addOutput(createOutput<PJ301MPort>(Vec(61, 280 ),    module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(61, 320 ),    module, ShiftRegister2::AUX_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1,  200), module, ShiftRegister2::PROB1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1,  240), module, ShiftRegister2::PROB2_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1,  280), module, ShiftRegister2::MIX1_INPUT));
+
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  200), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  240), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  280), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
+
+        addParam(createParam<Trimpot>(Vec(51.5,  320), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
+
+
+	addOutput(createOutput<PJ301MPort>(Vec(column1, 320 ),    module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column2, 320 ),    module, ShiftRegister2::AUX_OUTPUT));
 }
 
 #endif
