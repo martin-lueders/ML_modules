@@ -66,8 +66,8 @@ void ShiftRegister2::step() {
 
 		if( trigTrigger.process(inputs[TRIGGER_INPUT].value) ) {
 
-			float new_in1 = inputs[IN1_INPUT].normalize( randf()*20.0-10.0 );
-			float new_in2 = inputs[IN2_INPUT].normalize( 0.0 );
+			float new_in1 = inputs[IN1_INPUT].normalize( randf()*10.0-5.0 );
+			float new_in2 = inputs[IN2_INPUT].normalize( new_in1 + 1.0 );
 
 			for(int i=32; i>0; i--) values[i] = values[i-1];
 
