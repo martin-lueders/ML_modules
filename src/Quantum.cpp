@@ -32,6 +32,21 @@ struct Quantum : Module {
 		GATE_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		SEMI_1_LIGHT,
+		SEMI_2_LIGHT,
+		SEMI_3_LIGHT,
+		SEMI_4_LIGHT,
+		SEMI_5_LIGHT,
+		SEMI_6_LIGHT,
+		SEMI_7_LIGHT,
+		SEMI_8_LIGHT,
+		SEMI_9_LIGHT,
+		SEMI_10_LIGHT,
+		SEMI_11_LIGHT,
+		SEMI_12_LIGHT,
+		NUM_LIGHTS
+	};
 
 	enum Mode {
 		LAST,
@@ -111,7 +126,13 @@ void Quantum::step() {
 		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].value)) {
                         semiState[i] = !semiState[i];
                 }
+#ifdef v040
 		semiLight[i] = semiState[i]?1.0:0.0;
+#endif
+
+#ifdef v_dev
+		lights[i].value = semiState[i]?1.0:0.0;
+#endif
 	}
 
 	float gate = 0, trigger=0;
@@ -212,9 +233,17 @@ struct QuantumModeItem : MenuItem {
         Quantum *quantum;
         Quantum::Mode mode;
 
+#ifdef v040
         void onAction() override {
                 quantum->mode = mode;
         };
+#endif
+
+#ifdef v_dev
+        void onAction(EventAction &e) override {
+                quantum->mode = mode;
+        };
+#endif
 
         void step() override {
                 rightText = (quantum->mode == mode)? "✔" : "";
@@ -300,8 +329,12 @@ QuantumWidget::QuantumWidget() {
 
 	for(int i=0; i<12; i++) {
 		addParam(createParam<LEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+#ifdef v040
 		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(offset_x+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
-
+#endif
+#ifdef v_dev
+		addChild(createLight<SmallLight<GreenLight>>(Vec(offset_x+5, -22*i+5+offset_y), module, Quantum::SEMI_1_LIGHT+i));
+#endif
 	}
 
 }

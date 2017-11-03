@@ -1,5 +1,8 @@
 #include "rack.hpp"
 
+#ifdef v_dev
+#define Davies1900hSmallBlackKnob RoundSmallBlackKnob
+#endif
 
 using namespace rack;
 

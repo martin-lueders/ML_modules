@@ -35,6 +35,18 @@ struct SeqSwitch2 : Module {
 		OUT8_OUTPUT,
 		NUM_OUTPUTS
 	};
+        enum LightIds {
+                STEP1_LIGHT,
+                STEP2_LIGHT,
+                STEP3_LIGHT,
+                STEP4_LIGHT,
+                STEP5_LIGHT,
+                STEP6_LIGHT,
+                STEP7_LIGHT,
+                STEP8_LIGHT,
+                NUM_LIGHTS
+        };
+
 
 	SeqSwitch2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
 
@@ -42,7 +54,10 @@ struct SeqSwitch2 : Module {
 
 	int position=0;
 
+#ifdef v040
 	float stepLights[8] = {};
+#endif
+
 	float outs[8] = {};
 
 	const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
@@ -52,15 +67,17 @@ struct SeqSwitch2 : Module {
 
 #ifdef v_dev
 	void reset() override {
+		position=0;
+		for(int i=0; i<8; i++) lights[i].value = 0.0;
+	};
 #endif
 
 #ifdef v040
 	void initialize() override {
-#endif
 		position=0;
 		for(int i=0; i<8; i++) stepLights[i] = 0.0;
 	};
-
+#endif
 	enum OutMode {
 		ZERO,
 		LAST
@@ -146,7 +163,13 @@ void SeqSwitch2::step() {
 
 	outs[position] = inputs[IN_INPUT].normalize(0.0);
 
+#ifdef v040
 	for(int i=0; i<8; i++) stepLights[i] = (i==position)?1.0:0.0;
+#endif
+
+#ifdef v_dev
+	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
+#endif
 
 	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = outs[i];
 };
@@ -199,6 +222,7 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP7_PARAM, 0.0, 1.0, 0.0));
 	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP8_PARAM, 0.0, 1.0, 0.0));
 
+#ifdef v040
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 0*delta_y), &module->stepLights[0]));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 1*delta_y), &module->stepLights[1]));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 2*delta_y), &module->stepLights[2]));
@@ -208,7 +232,19 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 1*delta_y), &module->stepLights[5]));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 2*delta_y), &module->stepLights[6]));
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 3*delta_y), &module->stepLights[7]));
+#endif
 
+#ifdef v_dev
+        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 2*delta_y), module, SeqSwitch2::STEP3_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 3*delta_y), module, SeqSwitch2::STEP4_LIGHT));
+
+        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 0*delta_y), module, SeqSwitch2::STEP5_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 1*delta_y), module, SeqSwitch2::STEP6_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
+        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
+#endif
 	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch2::POS_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(76, 320), module, SeqSwitch2::IN_INPUT));
 
@@ -219,9 +255,18 @@ struct SeqSwitch2OutModeItem : MenuItem {
 	SeqSwitch2 *seqSwitch2;
 	SeqSwitch2::OutMode outMode;
 
+#ifdef v040
 	void onAction() override {
 		seqSwitch2->outMode = outMode;
 	};
+#endif
+
+#ifdef v_dev
+	void onAction(EventAction &e) override {
+		seqSwitch2->outMode = outMode;
+	};
+#endif
+
 
 	void step() override {
 		rightText = (seqSwitch2->outMode == outMode)? "✔" : "";
@@ -234,9 +279,18 @@ struct SeqSwitch2RangeItem : MenuItem {
 	SeqSwitch2 *seqSwitch2;
 	SeqSwitch2::InputRange inputRange;
 
+#ifdef v040
 	void onAction() override {
 		seqSwitch2->inputRange = inputRange;
 	};
+#endif
+
+#ifdef v040
+	void onAction(EventAction &e) override {
+		seqSwitch2->inputRange = inputRange;
+	};
+#endif
+
 
 	void step() override {
 		rightText = (seqSwitch2->inputRange == inputRange)? "✔" : "";

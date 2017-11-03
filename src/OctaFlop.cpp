@@ -39,6 +39,18 @@ struct OctaFlop : Module {
 		NUM_OUTPUTS
 	};
 
+	enum LightIds {
+		STATE1_LIGHT,
+		STATE2_LIGHT,
+		STATE3_LIGHT,
+		STATE4_LIGHT,
+		STATE5_LIGHT,
+		STATE6_LIGHT,
+		STATE7_LIGHT,
+		STATE8_LIGHT,
+		NUM_LIGHTS
+	};
+
 	SchmittTrigger trigger[8], resetTrigger;
 	float out[8] = {};
 	bool state[8] = {};
@@ -111,7 +123,13 @@ OctaFlopWidget::OctaFlopWidget() {
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, OctaFlop::TRIG1_INPUT+i));
+#ifdef v040
                 addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(row2, offset_y + 8 +   i*delta_y), &module->out[i]));
+#endif
+
+#ifdef v_dev
+                addChild(createLight<SmallLight<GreenLight>>(Vec(row2, offset_y + 8 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
+#endif
 		addOutput(createOutput<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), module, OctaFlop::OUT1_OUTPUT+i));
 	};
 

@@ -18,6 +18,11 @@ struct TrigBuf : Module {
 		OUT2_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		ARM1_LIGHT,
+		ARM2_LIGHT,
+		NUM_LIGHTS
+	};
 
 	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
 
@@ -157,6 +162,10 @@ void TrigBuf::step() {
 	outputs[OUT1_OUTPUT].value = out1;
 	outputs[OUT2_OUTPUT].value = out2;
 
+#ifdef v_dev
+	lights[ARM1_LIGHT].value = arm1;
+	lights[ARM2_LIGHT].value = arm2;
+#endif
 };
 
 
@@ -180,10 +189,21 @@ TrigBufWidget::TrigBufWidget() {
 	addInput(createInput<PJ301MPort>(Vec(10, 62),    module, TrigBuf::ARM1_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::GATE1_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, TrigBuf::OUT1_OUTPUT));
+#ifdef v040
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 66), &module->arm1));
+#endif
+
+#ifdef v_dev
+	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 66), module, TrigBuf::ARM1_LIGHT));
+#endif
 
 	addInput(createInput<PJ301MPort>(Vec(10, 218),   module, TrigBuf::ARM2_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::GATE2_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 305), module, TrigBuf::OUT2_OUTPUT));
+#ifdef v040
 	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 222), &module->arm2));
+#endif
+#ifdef v_dev
+	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 222), module, TrigBuf::ARM2_LIGHT));
+#endif
 }

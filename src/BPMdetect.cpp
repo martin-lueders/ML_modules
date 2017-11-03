@@ -6,9 +6,11 @@
 #include <sstream>
 #include <iomanip>
 
+#ifdef v040
 inline float nearf(float a, float b, float epsilon = 1e-6) {
 	return fabsf(a - b) <= epsilon;
 };
+#endif
 
 struct BPMdetect : Module {
 	enum ParamIds {
@@ -61,7 +63,7 @@ struct BPMdetect : Module {
 
 #ifdef v_dev
 	float gSampleRate;
-	void reset() override {counter=0; onSampleRateChange();};
+	void reset() override {onSampleRateChange();};
 	void onSampleRateChange() override {gSampleRate = engineGetSampleRate(); deltaT = 1.0/gSampleRate;}
 #endif
 
