@@ -177,7 +177,7 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 
 	addInput(createInput<PJ301MPort>(Vec(column1,  50), module, ShiftRegister2::TRIGGER_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(column1,  90), module, ShiftRegister2::NUM_STEPS_INPUT));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  90), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
+        addParam(createParam<Davies1900hBlackKnob>(Vec(column2,  90), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
 	addInput(createInput<PJ301MPort>(Vec(column1,  160), module, ShiftRegister2::IN1_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(column2,  160), module, ShiftRegister2::IN2_INPUT));

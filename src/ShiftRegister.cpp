@@ -53,7 +53,7 @@ struct ShiftRegister : Module {
 
 	int position=0;
 
-#ifdef v404
+#ifdef v040
 	float stepLights[8] = {};
 #endif
 

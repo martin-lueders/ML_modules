@@ -285,7 +285,7 @@ struct SeqSwitch2RangeItem : MenuItem {
 	};
 #endif
 
-#ifdef v040
+#ifdef v_dev
 	void onAction(EventAction &e) override {
 		seqSwitch2->inputRange = inputRange;
 	};
