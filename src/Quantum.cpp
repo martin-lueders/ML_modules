@@ -311,7 +311,9 @@ QuantumWidget::QuantumWidget() {
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 	addInput(createInput<PJ301MPort>(Vec(19, 42), module, Quantum::IN_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(76, 42), module, Quantum::OUT_OUTPUT));

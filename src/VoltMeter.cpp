@@ -19,11 +19,12 @@ struct VoltMeter : Module {
 		NUM_OUTPUTS
 	};
 
-	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { for(int i=0; i<4; i++) volts[i] = 0.0f; };
+	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { for(int i=0; i<4; i++) {volts[i] = 0.0f; active[i] = false;}};
 
 	void step() override;
 
 	float volts[4];
+	bool active[4];
 
 };
 
@@ -32,6 +33,7 @@ struct VoltMeter : Module {
 void VoltMeter::step() {
 
 	for(int i=0; i<4; i++) {
+		active[i] = inputs[IN1_INPUT+i].active;
 		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].normalize(0.0);
 	};
 
@@ -42,6 +44,8 @@ void VoltMeter::step() {
 struct VoltDisplayWidget : TransparentWidget {
 
   float  *value;
+  bool *on;
+
   std::shared_ptr<Font> font;
 
   VoltDisplayWidget() {
@@ -72,15 +76,17 @@ struct VoltDisplayWidget : TransparentWidget {
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+    nvgText(vg, textPos.x, textPos.y, "~~~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+    nvgText(vg, textPos.x, textPos.y, "\\\\\\\\\\\\", NULL);
 
-    textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, display_string, NULL);
+	if(*on) {
+	    textColor = nvgRGB(0xf0, 0x00, 0x00);
+		nvgFillColor(vg, textColor);
+		nvgText(vg, textPos.x, textPos.y, display_string, NULL);
+	};
   }
 };
 
@@ -101,7 +107,7 @@ VoltMeterWidget::VoltMeterWidget() {
 	}
 
 
-	
+	const float delta_y = 70;
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
@@ -109,13 +115,14 @@ VoltMeterWidget::VoltMeterWidget() {
 
 	for(int i=0; i<4; i++) {
 
-		addInput(createInput<PJ301MPort>(Vec(12, 60+i*65), module, VoltMeter::IN1_INPUT+i));
+		addInput(createInput<PJ301MPort>(Vec(12, 60+i*delta_y), module, VoltMeter::IN1_INPUT+i));
 
 
 		VoltDisplayWidget *display = new VoltDisplayWidget();
-		display->box.pos = Vec(10,90+i*65);
+		display->box.pos = Vec(10,90+i*delta_y);
 		display->box.size = Vec(100, 20);
 		display->value = &module->volts[i];
+		display->on = &module->active[i];
 		addChild(display);
 
 //		label[i] = new TextField();

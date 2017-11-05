@@ -36,9 +36,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="53.799951"
-     inkscape:cy="187.58904"
+     inkscape:zoom="8"
+     inkscape:cx="19.400979"
+     inkscape:cy="42.495677"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -183,7 +183,7 @@
        y="196.45831" />
     <g
        id="g4799-4"
-       transform="matrix(0.25,0,0,0.25,5.6885406,270.54164)"
+       transform="matrix(0.25,0,0,0.25,5.6885406,271.07081)"
        style="display:inline;fill:#000000;fill-opacity:1">
       <rect
          ry="0.52916306"
@@ -234,16 +234,16 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777791px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="7.4539642"
-       y="204.28427"
+       y="203.22595"
        id="text3757"><tspan
          sodipodi:role="line"
          id="tspan4967"
          x="7.4539642"
-         y="204.28427">Trigger</tspan><tspan
+         y="203.22595">Trigger</tspan><tspan
          sodipodi:role="line"
          id="tspan4969"
          x="7.4539642"
-         y="208.694">Buffer</tspan></text>
+         y="207.63568">Buffer</tspan></text>
     <rect
        style="display:inline;opacity:1;fill:#808080;fill-opacity:1;stroke-width:0.37417737"
        id="rect4778-7-6-2"

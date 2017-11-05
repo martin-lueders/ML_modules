@@ -36,9 +36,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.0000002"
-     inkscape:cx="50.878497"
-     inkscape:cy="48.158064"
+     inkscape:zoom="5.9694699"
+     inkscape:cx="-11.453924"
+     inkscape:cy="94.087238"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -98,7 +98,7 @@
        y="196.45831" />
     <g
        id="g4799-4"
-       transform="matrix(0.25,0,0,0.25,5.6885406,270.54164)"
+       transform="matrix(0.25,0,0,0.25,6.7468754,271.07081)"
        style="display:inline;fill:#000000;fill-opacity:1">
       <rect
          ry="0.52916306"
@@ -149,12 +149,12 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777791px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="11.687296"
-       y="204.28427"
+       y="203.22595"
        id="text3757"><tspan
          sodipodi:role="line"
          id="tspan854"
          x="11.687296"
-         y="204.28427">Counter</tspan></text>
+         y="203.22595">Counter</tspan></text>
     <rect
        style="display:inline;opacity:1;fill:#4d4d4d;fill-opacity:1;stroke-width:0.82063502"
        id="rect4778-7-1"
@@ -190,31 +190,33 @@
          x="6.8130212"
          y="209.9361">Length</tspan></text>
     <rect
-       style="display:inline;opacity:1;fill:#808080;fill-opacity:1;stroke-width:0.70764709"
+       style="display:inline;opacity:1;fill:#808080;fill-opacity:1;stroke-width:0.71974456"
        id="rect4778-7-1-5"
        width="19.579168"
-       height="15.345834"
+       height="16.933336"
        x="1.8520838"
        y="253.60831"
-       ry="0.90294051" />
+       ry="0.93407637"
+       rx="0.93407637" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="14.046338"
+       x="14.032563"
        y="249.90388"
        id="text4847-5"><tspan
          sodipodi:role="line"
          id="tspan877"
-         x="14.046338"
+         x="14.032563"
          y="249.90388">Out</tspan></text>
     <rect
-       style="display:inline;opacity:1;fill:#808080;fill-opacity:1;stroke-width:0.70764732"
+       style="display:inline;opacity:1;fill:#808080;fill-opacity:1;stroke-width:0.71974444"
        id="rect4778-7-1-5-3"
        width="19.579168"
-       height="15.345843"
+       height="16.933296"
        x="1.8520838"
-       y="271.0708"
-       ry="0.90294111" />
+       y="272.12918"
+       ry="0.93407637"
+       rx="0.93407643" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
@@ -228,66 +230,66 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="7.9568534"
-       y="256.50214"
+       x="3.7235198"
+       y="257.56049"
        id="text4847-0-7-7"><tspan
          sodipodi:role="line"
          id="tspan886"
-         x="7.9568534"
-         y="256.50214">Start</tspan></text>
+         x="3.7235198"
+         y="257.56049">Start</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="8.2020836"
-       y="274.24582"
+       x="3.96875"
+       y="276.36252"
        id="text4847-0-7-8"><tspan
          sodipodi:role="line"
          id="tspan896"
-         x="8.2020836"
-         y="274.24582">Stop</tspan></text>
+         x="3.96875"
+         y="276.36252">Stop</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="5.1619196"
-       y="267.89566"
+       x="5.0505877"
+       y="269.48318"
        id="text4847-8"><tspan
          sodipodi:role="line"
          id="tspan4845-3"
-         x="5.1619196"
-         y="267.89566"
+         x="5.0505877"
+         y="269.48318"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458335">In</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="14.157743"
-       y="267.89566"
+       x="14.032563"
+       y="269.48318"
        id="text4847-5-9"><tspan
          style="stroke-width:0.26458335"
          sodipodi:role="line"
          id="tspan877-5"
-         x="14.157743"
-         y="267.89566">Out</tspan></text>
+         x="14.032563"
+         y="269.48318">Out</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="4.7235436"
-       y="285.38367"
+       x="5.0505877"
+       y="288.02954"
        id="text4847-4"><tspan
          sodipodi:role="line"
          id="tspan4845-7"
-         x="4.7235436"
-         y="285.38367"
+         x="5.0505877"
+         y="288.02954"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458335">In</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="13.719367"
-       y="285.38367"
+       x="14.032563"
+       y="288.02954"
        id="text4847-5-0"><tspan
          style="stroke-width:0.26458335"
          sodipodi:role="line"
          id="tspan877-51"
-         x="13.719367"
-         y="285.38367">Out</tspan></text>
+         x="14.032563"
+         y="288.02954">Out</tspan></text>
   </g>
 </svg>

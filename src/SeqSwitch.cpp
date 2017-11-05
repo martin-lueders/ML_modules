@@ -244,11 +244,13 @@ SeqSwitchWidget::SeqSwitchWidget() {
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(21,  66), module, SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0));
+	addParam(createParam<RedMLKnob>(Vec(14,  63), module, SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0));
 
-	addInput(createInput<PJ301MPort>(Vec(76, 66),    module, SeqSwitch::NUMSTEPS_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(82, 66),    module, SeqSwitch::NUMSTEPS_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(10, 272),    module, SeqSwitch::TRIGUP_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(50, 272),    module, SeqSwitch::RESET_INPUT));

@@ -55,7 +55,9 @@ struct BPMdetect : Module {
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
 
-	inline bool checkBeat(float timer, int mult) { return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.1 ) && misses < 4); }
+	inline bool checkBeat(float timer, int mult) { 
+		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4); 
+	}
 #ifdef v040
 	void initialize() override {misses=0; onSampleRateChange(); };
 	void onSampleRateChange() override {deltaT = 1.0/gSampleRate;}
@@ -86,19 +88,19 @@ void BPMdetect::step() {
 
 		if( timer1 > seconds ) {
 			outPulse1.trigger(0.01);
-			timer1 = 0;
+			timer1 = 0.0;
 		}
 
 		if( (timer2 > seconds*factor2) && (count2 < mult2)  ) {
-			if(nearf(factor2,1.0)) std::cerr << timer2 << "\n";
+//			if(nearf(factor2,1.0)) std::cerr << timer2 << "\n";
 			outPulse2.trigger(0.01);
-			timer2 = 0;
+			timer2 = 0.0;
 			count2++;
 		}
 
 		if( (timer3 > seconds*factor3) && (count3<mult3) ) {
 			outPulse3.trigger(0.01);
-			timer3 = 0;
+			timer3 = 0.0 ;
 			count3++;
 		}
 
@@ -121,7 +123,7 @@ void BPMdetect::step() {
 				};
 
 				if( !found ) {
-					std::cerr << "default. misses = " << misses << "\n";
+//					std::cerr << "default. misses = " << misses << "\n";
 					new_seconds = timer;
 					misses=0;
 				}
@@ -138,7 +140,7 @@ void BPMdetect::step() {
 
 				delay_volts = 10.0*(3.0+log10(seconds * num/denom))/4.0;
 			
-				timer = 0.0;
+				timer -= seconds;
 				timer1 = 0.0;
 				timer2 = 0.0;
 				timer3 = 0.0;
@@ -203,11 +205,11 @@ struct NumberDisplayWidget2 : TransparentWidget {
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~~~~", NULL);
+    nvgText(vg, textPos.x, textPos.y, "~~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
     nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+    nvgText(vg, textPos.x, textPos.y, "\\\\\\\\\\", NULL);
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
     nvgFillColor(vg, textColor);
@@ -232,10 +234,11 @@ BPMdetectWidget::BPMdetectWidget() {
 	const float column2 = 61;
 	const float column3 = 110;
 
-	const float row1 = 90;
-	const float row2 = 150;
-	const float row3 = 230;
-	const float row4 = 320;
+	const float row1 = 84;
+	const float row2 = 140;
+	const float row3 = row2 + 60;
+	const float row4 = row3 + 58;
+	const float row5 = 316;
 
 	
 
@@ -245,28 +248,28 @@ BPMdetectWidget::BPMdetectWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	addInput(createInput<PJ301MPort>(Vec(column1, row1), module, BPMdetect::GATE_INPUT));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row1), module, BPMdetect::TRIG1_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
+    addParam(createParam<SmallMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
+	addOutput(createOutput<PJ301MPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
 
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row2), module, BPMdetect::MULT2_PARAM, 0.0, 8.0, 2.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row2+40), module, BPMdetect::MULT3_PARAM, 0.0, 8.0, 3.0));
+    addParam(createParam<SmallMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
+    addParam(createParam<SmallMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row2+2),    module, BPMdetect::TRIG2_OUTPUT));
 
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row2), module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row2+40), module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
 
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row2), module, BPMdetect::TRIG2_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row2+40), module, BPMdetect::TRIG3_OUTPUT));
+    addParam(createParam<SmallMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
+    addParam(createParam<SmallMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row3+2),    module, BPMdetect::TRIG3_OUTPUT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row3), module, BPMdetect::LFO_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row3+40), module, BPMdetect::SEQ_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row4), module, BPMdetect::DELAY_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column1, row4),    module, BPMdetect::LFO_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row4),    module, BPMdetect::SEQ_OUTPUT));
 
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column1,  row4), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  row4), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
+    addParam(createParam<SmallMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
+    addParam(createParam<SmallMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
+	addOutput(createOutput<PJ301MPort>(Vec(column3, row5),    module, BPMdetect::DELAY_OUTPUT));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
-	display->box.pos = Vec(25,50);
+	display->box.pos = Vec(25,40);
 	display->box.size = Vec(100, 20);
 	display->value = &module->BPM;
 	addChild(display);

@@ -150,8 +150,8 @@ FreeVerbWidget::FreeVerbWidget() {
 
 
 
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
+        addParam(createParam<SmallMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
+        addParam(createParam<SmallMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
         addParam(createParam<LEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
 #ifdef v040
         addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(19,255), &module->freezelight));

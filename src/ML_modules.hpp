@@ -1,12 +1,39 @@
 #include "rack.hpp"
 
-#ifdef v_dev
-#define Davies1900hSmallBlackKnob RoundSmallBlackKnob
-#endif
+//#ifdef v_dev
+//#define Davies1900hSmallBlackKnob SmallMLKnob
+//#endif
 
 using namespace rack;
 
 extern Plugin *plugin;
+
+
+struct MLKnob : RoundKnob {
+	MLKnob() {
+		setSVG(SVG::load(assetPlugin(plugin,"res/Knob.svg")));
+		box.size = Vec(36, 36);
+	}
+};
+
+struct RedMLKnob : RoundKnob, SnapKnob {
+	RedMLKnob() {
+		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob.svg")));
+		box.size = Vec(36, 36);
+	}
+};
+
+struct SmallMLKnob : MLKnob {
+	SmallMLKnob() {
+		box.size = Vec(28, 28);
+	}
+};
+
+struct SmallRedMLKnob : RedMLKnob {
+	SmallRedMLKnob() {
+		box.size = Vec(28, 28);
+	}
+};
 
 ////////////////////
 // module widgets

@@ -59,7 +59,7 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::step() {
 
-	numSteps = roundf(clampf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),1.0,5.0)/5.0,1.0,16.0));
+	numSteps = roundf(clampf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),0.0,5.0)/5.0,1.0,16.0));
 
 
 	if( inputs[TRIGGER_INPUT].active ) {
@@ -161,7 +161,9 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 
@@ -170,31 +172,34 @@ ShiftRegister2Widget::ShiftRegister2Widget() {
 
 
 	IntDisplayWidget *display = new IntDisplayWidget();
-	display->box.pos = Vec(65,50);
+	display->box.pos = Vec(65,46);
 	display->box.size = Vec(40, 20);
 	display->value = &module->numSteps;
 	addChild(display);
 
-	addInput(createInput<PJ301MPort>(Vec(column1,  50), module, ShiftRegister2::TRIGGER_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  90), module, ShiftRegister2::NUM_STEPS_INPUT));
-        addParam(createParam<Davies1900hBlackKnob>(Vec(column2,  90), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
+	addInput(createInput<PJ301MPort>(Vec(column1,  44), module, ShiftRegister2::TRIGGER_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1, 96), module, ShiftRegister2::NUM_STEPS_INPUT));
+        
+	addParam(createParam<RedMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
-	addInput(createInput<PJ301MPort>(Vec(column1,  160), module, ShiftRegister2::IN1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column2,  160), module, ShiftRegister2::IN2_INPUT));
-
-
-	addInput(createInput<PJ301MPort>(Vec(column1,  200), module, ShiftRegister2::PROB1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  240), module, ShiftRegister2::PROB2_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(column1,  280), module, ShiftRegister2::MIX1_INPUT));
-
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  200), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  240), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
-        addParam(createParam<Davies1900hSmallBlackKnob>(Vec(column2,  280), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
-
-        addParam(createParam<Trimpot>(Vec(51.5,  320), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
+	addInput(createInput<PJ301MPort>(Vec(column1+8,  135), module, ShiftRegister2::IN1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(column2-8,  135), module, ShiftRegister2::IN2_INPUT));
 
 
-	addOutput(createOutput<PJ301MPort>(Vec(column1, 320 ),    module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(column2, 320 ),    module, ShiftRegister2::AUX_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(column1+3,  183), module, ShiftRegister2::PROB1_INPUT));
+    addParam(createParam<SmallMLKnob>(Vec(column2-1, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
+	
+	addInput(createInput<PJ301MPort>(Vec(column1+3,  229), module, ShiftRegister2::PROB2_INPUT));
+    addParam(createParam<SmallMLKnob>(Vec(column2-1, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+	
+	addInput(createInput<PJ301MPort>(Vec(column1+3,  275), module, ShiftRegister2::MIX1_INPUT));
+	addParam(createParam<SmallMLKnob>(Vec(column2-1,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
+
+
+	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
+
+
+	addOutput(createOutput<PJ301MPort>(Vec(column1-2, 328 ),    module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(column2+2, 328 ),    module, ShiftRegister2::AUX_OUTPUT));
 }
 

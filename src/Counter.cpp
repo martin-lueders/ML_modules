@@ -7,6 +7,8 @@
 struct Counter : Module {
 	enum ParamIds {
 		MAX_PARAM,
+		START_PARAM,
+		STOP_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -61,13 +63,13 @@ void Counter::step() {
 
 	if( inputs[LENGTH_INPUT].active ) max = max * clampf(inputs[LENGTH_INPUT].value/10.0,0,1.0);
 
-	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) )) {
+	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].value )) {
 		state=true; 
 		counter=gateTrigger.isHigh()?1:0;
 		startPulse.trigger(0.001);
 	};
 
-	if( stopTrigger.process(inputs[STOP_INPUT].normalize(0.0) ))   {
+	if( stopTrigger.process(inputs[STOP_INPUT].normalize(0.0) + params[STOP_PARAM].value ))   {
 		state=false; 
 		counter=0;
 	};
@@ -168,18 +170,21 @@ CounterWidget::CounterWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-	addParam(createParam<Davies1900hSmallBlackKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addParam(createParam<SmallMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
 	addInput(createInput<PJ301MPort>(Vec(53, 87), module, Counter::LENGTH_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 168), module, Counter::GATE_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
 
-	addInput(createInput<PJ301MPort>(Vec(13, 235), module, Counter::START_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 235), module, Counter::START_OUTPUT));
+	addInput(createInput<PJ301MPort>(Vec(13, 241), module, Counter::START_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 241), module, Counter::START_OUTPUT));
+    addParam(createParam<LEDButton>(Vec(56, 219), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
 
-	addInput(createInput<PJ301MPort>(Vec(13, 298), module, Counter::STOP_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(53, 298), module, Counter::STOP_OUTPUT));
+
+	addInput(createInput<PJ301MPort>(Vec(13, 312), module, Counter::STOP_INPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(53, 312), module, Counter::STOP_OUTPUT));
+    addParam(createParam<LEDButton>(Vec(55, 290), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();
 	display->box.pos = Vec(20,56);

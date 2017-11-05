@@ -91,12 +91,14 @@ SH8Widget::SH8Widget() {
 	}
 
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 
 
-	const float offset_y = 62, delta_y = 32, row1=10, row2 = 48, row3 = 85;
+	const float offset_y = 62, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, SH8::IN1_INPUT+i));
