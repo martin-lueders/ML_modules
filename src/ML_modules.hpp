@@ -16,7 +16,7 @@ struct MLKnob : RoundKnob {
 	}
 };
 
-struct RedMLKnob : RoundKnob, SnapKnob {
+struct RedMLKnob : RoundKnob {
 	RedMLKnob() {
 		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob.svg")));
 		box.size = Vec(36, 36);
