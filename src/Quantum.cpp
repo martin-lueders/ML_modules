@@ -58,8 +58,13 @@ struct Quantum : Module {
 
 	Mode mode = LAST;
 		
-
+#ifdef v040
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#endif
+
+#ifdef v_dev
+	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
+#endif
 
 	void step() override;
 	PulseGenerator pulse;

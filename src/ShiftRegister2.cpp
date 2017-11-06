@@ -30,8 +30,18 @@ struct ShiftRegister2 : Module {
 		AUX_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	ShiftRegister2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
+
+#ifdef v_dev
+	ShiftRegister2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
+
 
 
 	void step() override;

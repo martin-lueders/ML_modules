@@ -24,8 +24,17 @@ struct Counter : Module {
 		STOP_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#endif
+
+#ifdef v_dev
+	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
+#endif
 
 	void step() override;
 

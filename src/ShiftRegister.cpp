@@ -46,7 +46,14 @@ struct ShiftRegister : Module {
                 NUM_LIGHTS
         };
 
+#ifdef v040
 	ShiftRegister() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
+
+#ifdef v_dev
+	ShiftRegister() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
+
 
 
 	void step() override;

@@ -41,8 +41,13 @@ struct FreeVerb : Module {
 
 	SchmittTrigger buttonTrigger;
 
-
+#ifdef v040
 	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
+#endif
+
+#ifdef v_dev
+	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
+#endif
 
 #ifdef v_dev
 	float gSampleRate = engineGetSampleRate();

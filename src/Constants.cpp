@@ -25,9 +25,17 @@ struct Constants : Module {
 		M_12_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
 
+#ifdef v_dev
+	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
 
 	void step() override;
 

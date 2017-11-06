@@ -17,8 +17,17 @@ struct Quant : Module {
 		OUT2_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LighIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+#endif
+
+#ifdef v_dev
+	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
+#endif
 
 	void step() override;
 };

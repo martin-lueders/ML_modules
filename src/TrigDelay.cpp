@@ -24,8 +24,19 @@ struct TrigDelay : Module {
 		OUT2_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
+#endif
+
+#ifdef v_dev
+	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
+#endif
+
+
 #ifdef v_dev	
 	gSampleRate = engineGetSampleRate();	
 #endif	

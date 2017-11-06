@@ -18,8 +18,18 @@ struct VoltMeter : Module {
 	enum OutputIds {
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { for(int i=0; i<4; i++) {volts[i] = 0.0f; active[i] = false;}};
+#endif
+
+#ifdef v_dev
+	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { for(int i=0; i<4; i++) {volts[i] = 0.0f; active[i] = false;}};
+#endif
+
 
 	void step() override;
 

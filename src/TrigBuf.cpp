@@ -24,7 +24,13 @@ struct TrigBuf : Module {
 		NUM_LIGHTS
 	};
 
+#ifdef v040
 	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
+
+#ifdef v_dev
+	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
 
 
 	void step() override;

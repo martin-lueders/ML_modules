@@ -55,8 +55,13 @@ struct OctaFlop : Module {
 	float out[8] = {};
 	bool state[8] = {};
 
+#ifdef v040
 	OctaFlop() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
 
+#ifdef v_dev
+	OctaFlop() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
 
 	void step() override;
 

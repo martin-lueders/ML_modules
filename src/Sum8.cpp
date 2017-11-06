@@ -20,8 +20,17 @@ struct Sum8 : Module {
 		OUT_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS 
+	};
 
+#ifdef v040
 	Sum8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
+
+#ifdef v_dev
+	Sum8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
 
 
 	void step() override;

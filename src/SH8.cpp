@@ -36,12 +36,20 @@ struct SH8 : Module {
 		OUT8_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LightIds {
+		NUM_LIGHTS
+	};
 
 	SchmittTrigger trigger[8];
 	float out[8];
 
+#ifdef v040
 	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+#endif
 
+#ifdef v_dev
+	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+#endif
 
 	void step() override;
 

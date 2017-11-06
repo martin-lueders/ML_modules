@@ -36,8 +36,17 @@ struct BPMdetect : Module {
 		TRIG3_OUTPUT,
 		NUM_OUTPUTS
 	};
+	enum LighIds {
+		NUM_LIGHTS
+	};
 
+#ifdef v040
 	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { misses = 0; onSampleRateChange();};
+#endif
+
+#ifdef v_dev
+	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { misses = 0; onSampleRateChange();};
+#endif
 
 	void step() override;
 
