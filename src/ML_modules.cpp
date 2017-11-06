@@ -39,7 +39,7 @@ void init(rack::Plugin *p) {
 	plugin->addModel(createModel<SeqSwitchWidget>("ML_modules", "ML modules", "SeqSwitch", "Sequential Switch 8->1"));
 	plugin->addModel(createModel<SeqSwitch2Widget>("ML_modules", "ML modules", "SeqSwitch2", "Sequential Switch 1->8"));
 	plugin->addModel(createModel<ShiftRegisterWidget>("ML_modules", "ML modules", "ShiftRegister", "Shift Register"));
-	plugin->addModel(createModel<ShiftRegister2Widget>("ML_modules", "ML modules", "ShiftRegister2", "Shift Register 2"));
+	plugin->addModel(createModel<ShiftRegister2Widget>("ML_modules", "ML modules", "Evolution", "Evolution"));
 	plugin->addModel(createModel<FreeVerbWidget>("ML_modules", "ML modules", "FreeVerb", "FreeVerb"));
 	plugin->addModel(createModel<Sum8Widget>("ML_modules", "ML modules", "Sum8", "Sum8"));
 	plugin->addModel(createModel<SH8Widget>("ML_modules", "ML modules", "SH8", "S&H 8"));
