@@ -98,7 +98,12 @@ void OctaFlop::step() {
 	};
 
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = out[i];
+	for(int i=0; i<8; i++) { 
+		outputs[OUT1_OUTPUT+i].value = out[i];
+#ifdef v_dev
+		lights[STATE1_LIGHT+i].value = out[i];
+#endif
+	}
 
 };
 

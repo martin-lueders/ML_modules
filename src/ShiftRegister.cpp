@@ -144,7 +144,7 @@ ShiftRegisterWidget::ShiftRegisterWidget() {
 		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), &module->values[i]));
 #endif
 #ifdef v_dev
-		addChild(createLight<SmallLight<GreenLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+1));
+		addChild(createLight<SmallLight<GreenLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+i));
 #endif
 	};
 
