@@ -33,22 +33,22 @@ void init(rack::Plugin *p) {
 #endif
 
 #ifdef v_dev
- 	plugin->addModel(createModel<QuantizerWidget>("ML_modules", "ML modules", "Quantizer", "Quantizer (h-bar)"));
- 	plugin->addModel(createModel<QuantumWidget>("ML_modules", "ML modules", "Quantum", "Quantum"));
- 	plugin->addModel(createModel<TrigBufWidget>("ML_modules", "ML modules", "TrigBuf", "Trigger Buffer"));
-	plugin->addModel(createModel<SeqSwitchWidget>("ML_modules", "ML modules", "SeqSwitch", "Sequential Switch 8->1"));
-	plugin->addModel(createModel<SeqSwitch2Widget>("ML_modules", "ML modules", "SeqSwitch2", "Sequential Switch 1->8"));
-	plugin->addModel(createModel<ShiftRegisterWidget>("ML_modules", "ML modules", "ShiftRegister", "Shift Register"));
-	plugin->addModel(createModel<ShiftRegister2Widget>("ML_modules", "ML modules", "Evolution", "Evolution"));
-	plugin->addModel(createModel<FreeVerbWidget>("ML_modules", "ML modules", "FreeVerb", "FreeVerb"));
-	plugin->addModel(createModel<Sum8Widget>("ML_modules", "ML modules", "Sum8", "Sum8"));
-	plugin->addModel(createModel<SH8Widget>("ML_modules", "ML modules", "SH8", "S&H 8"));
-	plugin->addModel(createModel<ConstantsWidget>("ML_modules", "ML modules", "Constants", "Constants"));
-	plugin->addModel(createModel<CounterWidget>("ML_modules", "ML modules", "Counter", "Counter"));
-	plugin->addModel(createModel<TrigDelayWidget>("ML_modules", "ML modules", "TrigDelay", "Trigger Delay"));
-	plugin->addModel(createModel<BPMdetectWidget>("ML_modules", "ML modules", "BPMdetect", "BPM Detect"));
-	plugin->addModel(createModel<VoltMeterWidget>("ML_modules", "ML modules", "VoltMeter", "Volt Meter"));
-	plugin->addModel(createModel<OctaFlopWidget>("ML_modules", "ML modules", "OctaFlop", "OctaFlop"));
+ 	plugin->addModel(createModel<QuantizerWidget>("ML modules", "Quantizer", "Quantizer (h-bar)", QUANTIZER_TAG));
+ 	plugin->addModel(createModel<QuantumWidget>("ML modules", "Quantum", "Quantum", QUANTIZER_TAG));
+ 	plugin->addModel(createModel<TrigBufWidget>("ML modules", "TrigBuf", "Trigger Buffer", UTILITY_TAG));
+	plugin->addModel(createModel<SeqSwitchWidget>("ML modules", "SeqSwitch", "Sequential Switch 8->1",SWITCH_TAG, SEQUENCER_TAG));
+	plugin->addModel(createModel<SeqSwitch2Widget>("ML modules", "SeqSwitch2", "Sequential Switch 1->8", SWITCH_TAG));
+	plugin->addModel(createModel<ShiftRegisterWidget>("ML modules", "ShiftRegister", "Shift Register",SAMPLE_AND_HOLD_TAG));
+	plugin->addModel(createModel<ShiftRegister2Widget>("ML modules", "Evolution", "Evolution", SEQUENCER_TAG, SAMPLE_AND_HOLD_TAG));
+	plugin->addModel(createModel<FreeVerbWidget>("ML modules", "FreeVerb", "FreeVerb", REVERB_TAG));
+	plugin->addModel(createModel<Sum8Widget>("ML modules", "Sum8", "Sum8", UTILITY_TAG, MIXER_TAG));
+	plugin->addModel(createModel<SH8Widget>("ML modules", "SH8", "S&H 8", SAMPLE_AND_HOLD_TAG));
+	plugin->addModel(createModel<ConstantsWidget>("ML modules", "Constants", "Constants", UTILITY_TAG));
+	plugin->addModel(createModel<CounterWidget>("ML modules", "Counter", "Counter", UTILITY_TAG));
+	plugin->addModel(createModel<TrigDelayWidget>("ML modules", "TrigDelay", "Trigger Delay", UTILITY_TAG, DELAY_TAG));
+	plugin->addModel(createModel<BPMdetectWidget>("ML modules", "BPMdetect", "BPM Detect", UTILITY_TAG, CLOCK_TAG));
+	plugin->addModel(createModel<VoltMeterWidget>("ML modules", "VoltMeter", "Volt Meter", UTILITY_TAG));
+	plugin->addModel(createModel<OctaFlopWidget>("ML modules", "OctaFlop", "OctaFlop", UTILITY_TAG, CLOCK_TAG));
 #endif
  }
 
