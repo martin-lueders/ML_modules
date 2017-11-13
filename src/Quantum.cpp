@@ -1,5 +1,4 @@
-#include "ML_modules.hpp"
-
+#include "ML_modules.hpp" 
 #include "dsp/digital.hpp"
 
 struct Quantum : Module {
@@ -108,6 +107,7 @@ struct Quantum : Module {
                         json_array_append_new(scaleJ, semiJ);
                 }
                 json_object_set_new(rootJ, "scale", scaleJ);
+                json_object_set_new(rootJ, "mode", json_integer(mode));
 
                 return rootJ;
         }
@@ -119,6 +119,8 @@ struct Quantum : Module {
                         semiState[i] = !!json_integer_value(semiJ);
 			semiLight[i] = semiState[i]?1.0:0.0;
                 }
+                json_t *modeJ = json_object_get(rootJ, "mode");
+                if(modeJ) mode = (Mode) json_integer_value(modeJ);
         }
 
 };
