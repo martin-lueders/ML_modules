@@ -29,11 +29,11 @@ struct Counter : Module {
 	};
 
 #ifdef v040
-	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { reset() };
+	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { initialize() };
 #endif
 
 #ifdef v_dev
-	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { initialize(); };
+	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 #endif
 
 	void step() override;
