@@ -58,11 +58,11 @@ struct Quantum : Module {
 	Mode mode = LAST;
 		
 #ifdef v040
-	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
+	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { initialize(); };
 #endif
 
 #ifdef v_dev
-	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
+	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 #endif
 
 	void step() override;
