@@ -11,4 +11,4 @@ https://github.com/martin-lueders/ML_modules/wiki
 
 Donate
 
-If you enjoy those modules you can support the development by making a donation. Here's the link: paypal.me/MartinLueders
+If you enjoy those modules you can support the development by making a donation. Here's the link: https://paypal.me/MartinLueders
