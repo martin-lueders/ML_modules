@@ -48,11 +48,11 @@ struct SeqSwitch : Module {
 	};
 
 #ifdef v040
-	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
+	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) { initialize(); };
 #endif
 
 #ifdef v_dev
-	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 #endif
 
 	void step() override;
