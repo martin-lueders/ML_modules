@@ -73,6 +73,9 @@ void FreeVerb::onSampleRateChange() {
 
 	reverb.init(gSampleRate);
 
+	reverb.setdamp(damp);
+	reverb.setroomsize(roomsize);
+
 };
 
 void FreeVerb::step() {

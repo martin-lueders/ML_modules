@@ -244,15 +244,15 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 #endif
 
 #ifdef v_dev
-        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 2*delta_y), module, SeqSwitch2::STEP3_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 3*delta_y), module, SeqSwitch2::STEP4_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP3_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP4_LIGHT));
 
-        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 0*delta_y), module, SeqSwitch2::STEP5_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 1*delta_y), module, SeqSwitch2::STEP6_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP5_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP6_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
 #endif
 	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch2::POS_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(76, 320), module, SeqSwitch2::IN_INPUT));

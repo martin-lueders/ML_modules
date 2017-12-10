@@ -342,7 +342,7 @@ QuantumWidget::QuantumWidget() {
 		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(offset_x+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
 #endif
 #ifdef v_dev
-		addChild(createLight<SmallLight<GreenLight>>(Vec(offset_x+5, -22*i+5+offset_y), module, Quantum::SEMI_1_LIGHT+i));
+		addChild(createLight<MediumLight<GreenLight>>(Vec(offset_x+4.2, -22*i+4.2+offset_y), module, Quantum::SEMI_1_LIGHT+i));
 #endif
 	}
 

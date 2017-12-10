@@ -298,15 +298,15 @@ SeqSwitchWidget::SeqSwitchWidget() {
 #endif
 
 #ifdef v_dev
-	addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 0*delta_y), module, SeqSwitch::STEP1_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 1*delta_y), module, SeqSwitch::STEP2_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 2*delta_y), module, SeqSwitch::STEP3_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(17, offset_y + 8 + 3*delta_y), module, SeqSwitch::STEP4_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch::STEP1_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch::STEP2_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch::STEP3_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch::STEP4_LIGHT));
 
-	addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 0*delta_y), module, SeqSwitch::STEP5_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 1*delta_y), module, SeqSwitch::STEP6_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 2*delta_y), module, SeqSwitch::STEP7_LIGHT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(94, offset_y + 8 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch::STEP5_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch::STEP6_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch::STEP7_LIGHT));
+	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
 #endif
 	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch::POS_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(76, 320), module, SeqSwitch::OUT1_OUTPUT));

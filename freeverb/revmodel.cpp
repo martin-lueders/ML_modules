@@ -109,7 +109,7 @@ void revmodel::process(const float in, float &outputL, float &outputR)
 
 	{
 		outL = outR = 0;
-		input = in*gain;
+		input = in*gain*conversion;
 
 		// Accumulate comb filters in parallel
 		for(int i=0; i<numcombs; i++)
@@ -161,24 +161,27 @@ void revmodel::update()
 
 void revmodel::setroomsize(float value)
 {
-	roomsize = ((value*scaleroom) + offsetroom) / conversion;
+	roomsize = ((value*scaleroom) + offsetroom); // * conversion;
 	update();
 }
 
 float revmodel::getroomsize()
 {
-	return (conversion * roomsize-offsetroom)/scaleroom;
+//	return (roomsize/conversion-offsetroom)/scaleroom;
+	return (roomsize-offsetroom)/scaleroom;
 }
 
 void revmodel::setdamp(float value)
 {
 	damp = value*scaledamp/conversion;
+	damp = value*scaledamp * sqrt(conversion) ;
 	update();
 }
 
 float revmodel::getdamp()
 {
-	return conversion * damp/scaledamp;
+//	return conversion * damp/scaledamp;
+	return damp/scaledamp;
 }
 
 void revmodel::setwet(float value)
