@@ -66,11 +66,18 @@ inline float comb::process(float input, float damp1, float damp2, float feedback
 {
 	float output;
 
-	output = buffer[bufidx];
+	output = buffer[bufidx]; // y[n-K]
 //	undenormalise(output);
 
 	filterstore *= damp1;
 	filterstore += (output*damp2);
+
+//  filterstore = damp1*filterstore + damp2*output;
+//  filterstore = damp1*filterstore + (1.0-damp1) * output;
+//	filterstore = output + damp1*(filterstore - output);
+
+
+
 //	undenormalise(filterstore);
 
 	buffer[bufidx] = input + (filterstore*feedback);

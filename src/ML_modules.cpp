@@ -46,9 +46,10 @@ void init(rack::Plugin *p) {
 	plugin->addModel(createModel<ConstantsWidget>("ML modules", "Constants", "Constants", UTILITY_TAG));
 	plugin->addModel(createModel<CounterWidget>("ML modules", "Counter", "Counter", UTILITY_TAG));
 	plugin->addModel(createModel<TrigDelayWidget>("ML modules", "TrigDelay", "Trigger Delay", UTILITY_TAG, DELAY_TAG));
-	plugin->addModel(createModel<BPMdetectWidget>("ML modules", "BPMdetect", "BPM Detect", UTILITY_TAG, CLOCK_TAG));
+	plugin->addModel(createModel<BPMdetectWidget>("ML modules", "BPMdetect", "BPM Tools", UTILITY_TAG, CLOCK_TAG));
 	plugin->addModel(createModel<VoltMeterWidget>("ML modules", "VoltMeter", "Volt Meter", UTILITY_TAG));
 	plugin->addModel(createModel<OctaFlopWidget>("ML modules", "OctaFlop", "OctaFlop", UTILITY_TAG, CLOCK_TAG));
+	plugin->addModel(createModel<OctaTrigWidget>("ML modules", "OctaTrig", "OctaTrig", UTILITY_TAG ));
 #endif
  }
 

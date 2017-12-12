@@ -112,3 +112,7 @@ struct VoltMeterWidget : ModuleWidget {
 struct OctaFlopWidget : ModuleWidget {
 	OctaFlopWidget();
 };
+
+struct OctaTrigWidget : ModuleWidget {
+	OctaTrigWidget();
+};
