@@ -28,33 +28,20 @@ struct Counter : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { initialize() };
-#endif
-
-#ifdef v_dev
 	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
-#endif
 
 	void step() override;
 
-#ifdef v040
-	void initialize() override {counter=0; state=false; state2=false;};
-#endif
-#ifdef v_dev
 	void reset() override {counter=0; state=false; state2=false; gSampleRate=engineGetSampleRate();};
-#endif
 
 	int counter = 0;
 	bool state = false;
 	bool state2 = false;
 	float stateLight;
 
-#ifdef v_dev	
 	float gSampleRate;
 
 	void onSampleRateChange() override {gSampleRate = engineGetSampleRate();}
-#endif
 
         int max;
   

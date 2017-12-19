@@ -55,13 +55,8 @@ struct OctaFlop : Module {
 	float out[8] = {};
 	bool state[8] = {};
 
-#ifdef v040
-	OctaFlop() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
-#endif
 
-#ifdef v_dev
 	OctaFlop() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { for(int i=0; i<8; i++) state[i]=false; };
-#endif
 
 	void step() override;
 
@@ -100,9 +95,7 @@ void OctaFlop::step() {
 
 	for(int i=0; i<8; i++) { 
 		outputs[OUT1_OUTPUT+i].value = out[i];
-#ifdef v_dev
 		lights[STATE1_LIGHT+i].value = out[i];
-#endif
 	}
 
 };
@@ -134,13 +127,8 @@ OctaFlopWidget::OctaFlopWidget() {
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, OctaFlop::TRIG1_INPUT+i));
-#ifdef v040
-                addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(row2, offset_y + 8 +   i*delta_y), &module->out[i]));
-#endif
 
-#ifdef v_dev
                 addChild(createLight<SmallLight<GreenLight>>(Vec(row2, offset_y + 8 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
-#endif
 		addOutput(createOutput<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), module, OctaFlop::OUT1_OUTPUT+i));
 	};
 

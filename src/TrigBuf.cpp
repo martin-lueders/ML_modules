@@ -24,13 +24,8 @@ struct TrigBuf : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) { initialize(); };
-#endif
 
-#ifdef v_dev
 	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
-#endif
 
 
 	void step() override;
@@ -44,13 +39,8 @@ struct TrigBuf : Module {
 	SchmittTrigger armTrigger1, armTrigger2;
 	SchmittTrigger gateTrigger1, gateTrigger2;
 
-#ifdef v_dev
 	void reset() override {
-#endif
 
-#ifdef v040
-	void initialize() override {
-#endif
 		arm1=0.0;
 		arm2=0.0;
 		out1=0.0;
@@ -168,10 +158,8 @@ void TrigBuf::step() {
 	outputs[OUT1_OUTPUT].value = out1;
 	outputs[OUT2_OUTPUT].value = out2;
 
-#ifdef v_dev
 	lights[ARM1_LIGHT].value = arm1;
 	lights[ARM2_LIGHT].value = arm2;
-#endif
 };
 
 
@@ -195,21 +183,11 @@ TrigBufWidget::TrigBufWidget() {
 	addInput(createInput<PJ301MPort>(Vec(10, 62),    module, TrigBuf::ARM1_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::GATE1_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, TrigBuf::OUT1_OUTPUT));
-#ifdef v040
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 66), &module->arm1));
-#endif
 
-#ifdef v_dev
 	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 66), module, TrigBuf::ARM1_LIGHT));
-#endif
 
 	addInput(createInput<PJ301MPort>(Vec(10, 218),   module, TrigBuf::ARM2_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::GATE2_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(10, 305), module, TrigBuf::OUT2_OUTPUT));
-#ifdef v040
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 222), &module->arm2));
-#endif
-#ifdef v_dev
 	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 222), module, TrigBuf::ARM2_LIGHT));
-#endif
 }

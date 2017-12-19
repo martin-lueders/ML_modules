@@ -28,18 +28,11 @@ struct TrigDelay : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
-#endif
 
-#ifdef v_dev
 	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
-#endif
 
 
-#ifdef v_dev	
 	gSampleRate = engineGetSampleRate();	
-#endif	
 	};
 
 
@@ -52,18 +45,13 @@ struct TrigDelay : Module {
 	PulseGenerator on1, on2;
 
 
-#ifdef v_dev
 
 	float gSampleRate;
 
 	void onSampleRateChange() { gSampleRate = engineGetSampleRate(); }
 
 	void reset() override {
-#endif
 
-#ifdef v040
-	void initialize() override {
-#endif
 		gate1=false;
 		gate2=false;
 	};

@@ -34,13 +34,7 @@ struct ShiftRegister2 : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	ShiftRegister2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) { initialize(); };
-#endif
-
-#ifdef v_dev
 	ShiftRegister2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
-#endif
 
 
 
@@ -53,13 +47,8 @@ struct ShiftRegister2 : Module {
 
 	inline float randf() {return rand()/(RAND_MAX-1.0);}
 
-#ifdef v_dev
 	void reset() override {
-#endif
 
-#ifdef v040
-	void initialize() override {
-#endif
 	};
 
 };

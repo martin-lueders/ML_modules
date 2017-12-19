@@ -47,21 +47,12 @@ struct SeqSwitch : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) { initialize(); };
-#endif
-
-#ifdef v_dev
 	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
-#endif
 
 	void step() override;
 
 	int position=0;
 
-#ifdef v040
-	float stepLights[8] = {};
-#endif
 
 
         const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
@@ -100,21 +91,12 @@ struct SeqSwitch : Module {
 
         InputRange inputRange = Zero_Eight;
 
-#ifdef v_dev
 	void reset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
 	};
-#endif
 
-#ifdef v040
-	void initialize() override {
-
-		position=0;
-		for(int i=0; i<8; i++) stepLights[i] = 0.0;
-	};
-#endif
 };
 
 
@@ -161,12 +143,7 @@ void SeqSwitch::step() {
 
 	out = inputs[IN1_INPUT+position].normalize(0.0);
 
-#ifdef v040
-	for(int i=0; i<8; i++) stepLights[i] = (i==position)?1.0:0.0;
-#endif
-#ifdef v_dev
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
-#endif
 
 
 	outputs[OUT1_OUTPUT].value = out;
@@ -177,17 +154,9 @@ struct SeqSwitchRangeItem : MenuItem {
         SeqSwitch *seqSwitch;
         SeqSwitch::InputRange inputRange;
 
-#ifdef v040
-        void onAction() override {
-                seqSwitch->inputRange = inputRange;
-        };
-#endif
-
-#ifdef v_dev
         void onAction(EventAction &e) override {
                 seqSwitch->inputRange = inputRange;
         };
-#endif
 
         void step() override {
                 rightText = (seqSwitch->inputRange == inputRange)? "✔" : "";
@@ -285,19 +254,6 @@ SeqSwitchWidget::SeqSwitchWidget() {
 	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch::STEP7_PARAM, 0.0, 1.0, 0.0));
 	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch::STEP8_PARAM, 0.0, 1.0, 0.0));
 
-#ifdef v040
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 0*delta_y), &module->stepLights[0]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 1*delta_y), &module->stepLights[1]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 2*delta_y), &module->stepLights[2]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(17, offset_y + 8 + 3*delta_y), &module->stepLights[3]));
-
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 0*delta_y), &module->stepLights[4]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 1*delta_y), &module->stepLights[5]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 2*delta_y), &module->stepLights[6]));
-	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(94, offset_y + 8 + 3*delta_y), &module->stepLights[7]));
-#endif
-
-#ifdef v_dev
 	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch::STEP1_LIGHT));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch::STEP2_LIGHT));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch::STEP3_LIGHT));
@@ -307,7 +263,7 @@ SeqSwitchWidget::SeqSwitchWidget() {
 	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch::STEP6_LIGHT));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch::STEP7_LIGHT));
 	addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
-#endif
+
 	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch::POS_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(76, 320), module, SeqSwitch::OUT1_OUTPUT));
 

@@ -23,35 +23,22 @@ struct FreeVerb : Module {
 		NUM_OUTPUTS
 	};
 
-#ifdef v_dev
 	enum LighIds {
 		FREEZE_LIGHT,
 		NUM_LIGHTS
 	};
-#endif
 	revmodel reverb;
 
 	float roomsize, damp; 
 
-#ifdef v040
-	float freezelight;
-#endif
 
 	bool freeze=false;
 
 	SchmittTrigger buttonTrigger;
 
-#ifdef v040
-	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {
-#endif
-
-#ifdef v_dev
 	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
-#endif
 
-#ifdef v_dev
 	float gSampleRate = engineGetSampleRate();
-#endif	
 
 		reverb.init(gSampleRate);
 
@@ -67,9 +54,7 @@ struct FreeVerb : Module {
 
 void FreeVerb::onSampleRateChange() {
 
-#ifdef v_dev
 	float gSampleRate = engineGetSampleRate();
-#endif	
 
 	reverb.init(gSampleRate);
 
@@ -113,13 +98,7 @@ void FreeVerb::step() {
 	if( old_damp != damp ) reverb.setdamp(damp);
 	if( old_roomsize != roomsize) reverb.setroomsize(roomsize);
 
-#ifdef v040
-	freezelight=freeze?10.0:0.0;
-#endif
-
-#ifdef v_dev
 	lights[FREEZE_LIGHT].value = freeze?10.0:0.0;
-#endif
 
 
 	if(freeze != old_freeze) reverb.setmode(freeze?1.0:0.0);
@@ -161,12 +140,7 @@ FreeVerbWidget::FreeVerbWidget() {
         addParam(createParam<SmallMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
         addParam(createParam<SmallMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
         addParam(createParam<LEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
-#ifdef v040
-        addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(19,255), &module->freezelight));
-#endif
-#ifdef v_dev
         addChild(createLight<SmallLight<GreenLight>>(Vec(19,255), module, FreeVerb::FREEZE_LIGHT));
-#endif
 
 	addOutput(createOutput<PJ301MPort>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));

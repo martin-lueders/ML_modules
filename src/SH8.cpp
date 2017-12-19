@@ -43,13 +43,8 @@ struct SH8 : Module {
 	SchmittTrigger trigger[8];
 	float out[8];
 
-#ifdef v040
-	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS ) {};
-#endif
 
-#ifdef v_dev
 	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
-#endif
 
 	void step() override;
 

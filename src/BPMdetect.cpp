@@ -6,11 +6,6 @@
 #include <sstream>
 #include <iomanip>
 
-#ifdef v040
-inline float nearf(float a, float b, float epsilon = 1e-6) {
-	return fabsf(a - b) <= epsilon;
-};
-#endif
 
 struct BPMdetect : Module {
 	enum ParamIds {
@@ -40,13 +35,7 @@ struct BPMdetect : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { misses = 0; onSampleRateChange();};
-#endif
-
-#ifdef v_dev
 	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { misses = 0; onSampleRateChange();};
-#endif
 
 	void step() override;
 
@@ -67,16 +56,10 @@ struct BPMdetect : Module {
 	inline bool checkBeat(float timer, int mult) { 
 		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4); 
 	}
-#ifdef v040
-	void initialize() override {misses=0; onSampleRateChange(); };
-	void onSampleRateChange() override {deltaT = 1.0/gSampleRate;}
-#endif
 
-#ifdef v_dev
 	float gSampleRate;
 	void reset() override {onSampleRateChange();};
 	void onSampleRateChange() override {gSampleRate = engineGetSampleRate(); deltaT = 1.0/gSampleRate;}
-#endif
 
 	SchmittTrigger gateTrigger;
 	PulseGenerator outPulse1, outPulse2, outPulse3;

@@ -8,31 +8,9 @@ Plugin *plugin;
 void init(rack::Plugin *p) {
  	plugin = p;
  	plugin->slug="ML_modules";
+	plugin->version = TOSTRING(VERSION);
 
 
-#ifdef v040	
- 	plugin->name="ML modules";
- 	plugin->homepageUrl="https://github.com/martin-lueders/ML_modules";
-
- 	createModel<QuantizerWidget>(plugin, "Quantizer", "Quantizer (h-bar)");
- 	createModel<QuantumWidget>(plugin, "Quantum", "Quantum");
- 	createModel<TrigBufWidget>(plugin, "TrigBuf", "Trigger Buffer");
-	createModel<SeqSwitchWidget>(plugin, "SeqSwitch", "Sequential Switch 8->1");
-	createModel<SeqSwitch2Widget>(plugin, "SeqSwitch2", "Sequential Switch 1->8");
-	createModel<ShiftRegisterWidget>(plugin, "ShiftRegister", "Shift Register");
-	createModel<ShiftRegister2Widget>(plugin, "Evolution", "Evolution");
-	createModel<FreeVerbWidget>(plugin, "FreeVerb", "FreeVerb");
-	createModel<Sum8Widget>(plugin, "Sum8", "Sum8");
-	createModel<SH8Widget>(plugin, "SH8", "S&H 8");
-	createModel<ConstantsWidget>(plugin, "Constants", "Constants");
-	createModel<CounterWidget>(plugin, "Counter", "Counter");
-	createModel<TrigDelayWidget>(plugin, "TrigDelay", "Trigger Delay");
-	createModel<BPMdetectWidget>(plugin, "BPMdetect", "BPM Detect");
-	createModel<VoltMeterWidget>(plugin, "VoltMeter", "Volt Meter");
-	createModel<OctaFlopWidget>(plugin, "OctaFlop", "OctaFlop");
-#endif
-
-#ifdef v_dev
  	plugin->addModel(createModel<QuantizerWidget>("ML modules", "Quantizer", "Quantizer (h-bar)", QUANTIZER_TAG));
  	plugin->addModel(createModel<QuantumWidget>("ML modules", "Quantum", "Quantum", QUANTIZER_TAG));
  	plugin->addModel(createModel<TrigBufWidget>("ML modules", "TrigBuf", "Trigger Buffer", UTILITY_TAG));
@@ -50,7 +28,6 @@ void init(rack::Plugin *p) {
 	plugin->addModel(createModel<VoltMeterWidget>("ML modules", "VoltMeter", "Volt Meter", UTILITY_TAG));
 	plugin->addModel(createModel<OctaFlopWidget>("ML modules", "OctaFlop", "OctaFlop", UTILITY_TAG, CLOCK_TAG));
 	plugin->addModel(createModel<OctaTrigWidget>("ML modules", "OctaTrig", "OctaTrig", UTILITY_TAG ));
-#endif
  }
 
 
