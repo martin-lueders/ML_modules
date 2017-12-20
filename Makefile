@@ -2,6 +2,9 @@
 # 
 # possible values are v032 and v040
 
+SLUG = ML_modules
+VERSION = 0.5.2
+
 FLAGS += -D v_dev
 
 SOURCES = $(wildcard src/*.cpp freeverb/*.cpp)
@@ -9,8 +12,11 @@ SOURCES = $(wildcard src/*.cpp freeverb/*.cpp)
 include ../../plugin.mk
 
 
+# Convenience target for packaging files into a ZIP file
+.PHONY: dist
 dist: all
-	mkdir -p dist/ML_modules
-	cp LICENSE* dist/ML_modules/
-	cp plugin.* dist/ML_modules/
-	cp -R res dist/ML_modules/
+	mkdir -p dist/$(SLUG)
+	cp LICENSE* dist/$(SLUG)/
+	cp $(TARGET) dist/$(SLUG)/
+	cp -R res dist/$(SLUG)/
+	cd dist && zip -5 -r $(SLUG)-$(VERSION)-$(ARCH).zip $(SLUG)
