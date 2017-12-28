@@ -8,6 +8,20 @@ using namespace rack;
 
 extern Plugin *plugin;
 
+struct NKK2 : SVGSwitch, ToggleSwitch {
+	NKK2() {
+		addFrame(SVG::load(assetGlobal("res/ComponentLibrary/NKK_0.svg")));
+		addFrame(SVG::load(assetGlobal("res/ComponentLibrary/NKK_2.svg")));
+	}
+};
+
+struct POLSWITCH : SVGSwitch, ToggleSwitch {
+	POLSWITCH() {
+		addFrame(SVG::load(assetPlugin(plugin, "res/CKSS_0.svg")));
+		addFrame(SVG::load(assetPlugin(plugin, "res/CKSS_1.svg")));
+	}
+};
+
 
 struct MLKnob : RoundKnob {
 	MLKnob() {
@@ -84,6 +98,10 @@ struct Sum8Widget : ModuleWidget {
 	Sum8Widget();
 };
 
+struct Sum8mk2Widget : ModuleWidget {
+	Sum8mk2Widget();
+};
+
 struct SH8Widget : ModuleWidget {
 	SH8Widget();
 };
@@ -115,4 +133,19 @@ struct OctaFlopWidget : ModuleWidget {
 
 struct OctaTrigWidget : ModuleWidget {
 	OctaTrigWidget();
+};
+
+struct OctaSwitchWidget : ModuleWidget {
+	OctaSwitchWidget();
+};
+
+struct TrigSwitchWidget : ModuleWidget {
+	TrigSwitchWidget();
+};
+
+struct TrigSwitch2Widget : ModuleWidget {
+	TrigSwitch2Widget();
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
 };

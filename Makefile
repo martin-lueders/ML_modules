@@ -1,9 +1,8 @@
 # this flag selects the rack version to compile against.
 # 
-# possible values are v032 and v040
 
 SLUG = ML_modules
-VERSION = 0.5.2
+VERSION = 0.5.3
 
 FLAGS += -D v_dev
 

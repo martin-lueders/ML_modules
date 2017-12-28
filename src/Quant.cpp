@@ -21,13 +21,7 @@ struct Quant : Module {
 		NUM_LIGHTS
 	};
 
-#ifdef v040
-	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {};
-#endif
-
-#ifdef v_dev
 	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
-#endif
 
 	void step() override;
 };

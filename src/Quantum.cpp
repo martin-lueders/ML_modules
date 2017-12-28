@@ -57,13 +57,7 @@ struct Quantum : Module {
 
 	Mode mode = LAST;
 		
-#ifdef v040
-	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) { initialize(); };
-#endif
-
-#ifdef v_dev
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
-#endif
 
 	void step() override;
 	PulseGenerator pulse;
@@ -74,19 +68,14 @@ struct Quantum : Module {
 	SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
 	float semiLight[12] = {};
 
-#ifdef v_dev
-        void reset() override {
-#endif
-#ifdef v040
-        void initialize() override {
-#endif
-                for (int i = 0; i < 12; i++) {
-                        semiState[i] = false;
+    void reset() override {
+        for (int i = 0; i < 12; i++) {
+            semiState[i] = false;
 			semiLight[i] = 0.0;
-                }
+        }
 		last_octave = 0;
 		last_semi   = 0;
-        }
+	}
 
 	void randomize() override {
 		for (int i = 0; i<12; i++) {
@@ -133,13 +122,7 @@ void Quantum::step() {
 		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].value)) {
                         semiState[i] = !semiState[i];
                 }
-#ifdef v040
-		semiLight[i] = semiState[i]?1.0:0.0;
-#endif
-
-#ifdef v_dev
 		lights[i].value = semiState[i]?1.0:0.0;
-#endif
 	}
 
 	float gate = 0, trigger=0;
@@ -166,14 +149,9 @@ void Quantum::step() {
 	if(semi_n<0) semi_n+=12;
 
 
-       	if( inputs[RESET_INPUT].active ) {
-#ifdef v040
-                if( resetTrigger.process(inputs[RESET_INPUT].value) ) initialize();
-#endif
-#ifdef v_dev
-                if( resetTrigger.process(inputs[RESET_INPUT].value) ) reset();
-#endif
-        };
+   	if( inputs[RESET_INPUT].active ) {
+		if( resetTrigger.process(inputs[RESET_INPUT].value) ) reset();
+    };
 
 
 	if( inputs[SET_INPUT].active ) {
@@ -222,9 +200,7 @@ void Quantum::step() {
 		};
 	};
 
-#ifdef v_dev
 	float gSampleRate = engineGetSampleRate();
-#endif
 
 	trigger = pulse.process(1.0/gSampleRate) ? 10.0 : 0.0;
 
@@ -240,17 +216,10 @@ struct QuantumModeItem : MenuItem {
         Quantum *quantum;
         Quantum::Mode mode;
 
-#ifdef v040
-        void onAction() override {
-                quantum->mode = mode;
-        };
-#endif
 
-#ifdef v_dev
         void onAction(EventAction &e) override {
                 quantum->mode = mode;
         };
-#endif
 
         void step() override {
                 rightText = (quantum->mode == mode)? "✔" : "";
@@ -338,12 +307,7 @@ QuantumWidget::QuantumWidget() {
 
 	for(int i=0; i<12; i++) {
 		addParam(createParam<LEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
-#ifdef v040
-		addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(offset_x+5, -22*i+5+offset_y), &module->semiLight[Quantum::SEMI_1_PARAM+i]));
-#endif
-#ifdef v_dev
 		addChild(createLight<MediumLight<GreenLight>>(Vec(offset_x+4.2, -22*i+4.2+offset_y), module, Quantum::SEMI_1_LIGHT+i));
-#endif
 	}
 
 }
