@@ -9,6 +9,5 @@ A short description of the available modules is on my wiki:
 
 https://github.com/martin-lueders/ML_modules/wiki
 
-Donate
 
 If you enjoy those modules you can support the development by making a donation. Here's the link: [DONATE](https://paypal.me/MartinLueders)
