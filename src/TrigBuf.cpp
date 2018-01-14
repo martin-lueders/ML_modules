@@ -68,10 +68,16 @@ void TrigBuf::step() {
 	bool last_gate2 = gate2;
        
 
-
-
 	if( inputs[GATE1_INPUT].active) gateTrigger1.process(inputs[GATE1_INPUT].value);
 	gate1 = (gateTrigger1.isHigh());
+
+	if( inputs[GATE2_INPUT].active ) {
+		gateTrigger2.process(inputs[GATE2_INPUT].value);
+		gate2 = gateTrigger2.isHigh();
+	} else {
+		gate2 = gate1;
+	};
+
 
 	if( inputs[ARM1_INPUT].active ) {
 		if( armTrigger1.process(inputs[ARM1_INPUT].value) ) { 
@@ -81,15 +87,13 @@ void TrigBuf::step() {
 				delayed1 = true;
 			};
 
-	       	}
+	    }
 	} else {
 		arm1 = 0.0;
 	};
 
 
-
-
-        if(gate1) {
+    if(gate1) {
 		if(arm1 > 5.0) {
 			out1 = 10.0;
 		} else {
@@ -112,20 +116,11 @@ void TrigBuf::step() {
 
 
 
-
-
-	if( inputs[GATE2_INPUT].active ) {
-		gateTrigger2.process(inputs[GATE2_INPUT].value);
-		gate2 = gateTrigger2.isHigh();
-	} else {
-		gate2 = gate1;
-	};
-
 	if( inputs[ARM2_INPUT].active ) {
 		if( armTrigger2.process(inputs[ARM2_INPUT].value) ) { 
-			if (gate2) {arm2 = 10.0;}
+			if (!gate2) {arm2 = 10.0;}
 			else { 
-				arm2 = 0.0;
+				// arm2 = 0.0;
 				delayed2 = true;
 			};
 		};

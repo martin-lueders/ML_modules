@@ -31,8 +31,9 @@ struct TrigDelay : Module {
 
 	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
 
+		gSampleRate = engineGetSampleRate();
+		minLength = 0.001;
 
-	gSampleRate = engineGetSampleRate();	
 	};
 
 
@@ -47,6 +48,7 @@ struct TrigDelay : Module {
 
 
 	float gSampleRate;
+	float minLength;
 
 	void onSampleRateChange() { gSampleRate = engineGetSampleRate(); }
 
@@ -77,8 +79,8 @@ void TrigDelay::step() {
 	if( inputs[DELAY1_INPUT].active )  { delayTime1 *= clampf( inputs[DELAY1_INPUT].value / 10.0, 0.0, 1.0 );};
 	if( inputs[DELAY2_INPUT].active )  { delayTime2 *= clampf( inputs[DELAY2_INPUT].value / 10.0, 0.0, 1.0 );};
 
-	if( inputs[LENGTH1_INPUT].active ) { length1    *= clampf( inputs[LENGTH1_INPUT].value / 10.0, 0.0, 1.0 );};
-	if( inputs[LENGTH2_INPUT].active ) { length2    *= clampf( inputs[LENGTH2_INPUT].value / 10.0, 0.0, 1.0 );};
+	if( inputs[LENGTH1_INPUT].active ) { length1    *= clampf( inputs[LENGTH1_INPUT].value / 10.0, minLength, 1.0 );};
+	if( inputs[LENGTH2_INPUT].active ) { length2    *= clampf( inputs[LENGTH2_INPUT].value / 10.0, minLength, 1.0 );};
 
 
 
@@ -139,21 +141,21 @@ TrigDelayWidget::TrigDelayWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
 	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
 
-        addParam(createParam<SmallMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
+    addParam(createParam<SmallMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
 	addInput(createInput<PJ301MPort>(Vec(53, 71),    module, TrigDelay::DELAY1_INPUT));
 
-        addParam(createParam<SmallMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, 0.0, 2.0, 0.1));
+    addParam(createParam<SmallMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, 0.0, 2.0, 0.1));
 	addInput(createInput<PJ301MPort>(Vec(53, 114),    module, TrigDelay::LENGTH1_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 165),   module, TrigDelay::GATE1_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(53, 165), module, TrigDelay::OUT1_OUTPUT));
 //	addChild(createValueLight<SmallLight<GreenValueLight>>(Vec(46, 66), &module->arm1));
 
-        addParam(createParam<SmallMLKnob>(Vec(12,  153 + 69), module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
+    addParam(createParam<SmallMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
 	addInput(createInput<PJ301MPort>(Vec(53, 153 + 71),    module, TrigDelay::DELAY2_INPUT));
 
-        addParam(createParam<SmallMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, 0.0, 2.0, 0.1));
-	addInput(createInput<PJ301MPort>(Vec(53, 153 + 114),    module, TrigDelay::LENGTH2_INPUT));
+    addParam(createParam<SmallMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, 0.0, 2.0, 0.1));
+	addInput(createInput<PJ301MPort>(Vec(53, 153 + 114),   module, TrigDelay::LENGTH2_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 153 + 165),   module, TrigDelay::GATE2_INPUT));
 	addOutput(createOutput<PJ301MPort>(Vec(53, 153 + 165), module, TrigDelay::OUT2_OUTPUT));

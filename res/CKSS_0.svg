@@ -26,7 +26,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.4"
-     inkscape:cx="19.233388"
+     inkscape:cx="27.425352"
      inkscape:cy="9.9416393"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -112,19 +112,21 @@
          d="m 784.767,1158.581 h 10.94 v -0.936 h -10.94 z" />
     </g>
     <path
-       style="opacity:1;fill:#890a0a;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:#ae0c0c;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        d="m 1.3360661,6.3005869 c 0,-2.917451 0.015138,-4.322873 0.047483,-4.4084822 0.067506,-0.1786701 0.2580643,-0.3689151 0.4659099,-0.4651445 0.1704387,-0.078911 0.4052693,-0.082676 5.15625,-0.082676 4.745129,0 4.986021,0.00385 5.15625,0.082416 0.216115,0.099743 0.352125,0.2410725 0.444298,0.4616735 0.06073,0.1453438 0.0691,0.6817778 0.0691,4.4301942 V 10.583395 H 7.005709 1.3360661 Z"
        id="path823"
        inkscape:connector-curvature="0"
        transform="matrix(0.26458333,0,0,0.26458333,35.423779,63.339207)" />
-    <g
-       aria-label="-"
+    <text
+       xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:Matematica;-inkscape-font-specification:'Matematica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       id="text827">
-      <path
-         d="m 37.898296,65.096571 c 0,0.02963 -0.0254,0.05927 -0.05927,0.05927 h -1.0668 c -0.03387,0 -0.05927,-0.02963 -0.05927,-0.05927 v -0.474133 c 0,-0.03387 0.0254,-0.05927 0.05927,-0.05927 h 1.0668 c 0.03387,0 0.05927,0.0254 0.05927,0.05927 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:Matematica;-inkscape-font-specification:'Matematica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332"
-         id="path826" />
-    </g>
+       x="35.52763"
+       y="66.388412"
+       id="text827"><tspan
+         sodipodi:role="line"
+         id="tspan825"
+         x="35.52763"
+         y="66.388412"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:Matematica;-inkscape-font-specification:'Matematica, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;stroke-width:0.26458332">-</tspan></text>
   </g>
 </svg>
