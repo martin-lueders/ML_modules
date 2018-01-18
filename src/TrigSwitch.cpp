@@ -48,10 +48,8 @@ void TrigSwitch::step() {
 
 	for(int i=0; i<8; i++) {
 		if( stepTriggers[i].process(inputs[TRIG_INPUT+i].normalize(0.0))) position = i;
-
+		lights[i].value = (i==position)?1.0:0.0;
 	};
-
-	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
 
 	outputs[OUT_OUTPUT].value = inputs[CV_INPUT+position].normalize(0.0);
 };

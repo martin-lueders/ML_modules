@@ -130,15 +130,12 @@ void Quantum::step() {
 
 	float v=inputs[IN_INPUT].value;
 	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
-	float n=inputs[NOTE_INPUT].value;
 
 	int octave   = round(v);
 	int octave_t = round(t);
-	int octave_n = round(n);
 
 	int semi   = round( 12.0*(v - 1.0*octave) );
 	int semi_t = round( 12.0*(t - 1.0*octave_t) );
-	int semi_n = round( 12.0*(n - 1.0*octave_n) ) - semi_t;
 
 
 	// transpose to shifted scale:
@@ -146,16 +143,20 @@ void Quantum::step() {
 	int tmp_semi=(semi-semi_t)%12;
 
 	if(tmp_semi<0) tmp_semi+=12;
-	if(semi_n<0) semi_n+=12;
 
 
    	if( inputs[RESET_INPUT].active ) {
 		if( resetTrigger.process(inputs[RESET_INPUT].value) ) reset();
-    };
+        };
 
 
 	if( inputs[SET_INPUT].active ) {
 		if( setTrigger.process(inputs[SET_INPUT].value ) ) {
+
+			float n=inputs[NOTE_INPUT].normalize(0.0);
+			int semi_n = round( 12.0*(n - 1.0*round(n)) ) - semi_t;
+			if(semi_n<0) semi_n+=12;
+
 			semiState[semi_n] = !semiState[semi_n];
 			semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
 		}

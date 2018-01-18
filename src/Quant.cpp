@@ -31,7 +31,7 @@ static void stepChannel(Input &in, Param &p_amount, Output &out) {
 
 
 
-	float v = in.value;
+	float v = in.normalize(0.0);
 
 	float amount = p_amount.value;
 
@@ -42,16 +42,14 @@ static void stepChannel(Input &in, Param &p_amount, Output &out) {
 	int semi   = round( rest*12.0 );
 
 	float quantized = 1.0*octave + semi/12.0;
-        float result = quantized + amount*(v-quantized);
 
-
-	out.value = result;
+	out.value = quantized + amount*(v-quantized);
 
 }
 
 void Quant::step() {
-	stepChannel(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
-	stepChannel(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
+	if (outputs[OUT1_OUTPUT].active) stepChannel(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
+	if (outputs[OUT2_OUTPUT].active) stepChannel(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
 }
 
 

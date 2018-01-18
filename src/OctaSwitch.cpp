@@ -43,7 +43,6 @@ void OctaSwitch::step() {
 
 	gate[0] = inputs[GATE_INPUT].normalize(0.0) > threshold;
 
-
 	for(int i=1; i<8; i++) {
 		
 		if( inputs[GATE_INPUT+i].active ) gate[i] = inputs[GATE_INPUT+i].value > threshold;

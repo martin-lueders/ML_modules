@@ -83,12 +83,12 @@ void ShiftRegister::step() {
 			for(int i=7; i>0; i--) values[i] = values[i-1];
 			values[0] = inputs[IN_INPUT].value;
 
+			for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = values[i];
+			for(int i=0; i<8; i++) lights[STEP1_LIGHT+i].value = values[i];
 		};
 
 	};
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = values[i];
-	for(int i=0; i<8; i++) lights[STEP1_LIGHT+i].value = values[i];
 
 };
 
