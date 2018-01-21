@@ -6,14 +6,7 @@ struct ShiftRegister : Module {
 	enum ParamIds {
 		NUM_STEPS,
 		STEP1_PARAM,
-		STEP2_PARAM,
-		STEP3_PARAM,
-		STEP4_PARAM,
-		STEP5_PARAM,
-		STEP6_PARAM,
-		STEP7_PARAM,
-		STEP8_PARAM,
-		NUM_PARAMS
+		NUM_PARAMS = STEP1_PARAM+8
 	};
 	enum InputIds {
 		IN_INPUT,
@@ -31,8 +24,8 @@ struct ShiftRegister : Module {
 		OUT6_OUTPUT,
 		OUT7_OUTPUT,
 		OUT8_OUTPUT,
-		OUT_OUTPUT,
-		NUM_OUTPUTS
+		// OUT_OUTPUT,
+		NUM_OUTPUTS 
 	};
         enum LightIds {
                 STEP1_LIGHT,
@@ -43,7 +36,7 @@ struct ShiftRegister : Module {
                 STEP6_LIGHT,
                 STEP7_LIGHT,
                 STEP8_LIGHT,
-                NUM_LIGHTS
+                NUM_LIGHTS = STEP1_LIGHT+16
         };
 
 
@@ -83,8 +76,13 @@ void ShiftRegister::step() {
 			for(int i=7; i>0; i--) values[i] = values[i-1];
 			values[0] = inputs[IN_INPUT].value;
 
-			for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = values[i];
-			for(int i=0; i<8; i++) lights[STEP1_LIGHT+i].value = values[i];
+			for(int i=0; i<8; i++) {
+				outputs[OUT1_OUTPUT+i].value = values[i];
+				bool positive = values[i]>0;
+				float value = values[i]/10.0;
+				lights[STEP1_LIGHT+2*i].value   = positive?value:0.0;
+				lights[STEP1_LIGHT+2*i+1].value = -(positive?0.0:value);
+			}
 		};
 
 	};
@@ -119,7 +117,7 @@ ShiftRegisterWidget::ShiftRegisterWidget() {
 	for( int i=0; i<8; i++) {
 
 		addOutput(createOutput<PJ301MPort>(Vec(offset_x+17, offset_y + i*delta_y  ),    module, ShiftRegister::OUT1_OUTPUT+i));
-		addChild(createLight<SmallLight<GreenLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+i));
+		addChild(createLight<SmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 

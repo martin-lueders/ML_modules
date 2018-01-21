@@ -106,7 +106,7 @@ struct NumberDisplayWidget : TransparentWidget {
 
   void draw(NVGcontext *vg) {
     // Background
-    NVGcolor backgroundColor = nvgRGB(0x44, 0x44, 0x44);
+    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
     nvgBeginPath(vg);
     nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);

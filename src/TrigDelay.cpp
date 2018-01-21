@@ -2,6 +2,9 @@
 
 #include "dsp/digital.hpp"
 
+
+#define minLength 0.001
+
 struct TrigDelay : Module {
 	enum ParamIds {
 		DELAY1_PARAM,
@@ -32,7 +35,7 @@ struct TrigDelay : Module {
 	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
 
 		gSampleRate = engineGetSampleRate();
-		minLength = 0.001;
+		// minLength = 0.001;
 
 	};
 
@@ -48,7 +51,6 @@ struct TrigDelay : Module {
 
 
 	float gSampleRate;
-	float minLength;
 
 	void onSampleRateChange() { gSampleRate = engineGetSampleRate(); }
 
@@ -144,7 +146,7 @@ TrigDelayWidget::TrigDelayWidget() {
     addParam(createParam<SmallMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
 	addInput(createInput<PJ301MPort>(Vec(53, 71),    module, TrigDelay::DELAY1_INPUT));
 
-    addParam(createParam<SmallMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, 0.0, 2.0, 0.1));
+    addParam(createParam<SmallMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1));
 	addInput(createInput<PJ301MPort>(Vec(53, 114),    module, TrigDelay::LENGTH1_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 165),   module, TrigDelay::GATE1_INPUT));
@@ -154,7 +156,7 @@ TrigDelayWidget::TrigDelayWidget() {
     addParam(createParam<SmallMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
 	addInput(createInput<PJ301MPort>(Vec(53, 153 + 71),    module, TrigDelay::DELAY2_INPUT));
 
-    addParam(createParam<SmallMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, 0.0, 2.0, 0.1));
+    addParam(createParam<SmallMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1));
 	addInput(createInput<PJ301MPort>(Vec(53, 153 + 114),   module, TrigDelay::LENGTH2_INPUT));
 
 	addInput(createInput<PJ301MPort>(Vec(13, 153 + 165),   module, TrigDelay::GATE2_INPUT));
