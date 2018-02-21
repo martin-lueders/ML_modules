@@ -15,7 +15,7 @@ struct Sum8mk2 : Module {
 		NUM_OUTPUTS
 	};
 	enum LightIds {
-		NUM_LIGHTS 
+		NUM_LIGHTS
 	};
 
 
@@ -41,10 +41,12 @@ void Sum8mk2::step() {
 
 
 
-Sum8mk2Widget::Sum8mk2Widget() {
+struct Sum8mk2Widget : ModuleWidget {
+	Sum8mk2Widget(Sum8mk2 *module);
+};
 
-	Sum8mk2 *module = new Sum8mk2();
-	setModule(module);
+Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*5, 380);
 
 	{
@@ -55,8 +57,8 @@ Sum8mk2Widget::Sum8mk2Widget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
 
 
@@ -64,12 +66,14 @@ Sum8mk2Widget::Sum8mk2Widget() {
 	const float offset_y = 70, delta_y = 26, offset_x=10.5;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<PJ301MPort>(Vec(offset_x, offset_y + i*delta_y  ),         module, Sum8mk2::IN_INPUT+i));
-        addParam(createParam<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0));
+		addInput(Port::create<PJ301MPort>(Vec(offset_x, offset_y + i*delta_y  ), Port::INPUT, module, Sum8mk2::IN_INPUT+i));
+        addParam(ParamWidget::create<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0));
 	}
 
 
-	addOutput(createOutput<PJ301MPort>(Vec(offset_x, 320), module, Sum8mk2::OUT_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(offset_x, 320), Port::OUTPUT, module, Sum8mk2::OUT_OUTPUT));
 
 
 }
+
+Model *modelSum8mk2 = Model::create<Sum8mk2, Sum8mk2Widget>("ML modules", "Sum8mk2", "Sum8 MkII", UTILITY_TAG, MIXER_TAG);

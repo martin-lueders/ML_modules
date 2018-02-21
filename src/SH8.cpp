@@ -83,10 +83,12 @@ void SH8::step() {
 
 
 
-SH8Widget::SH8Widget() {
+struct SH8Widget : ModuleWidget {
+	SH8Widget(SH8 *module);
+};
 
-	SH8 *module = new SH8();
-	setModule(module);
+SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*8, 380);
 
 	{
@@ -97,10 +99,10 @@ SH8Widget::SH8Widget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 
@@ -108,10 +110,12 @@ SH8Widget::SH8Widget() {
 	const float offset_y = 62, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, SH8::IN1_INPUT+i));
-		addInput(createInput<PJ301MPort>(Vec(row2, offset_y + i*delta_y  ),    module, SH8::TRIG1_INPUT+i));
-		addOutput(createOutput<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), module, SH8::OUT1_OUTPUT+i));
+		addInput(Port::create<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, SH8::IN1_INPUT+i));
+		addInput(Port::create<PJ301MPort>(Vec(row2, offset_y + i*delta_y  ), Port::INPUT, module, SH8::TRIG1_INPUT+i));
+		addOutput(Port::create<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, SH8::OUT1_OUTPUT+i));
 	};
 
 
 }
+
+Model *modelSH8 = Model::create<SH8, SH8Widget>("ML modules", "SH8", "S&H 8", SAMPLE_AND_HOLD_TAG);

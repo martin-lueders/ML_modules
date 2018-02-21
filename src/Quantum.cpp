@@ -1,4 +1,4 @@
-#include "ML_modules.hpp" 
+#include "ML_modules.hpp"
 #include "dsp/digital.hpp"
 
 struct Quantum : Module {
@@ -56,7 +56,7 @@ struct Quantum : Module {
 	};
 
 	Mode mode = LAST;
-		
+
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 
 	void step() override;
@@ -163,10 +163,10 @@ void Quantum::step() {
 	};
 
 
-	if( semiState[tmp_semi] ) 
-	{ 
+	if( semiState[tmp_semi] )
+	{
 		bool changed = !( (octave==last_octave)&&(semi==last_semi));
-		gate = 10.0; 
+		gate = 10.0;
 		quantized = 1.0*octave + semi/12.0;
 		if(changed) pulse.trigger(0.001);
 		last_octave = octave;
@@ -183,13 +183,13 @@ void Quantum::step() {
 
 			while( !semiState[tmp_semi+i_up  ] ) i_up++;
 		 	while( !semiState[tmp_semi-i_down] ) i_down++;
-	
-			switch(mode) {	
+
+			switch(mode) {
 			case UP: 		semi = semi+i_up; break;
 			case DOWN: 		semi = semi-i_down; break;
 			case CLOSEST_UP:   	semi = (i_up > i_down)? semi - i_down : semi + i_up; break;
 			case CLOSEST_DOWN: 	semi = (i_down > i_up)? semi + i_up : semi - i_down; break;
-			case LAST:	
+			case LAST:
 			default:		break;
 			};
 
@@ -226,6 +226,14 @@ struct QuantumModeItem : MenuItem {
                 rightText = (quantum->mode == mode)? "✔" : "";
         };
 
+};
+
+
+struct QuantumWidget : ModuleWidget {
+	QuantumWidget(Quantum *module);
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
 };
 
 Menu *QuantumWidget::createContextMenu() {
@@ -275,9 +283,7 @@ Menu *QuantumWidget::createContextMenu() {
 	return menu;
 };
 
-QuantumWidget::QuantumWidget() {
-	Quantum *module = new Quantum();
-	setModule(module);
+QuantumWidget::QuantumWidget(Quantum *module) : ModuleWidget(module) {
 	box.size = Vec(15*8, 380);
 
 	{
@@ -287,28 +293,30 @@ QuantumWidget::QuantumWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(19, 42), module, Quantum::IN_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(76, 42), module, Quantum::OUT_OUTPUT));
+	addInput(Port::create<PJ301MPort>(Vec(19, 42), Port::INPUT, module, Quantum::IN_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(76, 42), Port::OUTPUT, module, Quantum::OUT_OUTPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(76, 90), module, Quantum::TRANSPOSE_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(76, 140), module, Quantum::GATE_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(76, 180), module, Quantum::TRIGGER_OUTPUT));
+	addInput(Port::create<PJ301MPort>(Vec(76, 90), Port::INPUT, module, Quantum::TRANSPOSE_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(76, 140), Port::OUTPUT, module, Quantum::GATE_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(76, 180), Port::OUTPUT, module, Quantum::TRIGGER_OUTPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(76, 226), module, Quantum::NOTE_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(76, 266), module, Quantum::SET_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(76, 312), module, Quantum::RESET_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(76, 226), Port::INPUT, module, Quantum::NOTE_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(76, 266), Port::INPUT, module, Quantum::SET_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(76, 312), Port::INPUT, module, Quantum::RESET_INPUT));
 
 	static const float offset_x = 23;
 	static const float offset_y = 332;
 
 	for(int i=0; i<12; i++) {
-		addParam(createParam<LEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(createLight<MediumLight<GreenLight>>(Vec(offset_x+4.2, -22*i+4.2+offset_y), module, Quantum::SEMI_1_LIGHT+i));
+		addParam(ParamWidget::create<LEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(offset_x+4.2, -22*i+4.2+offset_y), module, Quantum::SEMI_1_LIGHT+i));
 	}
 
 }
+
+Model *modelQuantum = Model::create<Quantum, QuantumWidget>("ML modules", "Quantum", "Quantum", QUANTIZER_TAG);

@@ -1,6 +1,6 @@
 #include "ML_modules.hpp"
 #include "dsp/digital.hpp"
-#include "math.hpp"
+#include "util/math.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -53,8 +53,8 @@ struct BPMdetect : Module {
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
 
-	inline bool checkBeat(float timer, int mult) { 
-		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4); 
+	inline bool checkBeat(float timer, int mult) {
+		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4);
 	}
 
 	float gSampleRate;
@@ -102,7 +102,7 @@ void BPMdetect::step() {
 			if(timer>0) {
 				float new_seconds;
 
-		
+
 				bool found=false;
 
 				for(int mult=1;  !found && mult < 20; mult++ )  {
@@ -120,7 +120,7 @@ void BPMdetect::step() {
 					misses=0;
 				}
 
-			
+
 				float a = params[SMOOTH_PARAM].value;
 				seconds = ( (1.0-a)*seconds + a*new_seconds);
 				BPM=60.0/seconds;
@@ -131,7 +131,7 @@ void BPMdetect::step() {
 				float denom = roundf(params[DELAY2_PARAM].value);
 
 				delay_volts = 10.0*(3.0+log10(seconds * num/denom))/4.0;
-			
+
 				timer -= seconds;
 				timer1 = 0.0;
 				timer2 = 0.0;
@@ -147,7 +147,7 @@ void BPMdetect::step() {
 		};
 
 	};
-	
+
 	timer += deltaT;
 	timer1 += deltaT;
 	timer2 += deltaT;
@@ -210,9 +210,11 @@ struct NumberDisplayWidget2 : TransparentWidget {
 };
 
 
-BPMdetectWidget::BPMdetectWidget() {
-	BPMdetect *module = new BPMdetect();
-	setModule(module);
+struct BPMdetectWidget : ModuleWidget {
+	BPMdetectWidget(BPMdetect *module);
+};
+
+BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
 	box.size = Vec(15*10, 380);
 
 	{
@@ -232,33 +234,33 @@ BPMdetectWidget::BPMdetectWidget() {
 	const float row4 = row3 + 58;
 	const float row5 = 316;
 
-	
-
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	addInput(createInput<PJ301MPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
-    addParam(createParam<SmallMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
-	addOutput(createOutput<PJ301MPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
-
-    addParam(createParam<SmallMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
-    addParam(createParam<SmallMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row2+2),    module, BPMdetect::TRIG2_OUTPUT));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-    addParam(createParam<SmallMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
-    addParam(createParam<SmallMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row3+2),    module, BPMdetect::TRIG3_OUTPUT));
+	addInput(Port::create<PJ301MPort>(Vec(column1+5,  row1+2), Port::INPUT, module, BPMdetect::GATE_INPUT));
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
+	addOutput(Port::create<PJ301MPort>(Vec(column3-5,row1+2), Port::OUTPUT, module, BPMdetect::TRIG1_OUTPUT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(column1, row4),    module, BPMdetect::LFO_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row4),    module, BPMdetect::SEQ_OUTPUT));
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
+	addOutput(Port::create<PJ301MPort>(Vec(column3, row2+2), Port::OUTPUT, module, BPMdetect::TRIG2_OUTPUT));
 
-    addParam(createParam<SmallMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
-    addParam(createParam<SmallMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
-	addOutput(createOutput<PJ301MPort>(Vec(column3, row5),    module, BPMdetect::DELAY_OUTPUT));
+
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
+	addOutput(Port::create<PJ301MPort>(Vec(column3, row3+2), Port::OUTPUT, module, BPMdetect::TRIG3_OUTPUT));
+
+	addOutput(Port::create<PJ301MPort>(Vec(column1, row4), Port::OUTPUT, module, BPMdetect::LFO_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(column3, row4), Port::OUTPUT, module, BPMdetect::SEQ_OUTPUT));
+
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
+    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
+	addOutput(Port::create<PJ301MPort>(Vec(column3, row5), Port::OUTPUT, module, BPMdetect::DELAY_OUTPUT));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
 	display->box.pos = Vec(25,40);
@@ -266,6 +268,8 @@ BPMdetectWidget::BPMdetectWidget() {
 	display->value = &module->BPM;
 	addChild(display);
 
-	
+
 
 }
+
+Model *modelBPMdetect = Model::create<BPMdetect, BPMdetectWidget>("ML modules", "BPMdetect", "BPM Tools", UTILITY_TAG, CLOCK_TAG);

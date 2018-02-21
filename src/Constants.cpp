@@ -62,10 +62,12 @@ void Constants::step() {
 
 
 
-ConstantsWidget::ConstantsWidget() {
+struct ConstantsWidget : ModuleWidget {
+	ConstantsWidget(Constants *module);
+};
 
-	Constants *module = new Constants();
-	setModule(module);
+ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*6, 380);
 
 	{
@@ -76,8 +78,8 @@ ConstantsWidget::ConstantsWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
 
 
@@ -87,10 +89,12 @@ ConstantsWidget::ConstantsWidget() {
 
 	for(int i=0; i<7; i++) {
 
-		addOutput(createOutput<PJ301MPort>(Vec(offset_xR, offset_y + i*delta_y), module, Constants::P_1_OUTPUT + i));
-		addOutput(createOutput<PJ301MPort>(Vec(offset_xL, offset_y + i*delta_y), module, Constants::M_1_OUTPUT + i));
+		addOutput(Port::create<PJ301MPort>(Vec(offset_xR, offset_y + i*delta_y), Port::OUTPUT, module, Constants::P_1_OUTPUT + i));
+		addOutput(Port::create<PJ301MPort>(Vec(offset_xL, offset_y + i*delta_y), Port::OUTPUT, module, Constants::M_1_OUTPUT + i));
 
 	};
 
 
 }
+
+Model *modelConstants = Model::create<Constants, ConstantsWidget>("ML modules", "Constants", "Constants", UTILITY_TAG);

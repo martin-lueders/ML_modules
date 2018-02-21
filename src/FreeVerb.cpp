@@ -112,10 +112,12 @@ void FreeVerb::step() {
 
 
 
-FreeVerbWidget::FreeVerbWidget() {
+struct FreeVerbWidget : ModuleWidget {
+	FreeVerbWidget(FreeVerb *module);
+};
 
-	FreeVerb *module = new FreeVerb();
-	setModule(module);
+FreeVerbWidget::FreeVerbWidget(FreeVerb *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*6, 380);
 
 	{
@@ -125,23 +127,25 @@ FreeVerbWidget::FreeVerbWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(33, 50),    module, FreeVerb::IN_INPUT));
-
-
-	addInput(createInput<PJ301MPort>(Vec(53, 120),    module, FreeVerb::ROOMSIZE_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(53, 183),    module, FreeVerb::DAMP_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(53, 246),    module, FreeVerb::FREEZE_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(33, 50), Port::INPUT, module, FreeVerb::IN_INPUT));
 
 
+	addInput(Port::create<PJ301MPort>(Vec(53, 120), Port::INPUT, module, FreeVerb::ROOMSIZE_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(53, 183), Port::INPUT, module, FreeVerb::DAMP_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(53, 246), Port::INPUT, module, FreeVerb::FREEZE_INPUT));
 
-        addParam(createParam<SmallMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
-        addParam(createParam<SmallMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
-        addParam(createParam<LEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
-        addChild(createLight<SmallLight<GreenLight>>(Vec(19,255), module, FreeVerb::FREEZE_LIGHT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));
+
+        addParam(ParamWidget::create<SmallMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<SmallMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<LEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
+        addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(19,255), module, FreeVerb::FREEZE_LIGHT));
+
+	addOutput(Port::create<PJ301MPort>(Vec(11, 313), Port::OUTPUT, module, FreeVerb::OUT1_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(55, 313), Port::OUTPUT, module, FreeVerb::OUT2_OUTPUT));
 }
+
+Model *modelFreeVerb = Model::create<FreeVerb, FreeVerbWidget>("ML modules", "FreeVerb", "FreeVerb", REVERB_TAG);

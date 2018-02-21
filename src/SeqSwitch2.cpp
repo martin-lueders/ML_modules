@@ -87,13 +87,13 @@ struct SeqSwitch2 : Module {
 		json_t *rootJ = json_object();
 
 		// outMode:
-	
+
 		json_object_set_new(rootJ, "outMode", json_integer(outMode));
 		json_object_set_new(rootJ, "inputRange", json_integer(inputRange));
 
 		return rootJ;
 	};
-	
+
 	void fromJson(json_t *rootJ) override {
 
 		// outMode:
@@ -119,7 +119,7 @@ void SeqSwitch2::step() {
 
 	if( inputs[POS_INPUT].active ) {
 
-//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ; 
+//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ;
 
 		float in_value = clampf( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
 
@@ -159,10 +159,15 @@ void SeqSwitch2::step() {
 
 
 
-SeqSwitch2Widget::SeqSwitch2Widget() {
+struct SeqSwitch2Widget : ModuleWidget {
+	SeqSwitch2Widget(SeqSwitch2 *module);
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
+};
 
-	SeqSwitch2 *module = new SeqSwitch2();
-	setModule(module);
+SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*8, 380);
 
 	{
@@ -172,55 +177,55 @@ SeqSwitch2Widget::SeqSwitch2Widget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	addParam(createParam<RedMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0));
+	addParam(ParamWidget::create<RedMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0));
 
-	addInput(createInput<PJ301MPort>(Vec(82, 66),    module, SeqSwitch2::NUMSTEPS_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(82, 66), Port::INPUT, module, SeqSwitch2::NUMSTEPS_INPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 272),    module, SeqSwitch2::TRIGUP_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(50, 272),    module, SeqSwitch2::RESET_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(86, 272),    module, SeqSwitch2::TRIGDN_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(10, 272), Port::INPUT, module, SeqSwitch2::TRIGUP_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(50, 272), Port::INPUT, module, SeqSwitch2::RESET_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(86, 272), Port::INPUT, module, SeqSwitch2::TRIGDN_INPUT));
 
 	const float offset_y = 118, delta_y=38;
 
-	addOutput(createOutput<PJ301MPort>(Vec(31, offset_y + 0*delta_y),    module, SeqSwitch2::OUT1_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(31, offset_y + 1*delta_y),    module, SeqSwitch2::OUT2_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(31, offset_y + 2*delta_y),    module, SeqSwitch2::OUT3_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(31, offset_y + 3*delta_y),    module, SeqSwitch2::OUT4_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(31, offset_y + 0*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT1_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(31, offset_y + 1*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT2_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(31, offset_y + 2*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT3_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(31, offset_y + 3*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT4_OUTPUT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(64, offset_y + 0*delta_y),    module, SeqSwitch2::OUT5_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(64, offset_y + 1*delta_y),    module, SeqSwitch2::OUT6_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(64, offset_y + 2*delta_y),    module, SeqSwitch2::OUT7_OUTPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(64, offset_y + 3*delta_y),    module, SeqSwitch2::OUT8_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(64, offset_y + 0*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT5_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(64, offset_y + 1*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT6_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(64, offset_y + 2*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT7_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(64, offset_y + 3*delta_y), Port::OUTPUT, module, SeqSwitch2::OUT8_OUTPUT));
 
-	addParam(createParam<LEDButton>(Vec(12, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP1_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(12, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP2_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(12, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP3_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(12, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP4_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(12, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP1_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(12, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP2_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(12, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP3_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(12, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP4_PARAM, 0.0, 1.0, 0.0));
 
-	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP5_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP6_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP7_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<LEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP8_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP5_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP6_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP7_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<LEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP8_PARAM, 0.0, 1.0, 0.0));
 
 
-        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP3_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP4_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP3_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(16.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP4_LIGHT));
 
-        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP5_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP6_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
-        addChild(createLight<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 0*delta_y), module, SeqSwitch2::STEP5_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 1*delta_y), module, SeqSwitch2::STEP6_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
+        addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(93.2, offset_y + 7.2 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
 
-	addInput(createInput<PJ301MPort>(Vec(20, 320),    module, SeqSwitch2::POS_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(76, 320), module, SeqSwitch2::IN_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(20, 320), Port::INPUT, module, SeqSwitch2::POS_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(76, 320), Port::INPUT, module, SeqSwitch2::IN_INPUT));
 
 };
 
@@ -272,13 +277,13 @@ Menu *SeqSwitch2Widget::createContextMenu() {
 	menu->pushChild(modeLabel);
 
 	SeqSwitch2OutModeItem *zeroItem = new SeqSwitch2OutModeItem();
-	zeroItem->text = "Zero";	
+	zeroItem->text = "Zero";
 	zeroItem->seqSwitch2 = seqSwitch2;
 	zeroItem->outMode = SeqSwitch2::ZERO;
 	menu->pushChild(zeroItem);
 
 	SeqSwitch2OutModeItem *lastItem = new SeqSwitch2OutModeItem();
-	lastItem->text = "Last";	
+	lastItem->text = "Last";
 	lastItem->seqSwitch2 = seqSwitch2;
 	lastItem->outMode = SeqSwitch2::LAST;
 	menu->pushChild(lastItem);
@@ -288,28 +293,30 @@ Menu *SeqSwitch2Widget::createContextMenu() {
 	menu->pushChild(modeLabel2);
 
 	SeqSwitch2RangeItem *zeroEightItem = new SeqSwitch2RangeItem();
-	zeroEightItem->text = "0 - 8V";	
+	zeroEightItem->text = "0 - 8V";
 	zeroEightItem->seqSwitch2 = seqSwitch2;
 	zeroEightItem->inputRange = SeqSwitch2::Zero_Eight;
 	menu->pushChild(zeroEightItem);
 
 	SeqSwitch2RangeItem *zeroSixItem = new SeqSwitch2RangeItem();
-	zeroSixItem->text = "0 - 6V";	
+	zeroSixItem->text = "0 - 6V";
 	zeroSixItem->seqSwitch2 = seqSwitch2;
 	zeroSixItem->inputRange = SeqSwitch2::Zero_Six;
 	menu->pushChild(zeroSixItem);
 
 	SeqSwitch2RangeItem *zeroTenItem = new SeqSwitch2RangeItem();
-	zeroTenItem->text = "0 - 10V";	
+	zeroTenItem->text = "0 - 10V";
 	zeroTenItem->seqSwitch2 = seqSwitch2;
 	zeroTenItem->inputRange = SeqSwitch2::Zero_Ten;
 	menu->pushChild(zeroTenItem);
 
 	SeqSwitch2RangeItem *fiveFiveItem = new SeqSwitch2RangeItem();
-	fiveFiveItem->text = "-5 - 5V";	
+	fiveFiveItem->text = "-5 - 5V";
 	fiveFiveItem->seqSwitch2 = seqSwitch2;
 	fiveFiveItem->inputRange = SeqSwitch2::MinusFive_Five;;
 	menu->pushChild(fiveFiveItem);
 
 	return menu;
 };
+
+Model *modelSeqSwitch2 = Model::create<SeqSwitch2, SeqSwitch2Widget>("ML modules", "SeqSwitch2", "Sequential Switch 1->8", SWITCH_TAG);

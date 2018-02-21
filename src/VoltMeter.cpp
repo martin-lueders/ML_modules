@@ -97,9 +97,12 @@ struct VoltDisplayWidget : TransparentWidget {
 };
 
 
-VoltMeterWidget::VoltMeterWidget() {
-	VoltMeter *module = new VoltMeter();
-	setModule(module);
+struct VoltMeterWidget : ModuleWidget {
+	VoltMeterWidget(VoltMeter *module);
+	TextField ** label;
+};
+
+VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 
 	box.size = Vec(15*8, 380);
 
@@ -115,13 +118,13 @@ VoltMeterWidget::VoltMeterWidget() {
 
 	const float delta_y = 70;
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
 
 	for(int i=0; i<4; i++) {
 
-		addInput(createInput<PJ301MPort>(Vec(12, 60+i*delta_y), module, VoltMeter::IN1_INPUT+i));
+		addInput(Port::create<PJ301MPort>(Vec(12, 60+i*delta_y), Port::INPUT, module, VoltMeter::IN1_INPUT+i));
 
 
 		VoltDisplayWidget *display = new VoltDisplayWidget();
@@ -139,3 +142,5 @@ VoltMeterWidget::VoltMeterWidget() {
 	
 
 }
+
+Model *modelVoltMeter = Model::create<VoltMeter, VoltMeterWidget>("ML modules", "VoltMeter", "Volt Meter", UTILITY_TAG);

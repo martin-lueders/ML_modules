@@ -53,9 +53,11 @@ void Quant::step() {
 }
 
 
-QuantizerWidget::QuantizerWidget() {
-	Quant *module = new Quant();
-	setModule(module);
+struct QuantizerWidget : ModuleWidget {
+	QuantizerWidget(Quant *module);
+};
+
+QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
 	box.size = Vec(15*3, 380);
 
 	{
@@ -65,14 +67,16 @@ QuantizerWidget::QuantizerWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
-	addParam(createParam<SmallMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
-	addInput(createInput<PJ301MPort>(Vec(10, 105), module, Quant::IN1_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, Quant::OUT1_OUTPUT));
+	addParam(ParamWidget::create<SmallMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
+	addInput(Port::create<PJ301MPort>(Vec(10, 105), Port::INPUT, module, Quant::IN1_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(10, 150), Port::OUTPUT, module, Quant::OUT1_OUTPUT));
 
-	addParam(createParam<SmallMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
-	addInput(createInput<PJ301MPort>(Vec(10, 245), module, Quant::IN2_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 290), module, Quant::OUT2_OUTPUT));
+	addParam(ParamWidget::create<SmallMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
+	addInput(Port::create<PJ301MPort>(Vec(10, 245), Port::INPUT, module, Quant::IN2_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(10, 290), Port::OUTPUT, module, Quant::OUT2_OUTPUT));
 }
+
+Model *modelQuantizer = Model::create<Quant, QuantizerWidget>("ML modules", "Quantizer", "Quantizer (h-bar)", QUANTIZER_TAG);
