@@ -25,7 +25,7 @@ struct ShiftRegister : Module {
 		OUT7_OUTPUT,
 		OUT8_OUTPUT,
 		// OUT_OUTPUT,
-		NUM_OUTPUTS 
+		NUM_OUTPUTS
 	};
         enum LightIds {
                 STEP1_LIGHT,
@@ -92,10 +92,12 @@ void ShiftRegister::step() {
 
 
 
-ShiftRegisterWidget::ShiftRegisterWidget() {
+struct ShiftRegisterWidget : ModuleWidget {
+	ShiftRegisterWidget(ShiftRegister *module);
+};
 
-	ShiftRegister *module = new ShiftRegister();
-	setModule(module);
+ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*4, 380);
 
 	{
@@ -106,8 +108,8 @@ ShiftRegisterWidget::ShiftRegisterWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
 
 
@@ -116,12 +118,14 @@ ShiftRegisterWidget::ShiftRegisterWidget() {
 
 	for( int i=0; i<8; i++) {
 
-		addOutput(createOutput<PJ301MPort>(Vec(offset_x+17, offset_y + i*delta_y  ),    module, ShiftRegister::OUT1_OUTPUT+i));
-		addChild(createLight<SmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
+		addOutput(Port::create<PJ301MPort>(Vec(offset_x+17, offset_y + i*delta_y  ), Port::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
+		addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 
-	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 58), module, ShiftRegister::IN_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(offset_x+17, 94), module, ShiftRegister::TRIGGER_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(offset_x+17, 58), Port::INPUT, module, ShiftRegister::IN_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(offset_x+17, 94), Port::INPUT, module, ShiftRegister::TRIGGER_INPUT));
 
 }
+
+Model *modelShiftRegister = Model::create<ShiftRegister, ShiftRegisterWidget>("ML modules", "ShiftRegister", "Shift Register",SAMPLE_AND_HOLD_TAG);

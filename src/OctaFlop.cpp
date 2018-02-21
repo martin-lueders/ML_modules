@@ -102,10 +102,12 @@ void OctaFlop::step() {
 
 
 
-OctaFlopWidget::OctaFlopWidget() {
+struct OctaFlopWidget : ModuleWidget {
+	OctaFlopWidget(OctaFlop *module);
+};
 
-	OctaFlop *module = new OctaFlop();
-	setModule(module);
+OctaFlopWidget::OctaFlopWidget(OctaFlop *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*8, 380);
 
 	{
@@ -116,23 +118,25 @@ OctaFlopWidget::OctaFlopWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 
 	const float offset_y = 62, delta_y = 32, row1=15, row2 = 55, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, OctaFlop::TRIG1_INPUT+i));
+		addInput(Port::create<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, OctaFlop::TRIG1_INPUT+i));
 
-        addChild(createLight<SmallLight<GreenLight>>(Vec(row2, offset_y + 8 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
-		addOutput(createOutput<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), module, OctaFlop::OUT1_OUTPUT+i));
+        addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(row2, offset_y + 8 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
+		addOutput(Port::create<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaFlop::OUT1_OUTPUT+i));
 	};
 
-        addParam(createParam<LEDButton>(Vec(row1+3, 320+3), module, OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0));
-		addInput(createInput<PJ301MPort>(Vec(row3, 320),    module, OctaFlop::RESET_INPUT));
+        addParam(ParamWidget::create<LEDButton>(Vec(row1+3, 320+3), module, OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0));
+		addInput(Port::create<PJ301MPort>(Vec(row3, 320), Port::INPUT, module, OctaFlop::RESET_INPUT));
 
 }
+
+Model *modelOctaFlop = Model::create<OctaFlop, OctaFlopWidget>("ML modules", "OctaFlop", "OctaFlop", UTILITY_TAG, CLOCK_TAG);

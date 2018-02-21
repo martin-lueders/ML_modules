@@ -108,10 +108,15 @@ struct TrigSwitch2OutModeItem : MenuItem {
 };
 
 
-TrigSwitch2Widget::TrigSwitch2Widget() {
+struct TrigSwitch2Widget : ModuleWidget {
+	TrigSwitch2Widget(TrigSwitch2 *module);
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
+};
 
-	TrigSwitch2 *module = new TrigSwitch2();
-	setModule(module);
+TrigSwitch2Widget::TrigSwitch2Widget(TrigSwitch2 *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*8, 380);
 
 	{
@@ -121,22 +126,22 @@ TrigSwitch2Widget::TrigSwitch2Widget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 	const float offset_y = 62, delta_y = 32, row1=15, row2 = 55, row3 = 80;
 
 	for (int i=0; i<8; i++) {
 
-		addInput(createInput<PJ301MPort>(             Vec(row1, offset_y + i*delta_y),     module, TrigSwitch2::TRIG_INPUT + i));
-		addChild(createLight<SmallLight<GreenLight>>( Vec(row2, offset_y + i*delta_y + 8), module, TrigSwitch2::STEP_LIGHT+i));
-		addOutput(createOutput<PJ301MPort>(           Vec(row3, offset_y + i*delta_y),     module, TrigSwitch2::OUT_OUTPUT + i));
+		addInput(Port::create<PJ301MPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch2::TRIG_INPUT + i));
+		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>( Vec(row2, offset_y + i*delta_y + 8), module, TrigSwitch2::STEP_LIGHT+i));
+		addOutput(Port::create<PJ301MPort>(           Vec(row3, offset_y + i*delta_y), Port::OUTPUT, module, TrigSwitch2::OUT_OUTPUT + i));
 
 	}
-	addInput(createInput<PJ301MPort>(Vec(row3, 320), module, TrigSwitch2::CV_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(row3, 320), Port::INPUT, module, TrigSwitch2::CV_INPUT));
 
 }
 
@@ -169,3 +174,5 @@ Menu *TrigSwitch2Widget::createContextMenu() {
 
 	return menu;
 };
+
+Model *modelTrigSwitch2 = Model::create<TrigSwitch2, TrigSwitch2Widget>("ML modules", "TrigSwitch2", "TrigSwitch 1->8", SWITCH_TAG, UTILITY_TAG );

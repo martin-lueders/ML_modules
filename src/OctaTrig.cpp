@@ -107,10 +107,12 @@ void OctaTrig::step() {
 
 
 
-OctaTrigWidget::OctaTrigWidget() {
+struct OctaTrigWidget : ModuleWidget {
+	OctaTrigWidget(OctaTrig *module);
+};
 
-	OctaTrig *module = new OctaTrig();
-	setModule(module);
+OctaTrigWidget::OctaTrigWidget(OctaTrig *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*10, 380);
 
 	{
@@ -121,22 +123,24 @@ OctaTrigWidget::OctaTrigWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
 
 	const float offset_y = 62, delta_y = 32, row1=15, row2 = 50, row3 = 80, row4 = 110;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ),    module, OctaTrig::IN1_INPUT+i));
+		addInput(Port::create<PJ301MPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, OctaTrig::IN1_INPUT+i));
 
-		addOutput(createOutput<PJ301MPort>(Vec(row2, offset_y + i*delta_y ), module, OctaTrig::UP1_OUTPUT+i));
-		addOutput(createOutput<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTrig::DN1_OUTPUT+i));
-		addOutput(createOutput<PJ301MPort>(Vec(row4, offset_y + i*delta_y ), module, OctaTrig::SUM1_OUTPUT+i));
+		addOutput(Port::create<PJ301MPort>(Vec(row2, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::UP1_OUTPUT+i));
+		addOutput(Port::create<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::DN1_OUTPUT+i));
+		addOutput(Port::create<PJ301MPort>(Vec(row4, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::SUM1_OUTPUT+i));
 	};
 
 
 }
+
+Model *modelOctaTrig = Model::create<OctaTrig, OctaTrigWidget>("ML modules", "OctaTrig", "OctaTrig", UTILITY_TAG );

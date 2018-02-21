@@ -159,10 +159,12 @@ void TrigBuf::step() {
 
 
 
-TrigBufWidget::TrigBufWidget() {
+struct TrigBufWidget : ModuleWidget {
+	TrigBufWidget(TrigBuf *module);
+};
 
-	TrigBuf *module = new TrigBuf();
-	setModule(module);
+TrigBufWidget::TrigBufWidget(TrigBuf *module) : ModuleWidget(module) {
+
 	box.size = Vec(15*4, 380);
 
 	{
@@ -172,17 +174,19 @@ TrigBufWidget::TrigBufWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 62),    module, TrigBuf::ARM1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 105),    module, TrigBuf::GATE1_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 150), module, TrigBuf::OUT1_OUTPUT));
+	addInput(Port::create<PJ301MPort>(Vec(10, 62), Port::INPUT, module, TrigBuf::ARM1_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(10, 105), Port::INPUT, module, TrigBuf::GATE1_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(10, 150), Port::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
 
-	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 66), module, TrigBuf::ARM1_LIGHT));
+	addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(46, 66), module, TrigBuf::ARM1_LIGHT));
 
-	addInput(createInput<PJ301MPort>(Vec(10, 218),   module, TrigBuf::ARM2_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(10, 263),   module, TrigBuf::GATE2_INPUT));
-	addOutput(createOutput<PJ301MPort>(Vec(10, 305), module, TrigBuf::OUT2_OUTPUT));
-	addChild(createLight<SmallLight<GreenLight>>(Vec(46, 222), module, TrigBuf::ARM2_LIGHT));
+	addInput(Port::create<PJ301MPort>(Vec(10, 218), Port::INPUT, module, TrigBuf::ARM2_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(10, 263), Port::INPUT, module, TrigBuf::GATE2_INPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(10, 305), Port::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
+	addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(46, 222), module, TrigBuf::ARM2_LIGHT));
 }
+
+Model *modelTrigBuf = Model::create<TrigBuf, TrigBufWidget>("ML modules", "TrigBuf", "Trigger Buffer", UTILITY_TAG);
