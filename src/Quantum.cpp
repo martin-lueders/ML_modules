@@ -79,7 +79,7 @@ struct Quantum : Module {
 
 	void randomize() override {
 		for (int i = 0; i<12; i++) {
-			semiState[i] = (randomf() > 0.5);
+			semiState[i] = (randomUniform() > 0.5);
 			semiLight[i] = semiState[i]?1.0:0.0;
 		};
 		last_octave = 0;
@@ -241,44 +241,44 @@ Menu *QuantumWidget::createContextMenu() {
         Menu *menu = ModuleWidget::createContextMenu();
 
         MenuLabel *spacerLabel = new MenuLabel();
-        menu->pushChild(spacerLabel);
+        menu->addChild(spacerLabel);
 
         Quantum *quantum = dynamic_cast<Quantum*>(module);
         assert(quantum);
 
         MenuLabel *modeLabel = new MenuLabel();
         modeLabel->text = "Mode";
-        menu->pushChild(modeLabel);
+        menu->addChild(modeLabel);
 
         QuantumModeItem *last_Item = new QuantumModeItem();
         last_Item->text = "Last";
         last_Item->quantum = quantum;
         last_Item->mode = Quantum::LAST;
-        menu->pushChild(last_Item);
+        menu->addChild(last_Item);
 
         QuantumModeItem *up_Item = new QuantumModeItem();
         up_Item->text = "Up";
         up_Item->quantum = quantum;
         up_Item->mode = Quantum::UP;
-        menu->pushChild(up_Item);
+        menu->addChild(up_Item);
 
         QuantumModeItem *down_Item = new QuantumModeItem();
         down_Item->text = "Down";
         down_Item->quantum = quantum;
         down_Item->mode = Quantum::DOWN;
-        menu->pushChild(down_Item);
+        menu->addChild(down_Item);
 
         QuantumModeItem *cl_up_Item = new QuantumModeItem();
         cl_up_Item->text = "Closest, up";
         cl_up_Item->quantum = quantum;
         cl_up_Item->mode = Quantum::CLOSEST_UP;
-        menu->pushChild(cl_up_Item);
+        menu->addChild(cl_up_Item);
 
         QuantumModeItem *cl_dn_Item = new QuantumModeItem();
         cl_dn_Item->text = "Closest, Down";
         cl_dn_Item->quantum = quantum;
         cl_dn_Item->mode = Quantum::CLOSEST_DOWN;
-        menu->pushChild(cl_dn_Item);
+        menu->addChild(cl_dn_Item);
 
 	return menu;
 };

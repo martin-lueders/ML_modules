@@ -150,26 +150,26 @@ Menu *TrigSwitch2Widget::createContextMenu() {
 	Menu *menu = ModuleWidget::createContextMenu();
 
 	MenuLabel *spacerLabel = new MenuLabel();
-	menu->pushChild(spacerLabel);
+	menu->addChild(spacerLabel);
 
 	TrigSwitch2 *trigSwitch2 = dynamic_cast<TrigSwitch2*>(module);
 	assert(trigSwitch2);
 
 	MenuLabel *modeLabel = new MenuLabel();
 	modeLabel->text = "Output Mode";
-	menu->pushChild(modeLabel);
+	menu->addChild(modeLabel);
 
 	TrigSwitch2OutModeItem *zeroItem = new TrigSwitch2OutModeItem();
 	zeroItem->text = "Zero";	
 	zeroItem->trigSwitch2 = trigSwitch2;
 	zeroItem->outMode = TrigSwitch2::ZERO;
-	menu->pushChild(zeroItem);
+	menu->addChild(zeroItem);
 
 	TrigSwitch2OutModeItem *lastItem = new TrigSwitch2OutModeItem();
 	lastItem->text = "Last";	
 	lastItem->trigSwitch2 = trigSwitch2;
 	lastItem->outMode = TrigSwitch2::LAST;
-	menu->pushChild(lastItem);
+	menu->addChild(lastItem);
 
 
 	return menu;

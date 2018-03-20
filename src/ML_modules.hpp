@@ -26,26 +26,28 @@ struct POLSWITCH : SVGSwitch, ToggleSwitch {
 struct MLKnob : RoundKnob {
 	MLKnob() {
 		setSVG(SVG::load(assetPlugin(plugin,"res/Knob.svg")));
-		box.size = Vec(36, 36);
+		// box.size = Vec(36, 36);
 	}
 };
 
 struct RedMLKnob : RoundKnob {
 	RedMLKnob() {
 		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob.svg")));
-		box.size = Vec(36, 36);
+		//shadow->blurRadius = 0.0f;
+		//shadow->opacity = 0.15f;
+		//shadow->box.pos = Vec(box.size.x * 0.00f, box.size.y * 0.1f);
 	}
 };
 
-struct SmallMLKnob : MLKnob {
+struct SmallMLKnob : RoundKnob {
 	SmallMLKnob() {
-		box.size = Vec(28, 28);
+		setSVG(SVG::load(assetPlugin(plugin,"res/Knob_28.svg")));
 	}
 };
 
-struct SmallRedMLKnob : RedMLKnob {
+struct SmallRedMLKnob : RoundKnob {
 	SmallRedMLKnob() {
-		box.size = Vec(28, 28);
+		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob_28.svg")));
 	}
 };
 

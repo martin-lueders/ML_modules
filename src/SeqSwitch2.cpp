@@ -112,18 +112,18 @@ struct SeqSwitch2 : Module {
 
 void SeqSwitch2::step() {
 
-	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0; }
+	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0f; }
 
-	int numSteps = round(clampf(params[NUM_STEPS].value,1.0,8.0));
-	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clampf(inputs[NUMSTEPS_INPUT].value,1.0,8.0));
+	int numSteps = round(clamp(params[NUM_STEPS].value,1.0f,8.0f));
+	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clamp(inputs[NUMSTEPS_INPUT].value,1.0f,8.0f));
 
 	if( inputs[POS_INPUT].active ) {
 
-//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ;
+//		position = round( clamp( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ;
 
-		float in_value = clampf( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
+		float in_value = clamp( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
 
-		position = round( rescalef( in_value, in_min[inputRange], in_max[inputRange], 0, numSteps-1 ) );
+		position = round( rescale( in_value, in_min[inputRange], in_max[inputRange], 0.0f, 1.0f*(numSteps-1) ) );
 
 	} else {
 
@@ -267,54 +267,54 @@ Menu *SeqSwitch2Widget::createContextMenu() {
 	Menu *menu = ModuleWidget::createContextMenu();
 
 	MenuLabel *spacerLabel = new MenuLabel();
-	menu->pushChild(spacerLabel);
+	menu->addChild(spacerLabel);
 
 	SeqSwitch2 *seqSwitch2 = dynamic_cast<SeqSwitch2*>(module);
 	assert(seqSwitch2);
 
 	MenuLabel *modeLabel = new MenuLabel();
 	modeLabel->text = "Output Mode";
-	menu->pushChild(modeLabel);
+	menu->addChild(modeLabel);
 
 	SeqSwitch2OutModeItem *zeroItem = new SeqSwitch2OutModeItem();
 	zeroItem->text = "Zero";
 	zeroItem->seqSwitch2 = seqSwitch2;
 	zeroItem->outMode = SeqSwitch2::ZERO;
-	menu->pushChild(zeroItem);
+	menu->addChild(zeroItem);
 
 	SeqSwitch2OutModeItem *lastItem = new SeqSwitch2OutModeItem();
 	lastItem->text = "Last";
 	lastItem->seqSwitch2 = seqSwitch2;
 	lastItem->outMode = SeqSwitch2::LAST;
-	menu->pushChild(lastItem);
+	menu->addChild(lastItem);
 
 	MenuLabel *modeLabel2 = new MenuLabel();
 	modeLabel2->text = "Input Range";
-	menu->pushChild(modeLabel2);
+	menu->addChild(modeLabel2);
 
 	SeqSwitch2RangeItem *zeroEightItem = new SeqSwitch2RangeItem();
 	zeroEightItem->text = "0 - 8V";
 	zeroEightItem->seqSwitch2 = seqSwitch2;
 	zeroEightItem->inputRange = SeqSwitch2::Zero_Eight;
-	menu->pushChild(zeroEightItem);
+	menu->addChild(zeroEightItem);
 
 	SeqSwitch2RangeItem *zeroSixItem = new SeqSwitch2RangeItem();
 	zeroSixItem->text = "0 - 6V";
 	zeroSixItem->seqSwitch2 = seqSwitch2;
 	zeroSixItem->inputRange = SeqSwitch2::Zero_Six;
-	menu->pushChild(zeroSixItem);
+	menu->addChild(zeroSixItem);
 
 	SeqSwitch2RangeItem *zeroTenItem = new SeqSwitch2RangeItem();
 	zeroTenItem->text = "0 - 10V";
 	zeroTenItem->seqSwitch2 = seqSwitch2;
 	zeroTenItem->inputRange = SeqSwitch2::Zero_Ten;
-	menu->pushChild(zeroTenItem);
+	menu->addChild(zeroTenItem);
 
 	SeqSwitch2RangeItem *fiveFiveItem = new SeqSwitch2RangeItem();
 	fiveFiveItem->text = "-5 - 5V";
 	fiveFiveItem->seqSwitch2 = seqSwitch2;
 	fiveFiveItem->inputRange = SeqSwitch2::MinusFive_Five;;
-	menu->pushChild(fiveFiveItem);
+	menu->addChild(fiveFiveItem);
 
 	return menu;
 };

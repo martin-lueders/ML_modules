@@ -57,7 +57,7 @@ void Counter::step() {
 	max = params[MAX_PARAM].value;
 
 
-	if( inputs[LENGTH_INPUT].active ) max = max * clampf(inputs[LENGTH_INPUT].value/10.0,0,1.0);
+	if( inputs[LENGTH_INPUT].active ) max = max * clamp(inputs[LENGTH_INPUT].value/10.0,0,1.0);
 
 	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].value )) {
 		state=true; 
@@ -104,7 +104,7 @@ struct NumberDisplayWidget : TransparentWidget {
     font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) {
+  void draw(NVGcontext *vg) override {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);

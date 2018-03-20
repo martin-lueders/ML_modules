@@ -104,16 +104,16 @@ void SeqSwitch::step() {
 
 	float out=0.0;
 
-	int numSteps = round(clampf(params[NUM_STEPS].value,1.0,8.0));
-	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clampf(inputs[NUMSTEPS_INPUT].value,1.0,8.0));
+	int numSteps = round(clamp(params[NUM_STEPS].value,1.0f,8.0f));
+	if( inputs[NUMSTEPS_INPUT].active ) numSteps = round(clamp(inputs[NUMSTEPS_INPUT].value,1.0f,8.0f));
 
 	if( inputs[POS_INPUT].active ) {
 
-//		position = round( clampf( inputs[POS_INPUT].value,0.0,8.0))/8.0 * (numSteps-1) ;
+//		position = round( clamp( inputs[POS_INPUT].value,0.0f,8.0f))/8.0f * (numSteps-1) ;
 
-                float in_value = clampf( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
+                float in_value = clamp( inputs[POS_INPUT].value,in_min[inputRange],in_max[inputRange] );
 
-                position = round( rescalef( in_value, in_min[inputRange], in_max[inputRange], 0, numSteps-1 ) );
+                position = round( rescale( in_value, in_min[inputRange], in_max[inputRange], 0.0f, 1.0f*(numSteps-1) ) );
 
 
 	} else {
@@ -177,38 +177,38 @@ Menu *SeqSwitchWidget::createContextMenu() {
         Menu *menu = ModuleWidget::createContextMenu();
 
         MenuLabel *spacerLabel = new MenuLabel();
-        menu->pushChild(spacerLabel);
+        menu->addChild(spacerLabel);
 
         SeqSwitch *seqSwitch = dynamic_cast<SeqSwitch*>(module);
         assert(seqSwitch);
 
         MenuLabel *modeLabel2 = new MenuLabel();
         modeLabel2->text = "Input Range";
-        menu->pushChild(modeLabel2);
+        menu->addChild(modeLabel2);
 
         SeqSwitchRangeItem *zeroEightItem = new SeqSwitchRangeItem();
         zeroEightItem->text = "0 - 8V";
         zeroEightItem->seqSwitch = seqSwitch;
         zeroEightItem->inputRange = SeqSwitch::Zero_Eight;
-        menu->pushChild(zeroEightItem);
+        menu->addChild(zeroEightItem);
 
         SeqSwitchRangeItem *zeroSixItem = new SeqSwitchRangeItem();
         zeroSixItem->text = "0 - 6V";
         zeroSixItem->seqSwitch = seqSwitch;
         zeroSixItem->inputRange = SeqSwitch::Zero_Six;
-        menu->pushChild(zeroSixItem);
+        menu->addChild(zeroSixItem);
 
         SeqSwitchRangeItem *zeroTenItem = new SeqSwitchRangeItem();
         zeroTenItem->text = "0 - 10V";
         zeroTenItem->seqSwitch = seqSwitch;
         zeroTenItem->inputRange = SeqSwitch::Zero_Ten;
-        menu->pushChild(zeroTenItem);
+        menu->addChild(zeroTenItem);
 
         SeqSwitchRangeItem *fiveFiveItem = new SeqSwitchRangeItem();
         fiveFiveItem->text = "-5 - 5V";
         fiveFiveItem->seqSwitch = seqSwitch;
         fiveFiveItem->inputRange = SeqSwitch::MinusFive_Five;;
-        menu->pushChild(fiveFiveItem);
+        menu->addChild(fiveFiveItem);
 
         return menu;
 };

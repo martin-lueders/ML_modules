@@ -74,16 +74,16 @@ void FreeVerb::step() {
 	bool  old_freeze = freeze;
 
 
-	float input = clampf(inputs[IN_INPUT].value,-10.0,10.0);
+	float input = clamp(inputs[IN_INPUT].value,-10.0f,10.0f);
 
 	if(inputs[ROOMSIZE_INPUT].active) {
-		roomsize = clampf(inputs[ROOMSIZE_INPUT].value/8.0, 0.0, 1.0);
+		roomsize = clamp(inputs[ROOMSIZE_INPUT].value/8.0f, 0.0f, 1.0f);
 	} else {
 		roomsize = params[ROOMSIZE_PARAM].value;
 	};
 
 	if(inputs[DAMP_INPUT].active) {
-		damp     = clampf(inputs[DAMP_INPUT].value/8.0, 0.0, 1.0);
+		damp     = clamp(inputs[DAMP_INPUT].value/8.0f, 0.0f, 1.0f);
 	} else {
 		damp     = params[DAMP_PARAM].value;
 	};

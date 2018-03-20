@@ -58,7 +58,7 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::step() {
 
-	numSteps = roundf(clampf(params[NUM_STEPS_PARAM].value * clampf(inputs[NUM_STEPS_INPUT].normalize(5.0),0.0,5.0)/5.0,1.0,16.0));
+	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].value * clamp(inputs[NUM_STEPS_INPUT].normalize(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
 
 
 	if( inputs[TRIGGER_INPUT].active ) {
@@ -70,13 +70,13 @@ void ShiftRegister2::step() {
 
 			for(int i=32; i>0; i--) values[i] = values[i-1];
 
-			float p1 = params[PROB1_PARAM].value + clampf(inputs[PROB1_INPUT].normalize(0.0),-10.0,10.0)/10.0;
-			float p2 = params[PROB2_PARAM].value + clampf(inputs[PROB2_INPUT].normalize(0.0),-10.0,10.0)/10.0;
+			float p1 = params[PROB1_PARAM].value + clamp(inputs[PROB1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float p2 = params[PROB2_PARAM].value + clamp(inputs[PROB2_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
 
 			bool replace = ( randf() < p1 );
 			bool rnd2 = ( randf() < p2 );
 
-			float a = params[MIX1_PARAM].value + clampf(inputs[MIX1_INPUT].normalize(0.0),-10.0,10.0)/10.0;
+			float a = params[MIX1_PARAM].value + clamp(inputs[MIX1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
 
 
 			if(replace) {

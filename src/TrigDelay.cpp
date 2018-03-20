@@ -3,7 +3,7 @@
 #include "dsp/digital.hpp"
 
 
-#define minLength 0.001
+#define minLength 0.001f
 
 struct TrigDelay : Module {
 	enum ParamIds {
@@ -78,11 +78,11 @@ void TrigDelay::step() {
 	float length2    = params[LENGTH2_PARAM].value;
 
 
-	if( inputs[DELAY1_INPUT].active )  { delayTime1 *= clampf( inputs[DELAY1_INPUT].value / 10.0, 0.0, 1.0 );};
-	if( inputs[DELAY2_INPUT].active )  { delayTime2 *= clampf( inputs[DELAY2_INPUT].value / 10.0, 0.0, 1.0 );};
+	if( inputs[DELAY1_INPUT].active )  { delayTime1 *= clamp( inputs[DELAY1_INPUT].value / 10.0f, 0.0f, 1.0f );};
+	if( inputs[DELAY2_INPUT].active )  { delayTime2 *= clamp( inputs[DELAY2_INPUT].value / 10.0f, 0.0f, 1.0f );};
 
-	if( inputs[LENGTH1_INPUT].active ) { length1    *= clampf( inputs[LENGTH1_INPUT].value / 10.0, minLength, 1.0 );};
-	if( inputs[LENGTH2_INPUT].active ) { length2    *= clampf( inputs[LENGTH2_INPUT].value / 10.0, minLength, 1.0 );};
+	if( inputs[LENGTH1_INPUT].active ) { length1    *= clamp( inputs[LENGTH1_INPUT].value / 10.0f, minLength, 1.0f );};
+	if( inputs[LENGTH2_INPUT].active ) { length2    *= clamp( inputs[LENGTH2_INPUT].value / 10.0f, minLength, 1.0f );};
 
 
 
