@@ -53,6 +53,8 @@ struct BPMdetect : Module {
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
 
+	bool fine = false;
+
 	inline bool checkBeat(float timer, int mult) {
 		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4);
 	}
@@ -73,8 +75,9 @@ void BPMdetect::step() {
 	float mult2 = roundf(params[MULT2_PARAM].value);
 	float mult3 = roundf(params[MULT3_PARAM].value);
 
-	float factor2 = params[SWING2_PARAM].value / mult2;
-	float factor3 = params[SWING3_PARAM].value / mult3;
+	float factor2 = ( fine ? 1.0f + 0.25f * (params[SWING2_PARAM].value - 1.0f): params[SWING2_PARAM].value ) / mult2;
+	float factor3 = ( fine ? 1.0f + 0.25f * (params[SWING3_PARAM].value - 1.0f): params[SWING3_PARAM].value ) / mult3;
+
 
 	if( inputs[GATE_INPUT].active) {
 
@@ -83,17 +86,17 @@ void BPMdetect::step() {
 			timer1 = 0.0;
 		}
 
-		if( (timer2 > seconds*factor2) && (count2 < mult2)  ) {
+		if( (timer2 > seconds*factor2) /* && (count2 < mult2) */ ) {
 //			if(nearf(factor2,1.0)) std::cerr << timer2 << "\n";
 			outPulse2.trigger(0.01);
 			timer2 = 0.0;
-			count2++;
+			// count2++;
 		}
 
-		if( (timer3 > seconds*factor3) && (count3<mult3) ) {
+		if( (timer3 > seconds*factor3) /* && (count3<mult3) */ ) {
 			outPulse3.trigger(0.01);
 			timer3 = 0.0 ;
-			count3++;
+			// count3++;
 		}
 
 		if( gateTrigger.process(inputs[GATE_INPUT].value) ) {
@@ -210,8 +213,74 @@ struct NumberDisplayWidget2 : TransparentWidget {
 };
 
 
+struct FineMenuItem : MenuItem {
+
+        BPMdetect *module;
+        bool mfine;
+
+        void onAction(EventAction &e) override {
+                module->fine = mfine;
+        };
+
+        void step() override {
+                rightText = (module->fine == mfine)? "✔" : "";
+        };
+
+};
+
+struct NormalMenuItem : MenuItem {
+
+        BPMdetect *module;
+        bool mfine;
+
+        void onAction(EventAction &e) override {
+                module->fine = mfine;
+        };
+
+        void step() override {
+                rightText = (module->fine != mfine)? "✔" : "";
+        };
+
+};
+
 struct BPMdetectWidget : ModuleWidget {
 	BPMdetectWidget(BPMdetect *module);
+	json_t *toJsonData() ;
+	void fromJsonData(json_t *root) ;
+	Menu *createContextMenu() override;
+};
+
+
+Menu *BPMdetectWidget::createContextMenu() {
+
+        Menu *menu = ModuleWidget::createContextMenu();
+
+        MenuLabel *spacerLabel = new MenuLabel();
+        menu->addChild(spacerLabel);
+
+        BPMdetect *myModule = dynamic_cast<BPMdetect*>(module);
+        assert(myModule);
+
+        MenuLabel *modeLabel2 = new MenuLabel();
+        modeLabel2->text = "Swing Range";
+        menu->addChild(modeLabel2);
+
+       
+
+        FineMenuItem *fineMenuItem = new FineMenuItem();
+        fineMenuItem->text = "Fine";
+        fineMenuItem->module = myModule;
+        fineMenuItem->mfine = true;
+        menu->addChild(fineMenuItem);
+
+        NormalMenuItem *normalMenuItem = new NormalMenuItem();
+        normalMenuItem->text = "Legacy";
+        normalMenuItem->module = myModule;
+        normalMenuItem->mfine = false;
+        menu->addChild(normalMenuItem);
+
+
+        return menu;
 };
 
 BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
@@ -243,23 +312,23 @@ BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
 
 
 	addInput(Port::create<PJ301MPort>(Vec(column1+5,  row1+2), Port::INPUT, module, BPMdetect::GATE_INPUT));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
 	addOutput(Port::create<PJ301MPort>(Vec(column3-5,row1+2), Port::OUTPUT, module, BPMdetect::TRIG1_OUTPUT));
 
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
+    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
 	addOutput(Port::create<PJ301MPort>(Vec(column3, row2+2), Port::OUTPUT, module, BPMdetect::TRIG2_OUTPUT));
 
 
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
+    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
 	addOutput(Port::create<PJ301MPort>(Vec(column3, row3+2), Port::OUTPUT, module, BPMdetect::TRIG3_OUTPUT));
 
 	addOutput(Port::create<PJ301MPort>(Vec(column1, row4), Port::OUTPUT, module, BPMdetect::LFO_OUTPUT));
 	addOutput(Port::create<PJ301MPort>(Vec(column3, row4), Port::OUTPUT, module, BPMdetect::SEQ_OUTPUT));
 
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
+    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
+    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
 	addOutput(Port::create<PJ301MPort>(Vec(column3, row5), Port::OUTPUT, module, BPMdetect::DELAY_OUTPUT));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();

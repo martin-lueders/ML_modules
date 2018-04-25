@@ -139,8 +139,8 @@ FreeVerbWidget::FreeVerbWidget(FreeVerb *module) : ModuleWidget(module) {
 
 
 
-        addParam(ParamWidget::create<SmallMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
-        addParam(ParamWidget::create<SmallMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
         addParam(ParamWidget::create<LEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
         addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(19,255), module, FreeVerb::FREEZE_LIGHT));
 

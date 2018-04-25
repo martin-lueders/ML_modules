@@ -1,3 +1,5 @@
+#include "ML_components.hpp"
+
 #include "rack.hpp"
 
 //#ifdef v_dev
@@ -23,19 +25,16 @@ struct POLSWITCH : SVGSwitch, ToggleSwitch {
 };
 
 
+/*
 struct MLKnob : RoundKnob {
 	MLKnob() {
 		setSVG(SVG::load(assetPlugin(plugin,"res/Knob.svg")));
-		// box.size = Vec(36, 36);
 	}
 };
 
 struct RedMLKnob : RoundKnob {
 	RedMLKnob() {
 		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob.svg")));
-		//shadow->blurRadius = 0.0f;
-		//shadow->opacity = 0.15f;
-		//shadow->box.pos = Vec(box.size.x * 0.00f, box.size.y * 0.1f);
 	}
 };
 
@@ -50,6 +49,7 @@ struct SmallRedMLKnob : RoundKnob {
 		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob_28.svg")));
 	}
 };
+*/
 
 
 extern Model *modelQuantizer;

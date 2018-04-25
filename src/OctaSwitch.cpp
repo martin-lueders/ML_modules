@@ -132,7 +132,7 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 	const float offset_y = 62, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
 
 	addInput(Port::create<PJ301MPort>(   Vec(row1,  328 ), Port::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
-	addParam(ParamWidget::create<SmallMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
 
 
 	for( int i=0; i<8; i++) {

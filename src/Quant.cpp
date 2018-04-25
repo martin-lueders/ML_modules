@@ -70,11 +70,11 @@ QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
 	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
 	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
-	addParam(ParamWidget::create<SmallMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
 	addInput(Port::create<PJ301MPort>(Vec(10, 105), Port::INPUT, module, Quant::IN1_INPUT));
 	addOutput(Port::create<PJ301MPort>(Vec(10, 150), Port::OUTPUT, module, Quant::OUT1_OUTPUT));
 
-	addParam(ParamWidget::create<SmallMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
 	addInput(Port::create<PJ301MPort>(Vec(10, 245), Port::INPUT, module, Quant::IN2_INPUT));
 	addOutput(Port::create<PJ301MPort>(Vec(10, 290), Port::OUTPUT, module, Quant::OUT2_OUTPUT));
 }

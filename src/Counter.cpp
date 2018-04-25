@@ -162,7 +162,7 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
 	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
 
-	addParam(ParamWidget::create<SmallMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
 	addInput(Port::create<PJ301MPort>( Vec(53, 87), Port::INPUT, module, Counter::LENGTH_INPUT));
 
 	addInput(Port::create<PJ301MPort>(  Vec(13, 168), Port::INPUT, module, Counter::GATE_INPUT));

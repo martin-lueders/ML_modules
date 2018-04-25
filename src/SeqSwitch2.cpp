@@ -183,7 +183,7 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) : ModuleWidget(module) {
 	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	addParam(ParamWidget::create<RedMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0));
+	addParam(ParamWidget::create<RedSnapMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0));
 
 	addInput(Port::create<PJ301MPort>(Vec(82, 66), Port::INPUT, module, SeqSwitch2::NUMSTEPS_INPUT));
 

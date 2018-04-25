@@ -1,5 +1,5 @@
 SLUG = ML_modules
-VERSION = 0.6.0
+VERSION = 0.6.1
 
 FLAGS += -D v_dev
 

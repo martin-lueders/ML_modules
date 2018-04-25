@@ -1,5 +1,6 @@
 #include "ML_modules.hpp"
 
+
 #include "dsp/digital.hpp"
 
 #include <cmath>
@@ -181,20 +182,20 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 	addInput(Port::create<PJ301MPort>(Vec(column1,  44), Port::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
 	addInput(Port::create<PJ301MPort>(Vec(column1, 96), Port::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
         
-	addParam(ParamWidget::create<RedMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
+	addParam(ParamWidget::create<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
 	addInput(Port::create<PJ301MPort>(Vec(column1+8,  135), Port::INPUT, module, ShiftRegister2::IN1_INPUT));
 	addInput(Port::create<PJ301MPort>(Vec(column2-8,  135), Port::INPUT, module, ShiftRegister2::IN2_INPUT));
 
 
 	addInput(Port::create<PJ301MPort>(Vec(column1+3,  183), Port::INPUT, module, ShiftRegister2::PROB1_INPUT));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2-1, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
 	
 	addInput(Port::create<PJ301MPort>(Vec(column1+3,  229), Port::INPUT, module, ShiftRegister2::PROB2_INPUT));
-    addParam(ParamWidget::create<SmallMLKnob>(Vec(column2-1, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
 	
 	addInput(Port::create<PJ301MPort>(Vec(column1+3,  275), Port::INPUT, module, ShiftRegister2::MIX1_INPUT));
-	addParam(ParamWidget::create<SmallMLKnob>(Vec(column2-1,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
 
 
 	addParam(ParamWidget::create<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
