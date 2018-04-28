@@ -32,6 +32,7 @@ void init(rack::Plugin *p) {
 	plugin->addModel(modelOctaSwitch);
 	plugin->addModel(modelTrigSwitch);
  	plugin->addModel(modelTrigSwitch2);
+ 	plugin->addModel(modelTrigSwitch3);
 }
 
 

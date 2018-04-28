@@ -73,3 +73,4 @@ extern Model *modelOctaTrig;
 extern Model *modelOctaSwitch;
 extern Model *modelTrigSwitch;
 extern Model *modelTrigSwitch2;
+extern Model *modelTrigSwitch3;

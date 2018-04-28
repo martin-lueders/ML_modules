@@ -1,0 +1,104 @@
+#include "ML_modules.hpp"
+
+#include "dsp/digital.hpp"
+
+struct TrigSwitch3 : Module {
+	enum ParamIds {
+		NUM_PARAMS
+	};
+	enum InputIds {
+		TRIG_INPUT,
+		CV_INPUT1 = TRIG_INPUT + 8,
+		CV_INPUT2 = CV_INPUT1 + 8,
+		CV_INPUT3 = CV_INPUT2 + 8,
+		NUM_INPUTS = CV_INPUT3 + 8
+	};
+	enum OutputIds {
+		OUT1_OUTPUT,
+		OUT2_OUTPUT,
+		OUT3_OUTPUT,
+		NUM_OUTPUTS
+	};
+	enum LightIds {
+		STEP_LIGHT,
+		NUM_LIGHTS = STEP_LIGHT+8
+	};
+
+	TrigSwitch3() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+
+	void step() override;
+
+	int position=0;
+
+
+
+        const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
+        const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
+
+
+	SchmittTrigger stepTriggers[8];
+
+
+	void reset() override {
+
+		position = 0;
+		for(int i=0; i<8; i++) lights[i].value = 0.0;
+	};
+
+};
+
+
+void TrigSwitch3::step() {
+
+	for(int i=0; i<8; i++) {
+		if( stepTriggers[i].process(inputs[TRIG_INPUT+i].normalize(0.0))) position = i;
+		lights[i].value = (i==position)?1.0:0.0;
+	};
+
+	outputs[OUT1_OUTPUT].value = inputs[CV_INPUT1+position].normalize(0.0);
+	outputs[OUT2_OUTPUT].value = inputs[CV_INPUT2+position].normalize(0.0);
+	outputs[OUT3_OUTPUT].value = inputs[CV_INPUT3+position].normalize(0.0);
+
+};
+
+
+
+struct TrigSwitch3Widget : ModuleWidget {
+	TrigSwitch3Widget(TrigSwitch3 *module);
+};
+
+TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) : ModuleWidget(module) {
+
+	box.size = Vec(15*12, 380);
+
+	{
+		SVGPanel *panel = new SVGPanel();
+		panel->box.size = box.size;
+		panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigSwitch3.svg")));
+		addChild(panel);
+	}
+
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+
+
+	const float offset_y = 60, delta_y = 32, row1=15, row2 = row1+38, row3 = row2 + 20;
+
+	for (int i=0; i<8; i++) {
+
+		addInput(Port::create<PJ301MPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::TRIG_INPUT + i));
+		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>( Vec(row2, offset_y + i*delta_y + 8), module, TrigSwitch3::STEP_LIGHT+i));
+		addInput(Port::create<PJ301MPort>(             Vec(row3, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT1 + i));
+		addInput(Port::create<PJ301MPort>(             Vec(row3+32, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT2 + i));
+		addInput(Port::create<PJ301MPort>(             Vec(row3+64, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT3 + i));
+
+	}
+	addOutput(Port::create<PJ301MPort>(Vec(row3,    320), Port::OUTPUT, module, TrigSwitch3::OUT1_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(row3+32, 320), Port::OUTPUT, module, TrigSwitch3::OUT2_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(row3+64, 320), Port::OUTPUT, module, TrigSwitch3::OUT3_OUTPUT));
+
+}
+
+Model *modelTrigSwitch3 = Model::create<TrigSwitch3, TrigSwitch3Widget>("ML modules", "TrigSwitch3", "TrigSwitch3 8->1", SWITCH_TAG, UTILITY_TAG );
