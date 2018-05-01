@@ -4,7 +4,8 @@
 
 struct TrigSwitch : Module {
 	enum ParamIds {
-		NUM_PARAMS
+		STEP_PARAM,
+		NUM_PARAMS = STEP_PARAM + 9
 	};
 	enum InputIds {
 		TRIG_INPUT,
@@ -47,7 +48,7 @@ struct TrigSwitch : Module {
 void TrigSwitch::step() {
 
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process(inputs[TRIG_INPUT+i].normalize(0.0))) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0))  + params[STEP_PARAM+i].value ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
@@ -77,12 +78,15 @@ TrigSwitchWidget::TrigSwitchWidget(TrigSwitch *module) : ModuleWidget(module) {
 	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-	const float offset_y = 62, delta_y = 32, row1=15, row2 = 55, row3 = 80;
+	const float offset_y = 62, delta_y = 32, row1=15, row2 = 51, row3 = 80;
 
 	for (int i=0; i<8; i++) {
 
 		addInput(Port::create<PJ301MPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch::TRIG_INPUT + i));
-		addChild(ModuleLightWidget::create<SmallLight<GreenLight>>( Vec(row2, offset_y + i*delta_y + 8), module, TrigSwitch::STEP_LIGHT+i));
+
+		addParam(ParamWidget::create<LEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(ModuleLightWidget::create<MediumLight<GreenLight>>( Vec(row2 + 4.4, offset_y + i*delta_y + 7.4f), module, TrigSwitch::STEP_LIGHT+i));
+		
 		addInput(Port::create<PJ301MPort>(             Vec(row3, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch::CV_INPUT + i));
 
 	}
