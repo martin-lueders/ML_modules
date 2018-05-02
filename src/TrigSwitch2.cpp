@@ -21,6 +21,7 @@ struct TrigSwitch2 : Module {
 		NUM_LIGHTS = STEP_LIGHT+8
 	};
 
+
 	TrigSwitch2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
 	void step() override;
@@ -39,6 +40,8 @@ struct TrigSwitch2 : Module {
 		// outMode:
 	
 		json_object_set_new(rootJ, "outMode", json_integer(outMode));
+		json_object_set_new(rootJ, "position", json_integer(position));
+	
 
 		return rootJ;
 	};
@@ -49,6 +52,9 @@ struct TrigSwitch2 : Module {
 
 		json_t *outModeJ = json_object_get(rootJ, "outMode");
 		if(outModeJ) outMode = (OutMode) json_integer_value(outModeJ);
+	
+		json_t *positionJ = json_object_get(rootJ, "position");
+		if(positionJ) position = json_integer_value(positionJ);
 
 	};
 

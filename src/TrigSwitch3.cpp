@@ -47,6 +47,25 @@ struct TrigSwitch3 : Module {
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
 	};
 
+	json_t *toJson() override {
+
+		json_t *rootJ = json_object();
+
+		json_object_set_new(rootJ, "position", json_integer(position));
+	
+
+		return rootJ;
+	};
+	
+	void fromJson(json_t *rootJ) override {
+
+	
+		json_t *positionJ = json_object_get(rootJ, "position");
+		if(positionJ) position = json_integer_value(positionJ);
+
+	};
+
+
 };
 
 
