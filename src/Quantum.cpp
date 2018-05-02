@@ -122,11 +122,11 @@ void Quantum::step() {
 		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].value)) {
                         semiState[i] = !semiState[i];
                 }
-		lights[i].value = semiState[i]?1.0:0.0;
+		lights[i].value = semiState[i]?1.0f:0.0f;
 	}
 
-	float gate = 0, trigger=0;
-	float quantized = 0;
+	float gate = 0.f, trigger=0.f;
+	float quantized = 0.f;
 
 	float v=inputs[IN_INPUT].value;
 	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
@@ -134,15 +134,25 @@ void Quantum::step() {
 	int octave   = round(v);
 	int octave_t = round(t);
 
-	int semi   = round( 12.0*(v - 1.0*octave) );
-	int semi_t = round( 12.0*(t - 1.0*octave_t) );
+//	int octave   = floor(v);
+//	int octave_t = floor(t);
 
 
+	int semi   = round( 12.0f*(v - 1.0f*octave) );
+	int semi_t = round( 12.0f*(t - 1.0f*octave_t) );
+
+
+	if(semi==6) {
+		semi=-6;
+		octave+=1;
+	}
 	// transpose to shifted scale:
 
 	int tmp_semi=(semi-semi_t)%12;
 
-	if(tmp_semi<0) tmp_semi+=12;
+	if(tmp_semi<=0) {
+		tmp_semi+=12;
+	}
 
 
    	if( inputs[RESET_INPUT].active ) {
@@ -165,9 +175,9 @@ void Quantum::step() {
 
 	if( semiState[tmp_semi] )
 	{
-		bool changed = !( (octave==last_octave)&&(semi==last_semi));
-		gate = 10.0;
-		quantized = 1.0*octave + semi/12.0;
+		bool changed = !( (octave==last_octave) && (semi==last_semi));
+		gate = 10.0f;
+		quantized = 1.0f*octave + semi/12.0f;
 		if(changed) pulse.trigger(0.001);
 		last_octave = octave;
 		last_semi   = semi;
@@ -175,7 +185,7 @@ void Quantum::step() {
 	} else {
 
 		if(mode==LAST) {
-			quantized = 1.0*last_octave + last_semi/12.0;
+			quantized = 1.0f*last_octave + last_semi/12.0f;
 		} else {
 
 			int i_up   = 0;
@@ -194,8 +204,8 @@ void Quantum::step() {
 			};
 
 			bool changed = !( (octave==last_octave)&&(semi==last_semi));
-			quantized = 1.0*octave + semi/12.0;
-			if(changed) pulse.trigger(0.001);
+			quantized = 1.0f*octave + semi/12.0f;
+			if(changed) pulse.trigger(0.01f);
 			last_octave = octave;
 			last_semi   = semi;
 		};
@@ -203,7 +213,7 @@ void Quantum::step() {
 
 	float gSampleRate = engineGetSampleRate();
 
-	trigger = pulse.process(1.0/gSampleRate) ? 10.0 : 0.0;
+	trigger = pulse.process(1.0/gSampleRate) ? 10.0f : 0.0f;
 
 
 	outputs[OUT_OUTPUT].value = quantized;
