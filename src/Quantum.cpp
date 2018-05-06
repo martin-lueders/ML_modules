@@ -87,30 +87,38 @@ struct Quantum : Module {
 
 	}
 
-        json_t *toJson() override {
-                json_t *rootJ = json_object();
+    json_t *toJson() override {
+        json_t *rootJ = json_object();
 
-                json_t *scaleJ = json_array();
-                for (int i = 0; i < 12; i++) {
-                        json_t *semiJ = json_integer( (int) semiState[i]);
-                        json_array_append_new(scaleJ, semiJ);
-                }
-                json_object_set_new(rootJ, "scale", scaleJ);
-                json_object_set_new(rootJ, "mode", json_integer(mode));
+        json_t *scaleJ = json_array();
+            for (int i = 0; i < 12; i++) {
+                    json_t *semiJ = json_integer( (int) semiState[i]);
+                    json_array_append_new(scaleJ, semiJ);
+            }
+            json_object_set_new(rootJ, "scale", scaleJ);
+            json_object_set_new(rootJ, "mode", json_integer(mode));
 
-                return rootJ;
-        }
+        return rootJ;
+    }
 
-        void fromJson(json_t *rootJ) override {
-                json_t *scaleJ = json_object_get(rootJ, "scale");
-                for (int i = 0; i < 12; i++) {
-                        json_t *semiJ = json_array_get(scaleJ, i);
-                        semiState[i] = !!json_integer_value(semiJ);
+    void fromJson(json_t *rootJ) override {
+        json_t *scaleJ = json_object_get(rootJ, "scale");
+        for (int i = 0; i < 12; i++) {
+            json_t *semiJ = json_array_get(scaleJ, i);
+            semiState[i] = !!json_integer_value(semiJ);
 			semiLight[i] = semiState[i]?1.0:0.0;
-                }
-                json_t *modeJ = json_object_get(rootJ, "mode");
-                if(modeJ) mode = (Mode) json_integer_value(modeJ);
         }
+        json_t *modeJ = json_object_get(rootJ, "mode");
+        if(modeJ) mode = (Mode) json_integer_value(modeJ);
+    }
+
+	int modulo(int a, int b) {
+
+		int r = a % b;
+		return r < 0 ? r + b : r;
+
+	}
+
 
 };
 
@@ -131,28 +139,28 @@ void Quantum::step() {
 	float v=inputs[IN_INPUT].value;
 	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
 
-	int octave   = round(v);
-	int octave_t = round(t);
-
 //	int octave   = floor(v);
 //	int octave_t = floor(t);
 
-
-	int semi   = round( 12.0f*(v - 1.0f*octave) );
-	int semi_t = round( 12.0f*(t - 1.0f*octave_t) );
+	gate = mode==LAST? 0.0: 10.0;
 
 
-	if(semi==6) {
-		semi=-6;
-		octave+=1;
+	int semi_full   = round( 12.0f*v );
+	int semi_t = round( 12.0f*t );
+
+	int octave   = semi_full/12;
+
+	int semi =semi_full % 12;
+
+	if (semi<0) {
+		semi+=12;
+		octave-=1;
 	}
+
 	// transpose to shifted scale:
 
-	int tmp_semi=(semi-semi_t)%12;
+	int tmp_semi = modulo (semi-semi_t, 12) ;
 
-	if(tmp_semi<=0) {
-		tmp_semi+=12;
-	}
 
 
    	if( inputs[RESET_INPUT].active ) {
@@ -191,21 +199,44 @@ void Quantum::step() {
 			int i_up   = 0;
 			int i_down = 0;
 
-			while( !semiState[tmp_semi+i_up  ] ) i_up++;
-		 	while( !semiState[tmp_semi-i_down] ) i_down++;
+			while( !semiState[ modulo(tmp_semi+i_up,  12) ] && i_up   < 12 ) i_up++;
+		 	while( !semiState[ modulo(tmp_semi-i_down,12) ] && i_down < 12 ) i_down++;
+				
+			switch(mode) {	
+				case UP: 			if (i_up   < 12) semi += i_up;
+									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
+									break;
 
-			switch(mode) {
-			case UP: 		semi = semi+i_up; break;
-			case DOWN: 		semi = semi-i_down; break;
-			case CLOSEST_UP:   	semi = (i_up > i_down)? semi - i_down : semi + i_up; break;
-			case CLOSEST_DOWN: 	semi = (i_down > i_up)? semi + i_up : semi - i_down; break;
-			case LAST:
-			default:		break;
+				case DOWN: 			if (i_down < 12) semi -= i_down; 
+									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
+									break;
+
+				case CLOSEST_UP:   	if (i_up<12 && i_down<12) semi = (i_up > i_down) ? (semi - i_down) : (semi + i_up); 
+									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
+									break;
+
+				case CLOSEST_DOWN: 	if (i_up<12 && i_down<12) semi = (i_down > i_up) ? (semi + i_up) : (semi - i_down); 
+									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
+									break;
+
+				case LAST:	
+				default:		break;
 			};
+				
+			if( semi > 11 ) {
+				semi   -= 12;
+				octave += 1;
+			}
+
+			if( semi < 0 ) {
+				semi   += 12;
+				octave -= 1;
+			}
+
 
 			bool changed = !( (octave==last_octave)&&(semi==last_semi));
 			quantized = 1.0f*octave + semi/12.0f;
-			if(changed) pulse.trigger(0.01f);
+			if(changed) pulse.trigger(0.001f);
 			last_octave = octave;
 			last_semi   = semi;
 		};
@@ -217,7 +248,7 @@ void Quantum::step() {
 
 
 	outputs[OUT_OUTPUT].value = quantized;
-	outputs[GATE_OUTPUT].value = gate;
+	outputs[GATE_OUTPUT].value = gate - trigger;
 	outputs[TRIGGER_OUTPUT].value = trigger;
 
 }
