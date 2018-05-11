@@ -57,7 +57,7 @@ void Counter::step() {
 	max = params[MAX_PARAM].value;
 
 
-	if( inputs[LENGTH_INPUT].active ) max = max * clamp(inputs[LENGTH_INPUT].value/10.0,0,1.0);
+	if( inputs[LENGTH_INPUT].active ) max = max * clamp(inputs[LENGTH_INPUT].value/10.0f,0.0f,1.0f);
 
 	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].value )) {
 		state=true; 
