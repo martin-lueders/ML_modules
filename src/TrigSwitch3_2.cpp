@@ -150,30 +150,30 @@ TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) : ModuleWidget(m
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = row1+33, row3 = row2 + 25;
 
 	for (int i=0; i<8; i++) {
 
-		addInput(Port::create<PJ301MPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3_2::TRIG_INPUT + i));
+		addInput(Port::create<MLPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3_2::TRIG_INPUT + i));
 
-		addParam(ParamWidget::create<LEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(ModuleLightWidget::create<MediumLight<GreenLight>>( Vec(row2 + 4.4f, offset_y + i*delta_y + 7.4f), module, TrigSwitch3_2::STEP_LIGHT+i));
+		addParam(ParamWidget::create<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(ModuleLightWidget::create<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3_2::STEP_LIGHT+i));
 
 
-		addOutput(Port::create<PJ301MPort>(             Vec(row3, offset_y + i*delta_y),    Port::OUTPUT, module, TrigSwitch3_2::OUT1_OUTPUT + i));
-		addOutput(Port::create<PJ301MPort>(             Vec(row3+32, offset_y + i*delta_y), Port::OUTPUT, module, TrigSwitch3_2::OUT2_OUTPUT + i));
-		addOutput(Port::create<PJ301MPort>(             Vec(row3+64, offset_y + i*delta_y), Port::OUTPUT, module, TrigSwitch3_2::OUT3_OUTPUT + i));
+		addOutput(Port::create<MLPort>(             Vec(row3, offset_y + i*delta_y),    Port::OUTPUT, module, TrigSwitch3_2::OUT1_OUTPUT + i));
+		addOutput(Port::create<MLPort>(             Vec(row3+32, offset_y + i*delta_y), Port::OUTPUT, module, TrigSwitch3_2::OUT2_OUTPUT + i));
+		addOutput(Port::create<MLPort>(             Vec(row3+64, offset_y + i*delta_y), Port::OUTPUT, module, TrigSwitch3_2::OUT3_OUTPUT + i));
 
 	}
-	addInput(Port::create<PJ301MPort>(Vec(row3,    320), Port::INPUT, module, TrigSwitch3_2::CV1_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(row3+32, 320), Port::INPUT, module, TrigSwitch3_2::CV2_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(row3+64, 320), Port::INPUT, module, TrigSwitch3_2::CV3_INPUT));
+	addInput(Port::create<MLPort>(Vec(row3,    320), Port::INPUT, module, TrigSwitch3_2::CV1_INPUT));
+	addInput(Port::create<MLPort>(Vec(row3+32, 320), Port::INPUT, module, TrigSwitch3_2::CV2_INPUT));
+	addInput(Port::create<MLPort>(Vec(row3+64, 320), Port::INPUT, module, TrigSwitch3_2::CV3_INPUT));
 
 }
 
