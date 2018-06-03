@@ -10,7 +10,7 @@ struct TrigSwitch3_2 : Module {
 
 	enum InputIds {
 		TRIG_INPUT,
-		CV1_INPUT,
+		CV1_INPUT = TRIG_INPUT + 8,
 		CV2_INPUT,
 		CV3_INPUT,
 		NUM_INPUTS
