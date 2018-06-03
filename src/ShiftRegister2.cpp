@@ -162,15 +162,15 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
 
-	const float column1 = 20, column2 = 75;
+	const float column1 = 19, column2 = 74;
 
 
 	IntDisplayWidget *display = new IntDisplayWidget();
@@ -179,30 +179,30 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 	display->value = &module->numSteps;
 	addChild(display);
 
-	addInput(Port::create<PJ301MPort>(Vec(column1,  44), Port::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(column1, 96), Port::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
+	addInput(Port::create<MLPort>(Vec(column1,  44), Port::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
+	addInput(Port::create<MLPort>(Vec(column1, 96), Port::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
         
 	addParam(ParamWidget::create<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
-	addInput(Port::create<PJ301MPort>(Vec(column1+8,  135), Port::INPUT, module, ShiftRegister2::IN1_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(column2-8,  135), Port::INPUT, module, ShiftRegister2::IN2_INPUT));
+	addInput(Port::create<MLPort>(Vec(column1+8,  135), Port::INPUT, module, ShiftRegister2::IN1_INPUT));
+	addInput(Port::create<MLPort>(Vec(column2-8,  135), Port::INPUT, module, ShiftRegister2::IN2_INPUT));
 
 
-	addInput(Port::create<PJ301MPort>(Vec(column1+3,  183), Port::INPUT, module, ShiftRegister2::PROB1_INPUT));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
+	addInput(Port::create<MLPort>(Vec(column1+3,  183), Port::INPUT, module, ShiftRegister2::PROB1_INPUT));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(Port::create<PJ301MPort>(Vec(column1+3,  229), Port::INPUT, module, ShiftRegister2::PROB2_INPUT));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+	addInput(Port::create<MLPort>(Vec(column1+3,  229), Port::INPUT, module, ShiftRegister2::PROB2_INPUT));
+    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(Port::create<PJ301MPort>(Vec(column1+3,  275), Port::INPUT, module, ShiftRegister2::MIX1_INPUT));
-	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2-1,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
+	addInput(Port::create<MLPort>(Vec(column1+3,  275), Port::INPUT, module, ShiftRegister2::MIX1_INPUT));
+	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
 
 
 	addParam(ParamWidget::create<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
 
 
-	addOutput(Port::create<PJ301MPort>(Vec(column1-2, 328 ), Port::OUTPUT, module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(column2+2, 328 ), Port::OUTPUT, module, ShiftRegister2::AUX_OUTPUT));
+	addOutput(Port::create<MLPort>(Vec(column1-2, 328 ), Port::OUTPUT, module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(Port::create<MLPort>(Vec(column2+2, 328 ), Port::OUTPUT, module, ShiftRegister2::AUX_OUTPUT));
 }
 
 

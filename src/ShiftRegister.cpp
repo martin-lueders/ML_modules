@@ -108,23 +108,23 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(m
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
 
 
 
 
-	const float offset_y = 140, delta_y = 26, offset_x=12;
+	const float offset_y = 140, delta_y = 26, offset_x=11;
 
 	for( int i=0; i<8; i++) {
 
-		addOutput(Port::create<PJ301MPort>(Vec(offset_x+17, offset_y + i*delta_y  ), Port::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
-		addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
+		addOutput(Port::create<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), Port::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
+		addChild(ModuleLightWidget::create<MLSmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 
-	addInput(Port::create<PJ301MPort>(Vec(offset_x+17, 58), Port::INPUT, module, ShiftRegister::IN_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(offset_x+17, 94), Port::INPUT, module, ShiftRegister::TRIGGER_INPUT));
+	addInput(Port::create<MLPort>(Vec(offset_x+17, 58), Port::INPUT, module, ShiftRegister::IN_INPUT));
+	addInput(Port::create<MLPort>(Vec(offset_x+17, 94), Port::INPUT, module, ShiftRegister::TRIGGER_INPUT));
 
 }
 

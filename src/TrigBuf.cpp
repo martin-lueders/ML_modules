@@ -4,6 +4,8 @@
 
 struct TrigBuf : Module {
 	enum ParamIds {
+		ARM1_PARAM,
+		ARM2_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -68,30 +70,22 @@ void TrigBuf::step() {
 	bool last_gate2 = gate2;
        
 
-	if( inputs[GATE1_INPUT].active) gateTrigger1.process(inputs[GATE1_INPUT].value);
+	gateTrigger1.process(inputs[GATE1_INPUT].normalize(0.0f));
 	gate1 = (gateTrigger1.isHigh());
 
-	if( inputs[GATE2_INPUT].active ) {
-		gateTrigger2.process(inputs[GATE2_INPUT].value);
-		gate2 = gateTrigger2.isHigh();
-	} else {
-		gate2 = gate1;
-	};
+	gateTrigger2.process(inputs[GATE2_INPUT].normalize(inputs[GATE1_INPUT].normalize(0.0f)));
+	gate2 = gateTrigger2.isHigh();
+	
 
-
-	if( inputs[ARM1_INPUT].active ) {
-		if( armTrigger1.process(inputs[ARM1_INPUT].value) ) { 
-			if (!gate1) {arm1 = 10.0;}
-			else { 
+	
+	if( armTrigger1.process(inputs[ARM1_INPUT].normalize(0.0f) + params[ARM1_PARAM].value ) ) { 
+		if (!gate1) {arm1 = 10.0;}
+		else { 
 				// arm1 = 0.0;
-				delayed1 = true;
-			};
-
-	    }
-	} else {
-		arm1 = 0.0;
-	};
-
+			delayed1 = true;
+		};
+	}
+	
 
     if(gate1) {
 		if(arm1 > 5.0) {
@@ -116,18 +110,14 @@ void TrigBuf::step() {
 
 
 
-	if( inputs[ARM2_INPUT].active ) {
-		if( armTrigger2.process(inputs[ARM2_INPUT].value) ) { 
-			if (!gate2) {arm2 = 10.0;}
-			else { 
-				// arm2 = 0.0;
-				delayed2 = true;
-			};
+	if( armTrigger2.process(inputs[ARM2_INPUT].normalize(inputs[ARM1_INPUT].normalize(0.0f)) + params[ARM2_PARAM].value ) ) { 
+		if (!gate2) {arm2 = 10.0;}
+		else { 
+			// arm2 = 0.0;
+			delayed2 = true;
 		};
-	} else {
-		arm2 = arm1;
 	};
-
+	
 
 	if (gate2) {
 
@@ -174,19 +164,22 @@ TrigBufWidget::TrigBufWidget(TrigBuf *module) : ModuleWidget(module) {
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
 
-	addInput(Port::create<PJ301MPort>(Vec(10, 62), Port::INPUT, module, TrigBuf::ARM1_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(10, 105), Port::INPUT, module, TrigBuf::GATE1_INPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(10, 150), Port::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
+	addInput(Port::create<MLPort>(Vec(9, 62), Port::INPUT, module, TrigBuf::ARM1_INPUT));
+	addInput(Port::create<MLPort>(Vec(9, 105), Port::INPUT, module, TrigBuf::GATE1_INPUT));
+	addOutput(Port::create<MLPort>(Vec(9, 150), Port::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
 
-	addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(46, 66), module, TrigBuf::ARM1_LIGHT));
+	addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(40,66), module, TrigBuf::ARM1_PARAM, 0, 10, 0));
+	addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(44, 70), module, TrigBuf::ARM1_LIGHT));
 
-	addInput(Port::create<PJ301MPort>(Vec(10, 218), Port::INPUT, module, TrigBuf::ARM2_INPUT));
-	addInput(Port::create<PJ301MPort>(Vec(10, 263), Port::INPUT, module, TrigBuf::GATE2_INPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(10, 305), Port::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
-	addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(46, 222), module, TrigBuf::ARM2_LIGHT));
+	addInput(Port::create<MLPort>(Vec(9, 218), Port::INPUT, module, TrigBuf::ARM2_INPUT));
+	addInput(Port::create<MLPort>(Vec(9, 263), Port::INPUT, module, TrigBuf::GATE2_INPUT));
+	addOutput(Port::create<MLPort>(Vec(9, 305), Port::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
+
+	addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(40,222), module, TrigBuf::ARM2_PARAM, 0, 10, 0));
+	addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));
 }
 
 Model *modelTrigBuf = Model::create<TrigBuf, TrigBufWidget>("ML modules", "TrigBuf", "Trigger Buffer", UTILITY_TAG);

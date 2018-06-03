@@ -139,6 +139,8 @@ struct ML_SmallLEDButton : MLSVGSwitch, MomentarySwitch {
 	ML_SmallLEDButton();
 };
 
+
+
 struct MLSwitch : MLSVGSwitch, ToggleSwitch {
 
 	MLSwitch();
@@ -154,3 +156,28 @@ struct BlueMLSwitch : MLSVGSwitch, ToggleSwitch {
 
 
 
+struct MLScrew : FramebufferWidget {
+
+    SVGWidget *sw;
+    TransformWidget *tw;
+
+	MLScrew() {
+
+        tw = new TransformWidget();
+	    addChild(tw);
+	    sw = new SVGWidget();
+	    tw->addChild(sw);
+	    sw->setSVG(SVG::load(assetPlugin(plugin, "res/MLScrew.svg")));
+		tw->box.size = sw->box.size;	
+
+        float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 
+
+        Vec transl = tw->box.getCenter();
+        tw->translate( transl );
+        tw->rotate(angle);
+        tw->translate( transl.neg() );
+
+	}
+
+    
+};

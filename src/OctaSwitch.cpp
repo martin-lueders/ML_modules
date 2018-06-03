@@ -122,25 +122,25 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
-	const float offset_y = 62, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
+	const float offset_y = 60, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
 
-	addInput(Port::create<PJ301MPort>(   Vec(row1,  328 ), Port::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
+	addInput(Port::create<MLPort>(   Vec(row1,  328 ), Port::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
 	addParam(ParamWidget::create<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
 
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<PJ301MPort>(Vec(row1, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::GATE_INPUT+i));
-		addInput(Port::create<PJ301MPort>(Vec(row2, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::A_INPUT+i));
-		addInput(Port::create<PJ301MPort>(Vec(row3, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::B_INPUT+i));
+		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::GATE_INPUT+i));
+		addInput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::A_INPUT+i));
+		addInput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::B_INPUT+i));
 
-		addOutput(Port::create<PJ301MPort>(Vec(row4, offset_y + i*delta_y ), Port::OUTPUT, module, OctaSwitch::OUT_OUTPUT+i));
+		addOutput(Port::create<MLPort>(Vec(row4, offset_y + i*delta_y ), Port::OUTPUT, module, OctaSwitch::OUT_OUTPUT+i));
 	};
 
 	ThresholdDisplayWidget *display = new ThresholdDisplayWidget();

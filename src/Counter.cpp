@@ -159,24 +159,24 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 
 	
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
 
 	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
-	addInput(Port::create<PJ301MPort>( Vec(53, 87), Port::INPUT, module, Counter::LENGTH_INPUT));
+	addInput(Port::create<MLPort>( Vec(53, 87), Port::INPUT, module, Counter::LENGTH_INPUT));
 
-	addInput(Port::create<PJ301MPort>(  Vec(13, 168), Port::INPUT, module, Counter::GATE_INPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(53, 168), Port::OUTPUT, module, Counter::GATE_OUTPUT));
-
-
-	addInput(Port::create<PJ301MPort>(  Vec(13, 241), Port::INPUT, module, Counter::START_INPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(53, 241), Port::OUTPUT, module, Counter::START_OUTPUT));
-	addParam(ParamWidget::create<LEDButton>(   Vec(56, 219), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
+	addInput(Port::create<MLPort>(  Vec(13, 168), Port::INPUT, module, Counter::GATE_INPUT));
+	addOutput(Port::create<MLPort>(Vec(53, 168), Port::OUTPUT, module, Counter::GATE_OUTPUT));
 
 
-	addInput(Port::create<PJ301MPort>(  Vec(13, 312), Port::INPUT, module, Counter::STOP_INPUT));
-	addOutput(Port::create<PJ301MPort>(Vec(53, 312), Port::OUTPUT, module, Counter::STOP_OUTPUT));
-	addParam(ParamWidget::create<LEDButton>(   Vec(55, 290), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
+	addInput(Port::create<MLPort>(  Vec(13, 241), Port::INPUT, module, Counter::START_INPUT));
+	addOutput(Port::create<MLPort>(Vec(53, 241), Port::OUTPUT, module, Counter::START_OUTPUT));
+	addParam(ParamWidget::create<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
+
+
+	addInput(Port::create<MLPort>(  Vec(13, 312), Port::INPUT, module, Counter::STOP_INPUT));
+	addOutput(Port::create<MLPort>(Vec(53, 312), Port::OUTPUT, module, Counter::STOP_OUTPUT));
+	addParam(ParamWidget::create<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();
 	display->box.pos = Vec(20,56);

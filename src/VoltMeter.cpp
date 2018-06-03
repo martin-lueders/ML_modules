@@ -118,13 +118,15 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 
 	const float delta_y = 70;
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 	for(int i=0; i<4; i++) {
 
-		addInput(Port::create<PJ301MPort>(Vec(12, 60+i*delta_y), Port::INPUT, module, VoltMeter::IN1_INPUT+i));
+		addInput(Port::create<MLPort>(Vec(12, 60+i*delta_y), Port::INPUT, module, VoltMeter::IN1_INPUT+i));
 
 
 		VoltDisplayWidget *display = new VoltDisplayWidget();

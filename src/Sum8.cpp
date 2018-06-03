@@ -64,18 +64,18 @@ Sum8Widget::Sum8Widget(Sum8 *module) : ModuleWidget(module) {
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
 
 
 
 
-	const float offset_y = 70, delta_y = 26, offset_x=10.5;
+	const float offset_y = 70, delta_y = 26.5, offset_x=9.5;
 
-	for( int i=0; i<8; i++) addInput(Port::create<PJ301MPort>(Vec(offset_x, offset_y + i*delta_y  ), Port::INPUT, module, Sum8::IN1_INPUT+i));
+	for( int i=0; i<8; i++) addInput(Port::create<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), Port::INPUT, module, Sum8::IN1_INPUT+i));
 
 
-	addOutput(Port::create<PJ301MPort>(Vec(offset_x, 320), Port::OUTPUT, module, Sum8::OUT_OUTPUT));
+	addOutput(Port::create<MLPort>(Vec(offset_x, 320), Port::OUTPUT, module, Sum8::OUT_OUTPUT));
 
 
 }

@@ -39,6 +39,7 @@ void MLSVGSwitch::onChange(EventChange &e) {
 
 
 
+
 WhiteLight::WhiteLight() {
 	addBaseColor(COLOR_WHITE);
 }
@@ -109,8 +110,8 @@ MLPort::MLPort() {
 
 
 MLButton::MLButton() {
-	addFrame(SVG::load(assetPlugin(plugin, "res/Button_0.svg")));
-	addFrame(SVG::load(assetPlugin(plugin, "res/Button_1.svg")));
+	addFrame(SVG::load(assetPlugin(plugin, "res/MLButton_0.svg")));
+	addFrame(SVG::load(assetPlugin(plugin, "res/MLButton_1.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 };
@@ -160,6 +161,9 @@ ML_SmallLEDButton::ML_SmallLEDButton() {
 	shadow->box.pos = Vec(0, sw->box.size.y * 0.1);
 	
 };
+
+
+
 
 ML_ResetButton::ML_ResetButton() {
 

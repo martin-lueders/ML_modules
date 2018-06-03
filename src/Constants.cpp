@@ -78,19 +78,19 @@ ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
 		addChild(panel);
 	}
 
-	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<MLScrew>(Vec(15, 0)));
+	addChild(Widget::create<MLScrew>(Vec(15, 365)));
 
 
 
 
-	const float offset_y = 65, delta_y = 40, offset_xL=10, offset_xR=55;
+	const float offset_y = 63, delta_y = 40, offset_xL=10, offset_xR=55;
 
 
 	for(int i=0; i<7; i++) {
 
-		addOutput(Port::create<PJ301MPort>(Vec(offset_xR, offset_y + i*delta_y), Port::OUTPUT, module, Constants::P_1_OUTPUT + i));
-		addOutput(Port::create<PJ301MPort>(Vec(offset_xL, offset_y + i*delta_y), Port::OUTPUT, module, Constants::M_1_OUTPUT + i));
+		addOutput(Port::create<MLPort>(Vec(offset_xR, offset_y + i*delta_y), Port::OUTPUT, module, Constants::P_1_OUTPUT + i));
+		addOutput(Port::create<MLPort>(Vec(offset_xL, offset_y + i*delta_y), Port::OUTPUT, module, Constants::M_1_OUTPUT + i));
 
 	};
 
