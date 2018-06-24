@@ -30,15 +30,7 @@ struct Constants : Module {
 	};
 
 
-	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
-
-	void step() override;
-
-};
-
-
-
-void Constants::step() {
+	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
 
 	double semi = 1.0/12.0;
 
@@ -57,6 +49,17 @@ void Constants::step() {
 	outputs[M_5_OUTPUT].value  = - 5*semi;
 	outputs[M_7_OUTPUT].value  = - 7*semi;
 	outputs[M_12_OUTPUT].value = - 1.0;
+
+	};
+
+	void step() override;
+
+};
+
+
+
+void Constants::step() {
+
 
 };
 
