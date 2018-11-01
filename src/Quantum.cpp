@@ -55,7 +55,7 @@ struct Quantum : Module {
 		DOWN
 	};
 
-	Mode mode = LAST;
+	Mode mode = CLOSEST_UP;
 
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 
@@ -73,6 +73,7 @@ struct Quantum : Module {
             semiState[i] = false;
 			semiLight[i] = 0.0;
         }
+		mode = CLOSEST_UP;
 		last_octave = 0;
 		last_semi   = 0;
 	}
@@ -172,7 +173,7 @@ void Quantum::step() {
 		if( setTrigger.process(inputs[SET_INPUT].value ) ) {
 
 			float n=inputs[NOTE_INPUT].normalize(0.0);
-			int semi_n = round( 12.0*(n - 1.0*round(n)) ) - semi_t;
+			int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - semi_t;
 			if(semi_n<0) semi_n+=12;
 
 			semiState[semi_n] = !semiState[semi_n];
