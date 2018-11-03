@@ -4,6 +4,7 @@
 
 struct OctaTimes : Module {
 	enum ParamIds {
+		MULT_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -34,6 +35,7 @@ struct OctaTimes : Module {
 		OUT6_OUTPUT,
 		OUT7_OUTPUT,
 		OUT8_OUTPUT,
+		SUM_OUTPUT,
 		NUM_OUTPUTS
 	};
 	enum LightIds {
@@ -44,12 +46,13 @@ struct OctaTimes : Module {
 	float out[8];
 
 
+
 	OctaTimes() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
 	void step() override;
 
 	void reset() override {
-		for(int i=0; i<8; i++) out[i] = 0.0;
+		for(int i=0; i<8; i++) out[i] = 0.0; 
 	};
 
 };
@@ -60,19 +63,22 @@ void OctaTimes::step() {
 
 	float in_A[8], in_B[8];
 
-	float random = 0;
+	float normal = params[MULT_PARAM].value==1?1.0f:10.f;
 
 
+	float multiplier = params[MULT_PARAM].value==1?1.f:0.1f;
 
+	in_A[0] = inputs[IN1_INPUT].normalize(0.f);
+//	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(in_A[i-1]);
+	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(0.f);
 
-	in_A[0] = inputs[IN1_INPUT].normalize(random);
-	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(in_A[i-1]);
-
-	in_B[0] = inputs[IN_B_1_INPUT].normalize(random);
+	in_B[0] = inputs[IN_B_1_INPUT].normalize(normal);
 	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].normalize(in_B[i-1]);
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = in_A[i] * in_B[i] / 10.0f;
+	float sum = 0.0f;
+	for(int i=0; i<8; i++) sum += outputs[OUT1_OUTPUT+i].value = clamp(in_A[i] * in_B[i] * multiplier , -12.f, 12.f);
 
+	outputs[SUM_OUTPUT].value = clamp(sum,-12.f,12.f);
 };
 
 
@@ -108,7 +114,9 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
 		addInput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y  ), Port::INPUT, module, OctaTimes::IN_B_1_INPUT+i));
 		addOutput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTimes::OUT1_OUTPUT+i));
 	};
-
+	
+	addOutput(Port::create<MLPort>(Vec(row3, 330 ), Port::OUTPUT, module, OctaTimes::SUM_OUTPUT));
+	addParam(ParamWidget::create<CKSS>( Vec(row1 + 5, 330 ), module, OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0));
 
 }
 
