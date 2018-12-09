@@ -59,7 +59,7 @@ struct Quantum : Module {
 
 	Mode mode = CLOSEST_UP;
 
-	bool transpose_select = false;
+	bool transpose_select = true;
 
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 
