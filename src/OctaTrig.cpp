@@ -49,7 +49,7 @@ struct OctaTrig : Module {
 		NUM_LIGHTS
 	};
 
-	PulseGenerator upPulse[8], dnPulse[8];
+	dsp::PulseGenerator upPulse[8], dnPulse[8];
 
 	bool state[8] = {};
 
@@ -64,15 +64,15 @@ struct OctaTrig : Module {
 		onSampleRateChange();
 	};
 
-	void onSampleRateChange() override { delta = 1.0/engineGetSampleRate(); }
+	void onSampleRateChange() override { delta = 1.0/args.sampleRate; }
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 };
 
 
 
-void OctaTrig::step() {
+void OctaTrig::process(const ProcessArgs &args) {
 
 	bool gate[8];
 
@@ -99,7 +99,7 @@ void OctaTrig::step() {
 	for(int i=0; i<8; i++) { 
 		outputs[UP1_OUTPUT+i].value  = out_up[i];
 		outputs[DN1_OUTPUT+i].value  = out_dn[i];
-		outputs[SUM1_OUTPUT+i].value = out_up[i] + out_dn[i];
+		outputs[SUM1_OUTPUT+i].setVoltage(out_up[i] + out_dn[i]);
 	}
 
 };
@@ -110,14 +110,15 @@ struct OctaTrigWidget : ModuleWidget {
 	OctaTrigWidget(OctaTrig *module);
 };
 
-OctaTrigWidget::OctaTrigWidget(OctaTrig *module) : ModuleWidget(module) {
+OctaTrigWidget::OctaTrigWidget(OctaTrig *module) {
+		setModule(module);
 
 	box.size = Vec(15*10, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaTrig.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaTrig.svg")));
 
 		addChild(panel);
 	}
@@ -132,11 +133,11 @@ OctaTrigWidget::OctaTrigWidget(OctaTrig *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 50, row3 = 80, row4 = 110;
 
 	for( int i=0; i<8; i++) {
-		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTrig::IN1_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaTrig::IN1_INPUT+i));
 
-		addOutput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::UP1_OUTPUT+i));
-		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::DN1_OUTPUT+i));
-		addOutput(createPort<MLPort>(Vec(row4, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::SUM1_OUTPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row2, offset_y + i*delta_y ), module, OctaTrig::UP1_OUTPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTrig::DN1_OUTPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row4, offset_y + i*delta_y ), module, OctaTrig::SUM1_OUTPUT+i));
 	};
 
 

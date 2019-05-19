@@ -39,13 +39,13 @@ struct OctaPlus : Module {
 		NUM_LIGHTS
 	};
 
-	SchmittTrigger trigger[8];
+	dsp::SchmittTrigger trigger[8];
 	float out[8];
 
 
 	OctaPlus() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	void reset() override {
 		for(int i=0; i<8; i++) out[i] = 0.0;
@@ -55,7 +55,7 @@ struct OctaPlus : Module {
 
 
 
-void OctaPlus::step() {
+void OctaPlus::process(const ProcessArgs &args) {
 
 	float in_A[8], in_B[8];
 
@@ -70,7 +70,7 @@ void OctaPlus::step() {
 	in_B[0] = inputs[IN_B_1_INPUT].normalize(random);
 	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].normalize(in_B[i-1]);
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = in_A[i] + in_B[i];
+	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(in_A[i] + in_B[i]);
 
 };
 
@@ -80,14 +80,15 @@ struct OctaPlusWidget : ModuleWidget {
 	OctaPlusWidget(OctaPlus *module);
 };
 
-OctaPlusWidget::OctaPlusWidget(OctaPlus *module) : ModuleWidget(module) {
+OctaPlusWidget::OctaPlusWidget(OctaPlus *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaPlus.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaPlus.svg")));
 
 		addChild(panel);
 	}
@@ -103,9 +104,9 @@ OctaPlusWidget::OctaPlusWidget(OctaPlus *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaPlus::IN1_INPUT+i));
-		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaPlus::IN_B_1_INPUT+i));
-		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaPlus::OUT1_OUTPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaPlus::IN1_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaPlus::IN_B_1_INPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaPlus::OUT1_OUTPUT+i));
 	};
 
 

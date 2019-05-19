@@ -28,23 +28,23 @@ struct OctaSwitch : Module {
 	OctaSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { };
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 };
 
 
 
-void OctaSwitch::step() {
+void OctaSwitch::process(const ProcessArgs &args) {
 
 	bool gate[8];
 
-	threshold = inputs[THRESHOLD_INPUT].normalize(params[THRESHOLD_PARAM].value);
+	threshold = inputs[THRESHOLD_INPUT].normalize(params[THRESHOLD_PARAM].getValue());
 
 	gate[0] = inputs[GATE_INPUT].normalize(0.0) > threshold;
 
 	for(int i=1; i<8; i++) {
 		
-		if( inputs[GATE_INPUT+i].active ) gate[i] = inputs[GATE_INPUT+i].value > threshold;
+		if( inputs[GATE_INPUT+i].isConnected() ) gate[i] = inputs[GATE_INPUT+i].getVoltage() > threshold;
 		else	                          gate[i] = gate[i-1];
 
 	}
@@ -64,24 +64,24 @@ struct ThresholdDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   ThresholdDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) {
+  void draw(const DrawArgs &args) {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-    nvgStrokeWidth(vg, 1.0);
-    nvgStrokeColor(vg, borderColor);
-    nvgStroke(vg);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
 
-    nvgFontSize(vg, 18);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 1.0);
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 1.0);
 
     char display_string[10];
 
@@ -90,17 +90,17 @@ struct ThresholdDisplayWidget : TransparentWidget {
     Vec textPos = Vec(3.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~~", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\\\", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\", NULL);
 
 	{
 	    textColor = nvgRGB(0xf0, 0x00, 0x00);
-		nvgFillColor(vg, textColor);
-		nvgText(vg, textPos.x, textPos.y, display_string, NULL);
+		nvgFillColor(args.vg, textColor);
+		nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
 	};
   }
 };
@@ -109,14 +109,15 @@ struct OctaSwitchWidget : ModuleWidget {
 	OctaSwitchWidget(OctaSwitch *module);
 };
 
-OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
+OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) {
+		setModule(module);
 
 	box.size = Vec(15*10, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaSwitch.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaSwitch.svg")));
 
 		addChild(panel);
 	}
@@ -130,16 +131,16 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
 
-	addInput(createPort<MLPort>(   Vec(row1,  328 ), PortWidget::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
+	addInput(createInput<MLPort>(   Vec(row1,  328 ), module, OctaSwitch::THRESHOLD_INPUT));
 	addParam(createParam<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
 
 
 	for( int i=0; i<8; i++) {
-		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::GATE_INPUT+i));
-		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::A_INPUT+i));
-		addInput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::B_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y ), module, OctaSwitch::GATE_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y ), module, OctaSwitch::A_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaSwitch::B_INPUT+i));
 
-		addOutput(createPort<MLPort>(Vec(row4, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaSwitch::OUT_OUTPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row4, offset_y + i*delta_y ), module, OctaSwitch::OUT_OUTPUT+i));
 	};
 
 	ThresholdDisplayWidget *display = new ThresholdDisplayWidget();

@@ -34,9 +34,10 @@ struct BPMdetect : Module {
 		NUM_LIGHTS
 	};
 
-	BPMdetect() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { misses = 0; onSampleRateChange();};
+	BPMdetect() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); misses = 0; onSampleRateChange();};
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	int misses = 0;
 	int count2 = 0;
@@ -60,25 +61,25 @@ struct BPMdetect : Module {
 
 	float gSampleRate;
 	void reset() {onSampleRateChange();};
-	void onSampleRateChange() override {gSampleRate = engineGetSampleRate(); deltaT = 1.0/gSampleRate;}
+	void onSampleRateChange() override {gSampleRate = args.sampleRate; deltaT = 1.0/gSampleRate;}
 
-	SchmittTrigger gateTrigger;
-	PulseGenerator outPulse1, outPulse2, outPulse3;
+	dsp::SchmittTrigger gateTrigger;
+	dsp::PulseGenerator outPulse1, outPulse2, outPulse3;
 };
 
 
 
-void BPMdetect::step() {
+void BPMdetect::process(const ProcessArgs &args) {
 
 
-	float mult2 = roundf(params[MULT2_PARAM].value);
-	float mult3 = roundf(params[MULT3_PARAM].value);
+	float mult2 = roundf(params[MULT2_PARAM].getValue());
+	float mult3 = roundf(params[MULT3_PARAM].getValue());
 
-	float factor2 = ( fine ? 1.0f + 0.25f * (params[SWING2_PARAM].value - 1.0f): params[SWING2_PARAM].value ) / mult2;
-	float factor3 = ( fine ? 1.0f + 0.25f * (params[SWING3_PARAM].value - 1.0f): params[SWING3_PARAM].value ) / mult3;
+	float factor2 = ( fine ? 1.0f + 0.25f * (params[SWING2_PARAM].getValue() - 1.0f): params[SWING2_PARAM].getValue() ) / mult2;
+	float factor3 = ( fine ? 1.0f + 0.25f * (params[SWING3_PARAM].getValue() - 1.0f): params[SWING3_PARAM].getValue() ) / mult3;
 
 
-	if( inputs[GATE_INPUT].active) {
+	if( inputs[GATE_INPUT].isConnected()) {
 
 		if( timer1 > seconds ) {
 			outPulse1.trigger(0.01);
@@ -98,7 +99,7 @@ void BPMdetect::step() {
 			// count3++;
 		}
 
-		if( gateTrigger.process(inputs[GATE_INPUT].value) ) {
+		if( gateTrigger.process(inputs[GATE_INPUT].getVoltage()) ) {
 
 
 			if(timer>0) {
@@ -123,14 +124,14 @@ void BPMdetect::step() {
 				}
 
 
-				float a = params[SMOOTH_PARAM].value;
+				float a = params[SMOOTH_PARAM].getValue();
 				seconds = ( (1.0-a)*seconds + a*new_seconds);
 				BPM=60.0/seconds;
 
 				lfo_volts = 1.0 - log2(seconds) ;
 
-				float num   = roundf(params[DELAY1_PARAM].value);
-				float denom = roundf(params[DELAY2_PARAM].value);
+				float num   = roundf(params[DELAY1_PARAM].getValue());
+				float denom = roundf(params[DELAY2_PARAM].getValue());
 
 				delay_volts = 10.0*(3.0+log10(seconds * num/denom))/4.0;
 
@@ -155,14 +156,14 @@ void BPMdetect::step() {
 	timer2 += deltaT;
 	timer3 += deltaT;
 
-	outputs[TRIG1_OUTPUT].value = outPulse1.process(deltaT) ? 10.0 : 0.0;
-	outputs[TRIG2_OUTPUT].value = outPulse2.process(deltaT) ? 10.0 : 0.0;
-	outputs[TRIG3_OUTPUT].value = outPulse3.process(deltaT) ? 10.0 : 0.0;
+	outputs[TRIG1_OUTPUT].setVoltage(outPulse1.process(deltaT) ? 10.0 : 0.0);
+	outputs[TRIG2_OUTPUT].setVoltage(outPulse2.process(deltaT) ? 10.0 : 0.0);
+	outputs[TRIG3_OUTPUT].setVoltage(outPulse3.process(deltaT) ? 10.0 : 0.0);
 
 
-	outputs[LFO_OUTPUT].value = lfo_volts;
-	outputs[SEQ_OUTPUT].value = lfo_volts-3.0;
-	outputs[DELAY_OUTPUT].value = delay_volts;
+	outputs[LFO_OUTPUT].setVoltage(lfo_volts);
+	outputs[SEQ_OUTPUT].setVoltage(lfo_volts-3.0);
+	outputs[DELAY_OUTPUT].setVoltage(delay_volts);
 
 };
 
@@ -172,24 +173,24 @@ struct NumberDisplayWidget2 : TransparentWidget {
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget2() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) {
+  void draw(const DrawArgs &args) {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-    nvgStrokeWidth(vg, 1.0);
-    nvgStrokeColor(vg, borderColor);
-    nvgStroke(vg);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
 
-    nvgFontSize(vg, 18);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
 
     char display_string[10];
 
@@ -198,16 +199,16 @@ struct NumberDisplayWidget2 : TransparentWidget {
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~~~", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\\\\\", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\", NULL);
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, display_string, NULL);
+    nvgFillColor(args.vg, textColor);
+    nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
   }
 };
 
@@ -221,7 +222,7 @@ struct FineMenuItem : MenuItem {
                 module->fine = mfine;
         };
 
-        void step() override {
+        void process(const ProcessArgs &args) override {
                 rightText = (module->fine == mfine)? "✔" : "";
         };
 
@@ -236,7 +237,7 @@ struct NormalMenuItem : MenuItem {
                 module->fine = mfine;
         };
 
-        void step() override {
+        void process(const ProcessArgs &args) override {
                 rightText = (module->fine != mfine)? "✔" : "";
         };
 
@@ -282,13 +283,14 @@ Menu *BPMdetectcreateWidgetContextMenu() {
         return menu;
 };
 
-BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
+BPMdetectWidget::BPMdetectWidget(BPMdetect *module) {
+		setModule(module);
 	box.size = Vec(15*10, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/BPMdetect.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/BPMdetect.svg")));
 		addChild(panel);
 	}
 
@@ -310,25 +312,25 @@ BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
-	addInput(createPort<MLPort>(Vec(column1+5,  row1+2), PortWidget::INPUT, module, BPMdetect::GATE_INPUT));
+	addInput(createInput<MLPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
   	addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
-	addOutput(createPort<MLPort>(Vec(column3-5,row1+2), PortWidget::OUTPUT, module, BPMdetect::TRIG1_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
 
   	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
   	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createPort<MLPort>(Vec(column3, row2+2), PortWidget::OUTPUT, module, BPMdetect::TRIG2_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
 
 
   	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
   	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createPort<MLPort>(Vec(column3, row3+2), PortWidget::OUTPUT, module, BPMdetect::TRIG3_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
 
-	addOutput(createPort<MLPort>(Vec(column1, row4), PortWidget::OUTPUT, module, BPMdetect::LFO_OUTPUT));
-	addOutput(createPort<MLPort>(Vec(column3, row4), PortWidget::OUTPUT, module, BPMdetect::SEQ_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
 
   	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
   	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
-	addOutput(createPort<MLPort>(Vec(column3, row5), PortWidget::OUTPUT, module, BPMdetect::DELAY_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
 	display->box.pos = Vec(25,40);

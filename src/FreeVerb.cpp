@@ -33,17 +33,17 @@ struct FreeVerb : Module {
 
 	bool freeze=false;
 
-	SchmittTrigger buttonTrigger;
+	dsp::SchmittTrigger buttonTrigger;
 
 	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
 
-	float gSampleRate = engineGetSampleRate();
+	float gSampleRate = args.sampleRate;
 
 		reverb.init(gSampleRate);
 
 	};
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	void onSampleRateChange() override;
 
@@ -53,7 +53,7 @@ struct FreeVerb : Module {
 
 void FreeVerb::onSampleRateChange() {
 
-	float gSampleRate = engineGetSampleRate();
+	float gSampleRate = args.sampleRate;
 
 	reverb.init(gSampleRate);
 
@@ -62,7 +62,7 @@ void FreeVerb::onSampleRateChange() {
 
 };
 
-void FreeVerb::step() {
+void FreeVerb::process(const ProcessArgs &args) {
 
 	float out1, out2;
 
@@ -73,24 +73,24 @@ void FreeVerb::step() {
 	bool  old_freeze = freeze;
 
 
-	float input = clamp(inputs[IN_INPUT].value,-10.0f,10.0f);
+	float input = clamp(inputs[IN_INPUT].getVoltage(),-10.0f,10.0f);
 
-	if(inputs[ROOMSIZE_INPUT].active) {
-		roomsize = clamp(inputs[ROOMSIZE_INPUT].value/8.0f, 0.0f, 1.0f);
+	if(inputs[ROOMSIZE_INPUT].isConnected()) {
+		roomsize = clamp(inputs[ROOMSIZE_INPUT].getVoltage()/8.0f, 0.0f, 1.0f);
 	} else {
-		roomsize = params[ROOMSIZE_PARAM].value;
+		roomsize = params[ROOMSIZE_PARAM].getValue();
 	};
 
-	if(inputs[DAMP_INPUT].active) {
-		damp     = clamp(inputs[DAMP_INPUT].value/8.0f, 0.0f, 1.0f);
+	if(inputs[DAMP_INPUT].isConnected()) {
+		damp     = clamp(inputs[DAMP_INPUT].getVoltage()/8.0f, 0.0f, 1.0f);
 	} else {
-		damp     = params[DAMP_PARAM].value;
+		damp     = params[DAMP_PARAM].getValue();
 	};
 
-	if(inputs[FREEZE_INPUT].active) {
-		freeze = inputs[FREEZE_INPUT].value > 1.0;
+	if(inputs[FREEZE_INPUT].isConnected()) {
+		freeze = inputs[FREEZE_INPUT].getVoltage() > 1.0;
 	} else {
-		if(buttonTrigger.process(params[FREEZE_PARAM].value)) freeze = !freeze;
+		if(buttonTrigger.process(params[FREEZE_PARAM].getValue())) freeze = !freeze;
 	};
 
 
@@ -105,8 +105,8 @@ void FreeVerb::step() {
 	reverb.process(input, out1, out2);
 
 
-	outputs[OUT1_OUTPUT].value = out1;
-	outputs[OUT2_OUTPUT].value = out2;
+	outputs[OUT1_OUTPUT].setVoltage(out1);
+	outputs[OUT2_OUTPUT].setVoltage(out2);
 };
 
 
@@ -115,33 +115,34 @@ struct FreeVerbWidget : ModuleWidget {
 	FreeVerbWidget(FreeVerb *module);
 };
 
-FreeVerbWidget::FreeVerbWidget(FreeVerb *module) : ModuleWidget(module) {
+FreeVerbWidget::FreeVerbWidget(FreeVerb *module) {
+		setModule(module);
 
 	box.size = Vec(15*6, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/FreeVerb.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/FreeVerb.svg")));
 		addChild(panel);
 	}
 
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addInput(createPort<MLPort>(Vec(33, 50), PortWidget::INPUT, module, FreeVerb::IN_INPUT));
+	addInput(createInput<MLPort>(Vec(33, 50), module, FreeVerb::IN_INPUT));
 
-	addInput(createPort<MLPort>(Vec(53, 120), PortWidget::INPUT, module, FreeVerb::ROOMSIZE_INPUT));
-	addInput(createPort<MLPort>(Vec(53, 183), PortWidget::INPUT, module, FreeVerb::DAMP_INPUT));
-	addInput(createPort<MLPort>(Vec(53, 246), PortWidget::INPUT, module, FreeVerb::FREEZE_INPUT));
+	addInput(createInput<MLPort>(Vec(53, 120), module, FreeVerb::ROOMSIZE_INPUT));
+	addInput(createInput<MLPort>(Vec(53, 183), module, FreeVerb::DAMP_INPUT));
+	addInput(createInput<MLPort>(Vec(53, 246), module, FreeVerb::FREEZE_INPUT));
 
     addParam(createParam<SmallBlueMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
     addParam(createParam<SmallBlueMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
     addParam(createParam<ML_MediumLEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
     addChild(createLight<MLMediumLight<GreenLight>>(Vec(18,254), module, FreeVerb::FREEZE_LIGHT));
 
-	addOutput(createPort<MLPort>(Vec(11, 313), PortWidget::OUTPUT, module, FreeVerb::OUT1_OUTPUT));
-	addOutput(createPort<MLPort>(Vec(55, 313), PortWidget::OUTPUT, module, FreeVerb::OUT2_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));
 }
 
 Model *modelFreeVerb = createModel<FreeVerb, FreeVerbWidget>("FreeVerb");

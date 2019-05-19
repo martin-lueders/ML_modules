@@ -22,10 +22,11 @@ struct VoltMeter : Module {
 	};
 
 
-	VoltMeter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { for(int i=0; i<4; i++) {volts[i] = 0.0f; active[i] = false;}};
+	VoltMeter() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); for(int i=0; i<4; i++) {volts[i] = 0.0f; active[i] = false;}};
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	float volts[4];
 	bool active[4];
@@ -34,10 +35,10 @@ struct VoltMeter : Module {
 
 
 
-void VoltMeter::step() {
+void VoltMeter::process(const ProcessArgs &args) {
 
 	for(int i=0; i<4; i++) {
-		active[i] = inputs[IN1_INPUT+i].active;
+		active[i] = inputs[IN1_INPUT+i].isConnected();
 		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].normalize(0.0);
 	};
 
@@ -53,25 +54,25 @@ struct VoltDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   VoltDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) {
+  void draw(const DrawArgs &args) {
     // Background
 //    NVGcolor backgroundColor = nvgRGB(0x44, 0x44, 0x44);
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-    nvgStrokeWidth(vg, 1.0);
-    nvgStrokeColor(vg, borderColor);
-    nvgStroke(vg);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
 
-    nvgFontSize(vg, 18);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
 
     char display_string[10];
 
@@ -80,17 +81,17 @@ struct VoltDisplayWidget : TransparentWidget {
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~~~~", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~~~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\\\\\\\", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\\\", NULL);
 
 	if(*on) {
 	    textColor = nvgRGB(0xf0, 0x00, 0x00);
-		nvgFillColor(vg, textColor);
-		nvgText(vg, textPos.x, textPos.y, display_string, NULL);
+		nvgFillColor(args.vg, textColor);
+		nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
 	};
   }
 };
@@ -101,7 +102,8 @@ struct VoltMeterWidget : ModuleWidget {
 	TextField ** label;
 };
 
-VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
+VoltMeterWidget::VoltMeterWidget(VoltMeter *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
@@ -110,7 +112,7 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/VoltMeter.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/VoltMeter.svg")));
 		addChild(panel);
 	}
 
@@ -125,7 +127,7 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 
 	for(int i=0; i<4; i++) {
 
-		addInput(createPort<MLPort>(Vec(12, 60+i*delta_y), PortWidget::INPUT, module, VoltMeter::IN1_INPUT+i));
+		addInput(createInput<MLPort>(Vec(12, 60+i*delta_y), module, VoltMeter::IN1_INPUT+i));
 
 
 		VoltDisplayWidget *display = new VoltDisplayWidget();

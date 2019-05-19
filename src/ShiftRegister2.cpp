@@ -38,12 +38,12 @@ struct ShiftRegister2 : Module {
 
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	int numSteps;
 	float values[32] = {};
 
-	SchmittTrigger trigTrigger;
+	dsp::SchmittTrigger trigTrigger;
 
 	inline float randf() {return rand()/(RAND_MAX-1.0);}
 
@@ -56,27 +56,27 @@ struct ShiftRegister2 : Module {
 
 
 
-void ShiftRegister2::step() {
+void ShiftRegister2::process(const ProcessArgs &args) {
 
-	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].value * clamp(inputs[NUM_STEPS_INPUT].normalize(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
+	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].getValue() * clamp(inputs[NUM_STEPS_INPUT].normalize(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
 
 
-	if( inputs[TRIGGER_INPUT].active ) {
+	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
-		if( trigTrigger.process(inputs[TRIGGER_INPUT].value) ) {
+		if( trigTrigger.process(inputs[TRIGGER_INPUT].getVoltage()) ) {
 
 			float new_in1 = inputs[IN1_INPUT].normalize( randf()*10.0-5.0 );
 			float new_in2 = inputs[IN2_INPUT].normalize( new_in1 + 1.0 );
 
 			for(int i=32; i>0; i--) values[i] = values[i-1];
 
-			float p1 = params[PROB1_PARAM].value + clamp(inputs[PROB1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
-			float p2 = params[PROB2_PARAM].value + clamp(inputs[PROB2_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
 
 			bool replace = ( randf() < p1 );
 			bool rnd2 = ( randf() < p2 );
 
-			float a = params[MIX1_PARAM].value + clamp(inputs[MIX1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
 
 
 			if(replace) {
@@ -89,11 +89,11 @@ void ShiftRegister2::step() {
 
 	};
 
-	outputs[OUT_OUTPUT].value = values[0];
+	outputs[OUT_OUTPUT].setVoltage(values[0]);
 
-	int offset = roundf(params[AUX_OFFSET_PARAM].value);
+	int offset = roundf(params[AUX_OFFSET_PARAM].getValue());
 
-	outputs[AUX_OUTPUT].value = values[offset];
+	outputs[AUX_OUTPUT].setVoltage(values[offset]);
 };
 
 struct IntDisplayWidget : TransparentWidget {
@@ -102,24 +102,24 @@ struct IntDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   IntDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) override {
+  void draw(const DrawArgs &args) override {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-    nvgStrokeWidth(vg, 1.0);
-    nvgStrokeColor(vg, borderColor);
-    nvgStroke(vg);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
 
-    nvgFontSize(vg, 18);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
 
 //    std::string to_display = std::to_string( (unsigned) *value);
 
@@ -131,16 +131,16 @@ struct IntDisplayWidget : TransparentWidget {
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\", NULL);
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, displayStr,  NULL);
+    nvgFillColor(args.vg, textColor);
+    nvgText(args.vg, textPos.x, textPos.y, displayStr,  NULL);
   }
 };
 
@@ -149,14 +149,15 @@ struct ShiftRegister2Widget : ModuleWidget {
 	ShiftRegister2Widget(ShiftRegister2 *module);
 };
 
-ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidget(module) {
+ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/ShiftReg2.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ShiftReg2.svg")));
 
 		addChild(panel);
 	}
@@ -178,30 +179,30 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 	display->value = &module->numSteps;
 	addChild(display);
 
-	addInput(createPort<MLPort>(Vec(column1,  44), PortWidget::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
-	addInput(createPort<MLPort>(Vec(column1, 96), PortWidget::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
+	addInput(createInput<MLPort>(Vec(column1,  44), module, ShiftRegister2::TRIGGER_INPUT));
+	addInput(createInput<MLPort>(Vec(column1, 96), module, ShiftRegister2::NUM_STEPS_INPUT));
         
 	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
-	addInput(createPort<MLPort>(Vec(column1+8,  135), PortWidget::INPUT, module, ShiftRegister2::IN1_INPUT));
-	addInput(createPort<MLPort>(Vec(column2-8,  135), PortWidget::INPUT, module, ShiftRegister2::IN2_INPUT));
+	addInput(createInput<MLPort>(Vec(column1+8,  135), module, ShiftRegister2::IN1_INPUT));
+	addInput(createInput<MLPort>(Vec(column2-8,  135), module, ShiftRegister2::IN2_INPUT));
 
 
-	addInput(createPort<MLPort>(Vec(column1+3,  183), PortWidget::INPUT, module, ShiftRegister2::PROB1_INPUT));
+	addInput(createInput<MLPort>(Vec(column1+3,  183), module, ShiftRegister2::PROB1_INPUT));
     addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(createPort<MLPort>(Vec(column1+3,  229), PortWidget::INPUT, module, ShiftRegister2::PROB2_INPUT));
+	addInput(createInput<MLPort>(Vec(column1+3,  229), module, ShiftRegister2::PROB2_INPUT));
     addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(createPort<MLPort>(Vec(column1+3,  275), PortWidget::INPUT, module, ShiftRegister2::MIX1_INPUT));
+	addInput(createInput<MLPort>(Vec(column1+3,  275), module, ShiftRegister2::MIX1_INPUT));
 	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
 
 
 	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
 
 
-	addOutput(createPort<MLPort>(Vec(column1-2, 328 ), PortWidget::OUTPUT, module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(createPort<MLPort>(Vec(column2+2, 328 ), PortWidget::OUTPUT, module, ShiftRegister2::AUX_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column1-2, 328 ), module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(column2+2, 328 ), module, ShiftRegister2::AUX_OUTPUT));
 }
 
 

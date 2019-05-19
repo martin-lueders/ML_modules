@@ -28,13 +28,13 @@ struct Sum8 : Module {
 	Sum8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 };
 
 
 
-void Sum8::step() {
+void Sum8::process(const ProcessArgs &args) {
 
 	float out=0.0;
 
@@ -42,7 +42,7 @@ void Sum8::step() {
 
 	for(int i=0; i<8; i++) out += inputs[IN1_INPUT+i].normalize(0.0);
 
-	outputs[OUT_OUTPUT].value = out;
+	outputs[OUT_OUTPUT].setVoltage(out);
 
 };
 
@@ -52,14 +52,15 @@ struct Sum8Widget : ModuleWidget {
 	Sum8Widget(Sum8 *module);
 };
 
-Sum8Widget::Sum8Widget(Sum8 *module) : ModuleWidget(module) {
+Sum8Widget::Sum8Widget(Sum8 *module) {
+		setModule(module);
 
 	box.size = Vec(15*3, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Sum8.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Sum8.svg")));
 
 		addChild(panel);
 	}
@@ -72,10 +73,10 @@ Sum8Widget::Sum8Widget(Sum8 *module) : ModuleWidget(module) {
 
 	const float offset_y = 70, delta_y = 26.5, offset_x=9.5;
 
-	for( int i=0; i<8; i++) addInput(createPort<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), PortWidget::INPUT, module, Sum8::IN1_INPUT+i));
+	for( int i=0; i<8; i++) addInput(createInput<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), module, Sum8::IN1_INPUT+i));
 
 
-	addOutput(createPort<MLPort>(Vec(offset_x, 320), PortWidget::OUTPUT, module, Sum8::OUT_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(offset_x, 320), module, Sum8::OUT_OUTPUT));
 
 
 }

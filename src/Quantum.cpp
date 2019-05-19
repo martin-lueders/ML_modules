@@ -62,13 +62,13 @@ struct Quantum : Module {
 
 	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
 
-	void step() override;
-	PulseGenerator pulse;
+	void process(const ProcessArgs &args) override;
+	dsp::PulseGenerator pulse;
 
 	int last_octave=0, last_semi=0;
 
 	bool semiState[12] = {};
-	SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
+	dsp::SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
 	float semiLight[12] = {};
 
     void reset() override {
@@ -83,7 +83,7 @@ struct Quantum : Module {
 
 	void randomize() override {
 		for (int i = 0; i<12; i++) {
-			semiState[i] = (randomUniform() > 0.5);
+			semiState[i] = (random::uniform() > 0.5);
 			semiLight[i] = semiState[i]?1.0:0.0;
 		};
 		last_octave = 0;
@@ -132,11 +132,11 @@ struct Quantum : Module {
 };
 
 
-void Quantum::step() {
+void Quantum::process(const ProcessArgs &args) {
 
 	for(int i=0; i<12; i++) {
 
-		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].value)) {
+		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].getValue())) {
                         semiState[i] = !semiState[i];
                 }
 		lights[i].value = semiState[i]?1.0f:0.0f;
@@ -145,7 +145,7 @@ void Quantum::step() {
 	float gate = 0.f, trigger=0.f;
 	float quantized = 0.f;
 
-	float v=inputs[IN_INPUT].value;
+	float v=inputs[IN_INPUT].getVoltage();
 	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
 
 //	int octave   = floor(v);
@@ -172,13 +172,13 @@ void Quantum::step() {
 
 
 
-   	if( inputs[RESET_INPUT].active ) {
-		if( resetTrigger.process(inputs[RESET_INPUT].value) ) reset();
+   	if( inputs[RESET_INPUT].isConnected() ) {
+		if( resetTrigger.process(inputs[RESET_INPUT].getVoltage()) ) reset();
         };
 
 
-	if( inputs[SET_INPUT].active ) {
-		if( setTrigger.process(inputs[SET_INPUT].value ) ) {
+	if( inputs[SET_INPUT].isConnected() ) {
+		if( setTrigger.process(inputs[SET_INPUT].getVoltage() ) ) {
 
 			float n=inputs[NOTE_INPUT].normalize(0.0);
 			int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
@@ -251,14 +251,14 @@ void Quantum::step() {
 		};
 	};
 
-	float gSampleRate = engineGetSampleRate();
+	float gSampleRate = args.sampleRate;
 
 	trigger = pulse.process(1.0/gSampleRate) ? 10.0f : 0.0f;
 
 
-	outputs[OUT_OUTPUT].value = quantized;
-	outputs[GATE_OUTPUT].value = gate - trigger;
-	outputs[TRIGGER_OUTPUT].value = trigger;
+	outputs[OUT_OUTPUT].setVoltage(quantized);
+	outputs[GATE_OUTPUT].setVoltage(gate - trigger);
+	outputs[TRIGGER_OUTPUT].setVoltage(trigger);
 
 }
 
@@ -272,7 +272,7 @@ struct QuantumModeItem : MenuItem {
                 quantum->mode = mode;
         };
 
-        void step() override {
+        void process(const ProcessArgs &args) override {
                 rightText = (quantum->mode == mode)? "✔" : "";
         };
 
@@ -287,7 +287,7 @@ struct QuantumTranposeModeItem : MenuItem {
             quantum->transpose_select = transpose_select;
   	};
 
-    void step() override {
+    void process(const ProcessArgs &args) override {
             rightText = (quantum->transpose_select == transpose_select)? "✔" : "";
     };
 
@@ -365,13 +365,14 @@ Menu *QuantumcreateWidgetContextMenu() {
 	return menu;
 };
 
-QuantumWidget::QuantumWidget(Quantum *module) : ModuleWidget(module) {
+QuantumWidget::QuantumWidget(Quantum *module) {
+		setModule(module);
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Quantum.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Quantum.svg")));
 		addChild(panel);
 	}
 
@@ -380,16 +381,16 @@ QuantumWidget::QuantumWidget(Quantum *module) : ModuleWidget(module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
-	addInput( createPort<MLPort>(Vec(19, 42), PortWidget::INPUT, module, Quantum::IN_INPUT));
-	addOutput(createPort<MLPort>(Vec(75, 42), PortWidget::OUTPUT, module, Quantum::OUT_OUTPUT));
+	addInput( createPort<MLPort>(Vec(19, 42), module, Quantum::IN_INPUT));
+	addOutput(createOutput<MLPort>(Vec(75, 42), module, Quantum::OUT_OUTPUT));
 
-	addInput( createPort<MLPort>(Vec(75, 90), PortWidget::INPUT, module, Quantum::TRANSPOSE_INPUT));
-	addOutput(createPort<MLPort>(Vec(75, 140), PortWidget::OUTPUT, module, Quantum::GATE_OUTPUT));
-	addOutput(createPort<MLPort>(Vec(75, 180), PortWidget::OUTPUT, module, Quantum::TRIGGER_OUTPUT));
+	addInput( createPort<MLPort>(Vec(75, 90), module, Quantum::TRANSPOSE_INPUT));
+	addOutput(createOutput<MLPort>(Vec(75, 140), module, Quantum::GATE_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(75, 180), module, Quantum::TRIGGER_OUTPUT));
 
-	addInput(createPort<MLPort>(Vec(75, 226), PortWidget::INPUT, module, Quantum::NOTE_INPUT));
-	addInput(createPort<MLPort>(Vec(75, 266), PortWidget::INPUT, module, Quantum::SET_INPUT));
-	addInput(createPort<MLPort>(Vec(75, 312), PortWidget::INPUT, module, Quantum::RESET_INPUT));
+	addInput(createInput<MLPort>(Vec(75, 226), module, Quantum::NOTE_INPUT));
+	addInput(createInput<MLPort>(Vec(75, 266), module, Quantum::SET_INPUT));
+	addInput(createInput<MLPort>(Vec(75, 312), module, Quantum::RESET_INPUT));
 
 	static const float offset_x = 24;
 	static const float offset_y = 333;

@@ -167,7 +167,7 @@ struct MLScrew : FramebufferWidget {
 	    addChild(tw);
 	    sw = new SVGWidget();
 	    tw->addChild(sw);
-	    sw->setSVG(SVG::load(asset::plugin(pluginInstance, "res/MLScrew.svg")));
+	    sw->setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLScrew.svg")));
 		tw->box.size = sw->box.size;	
 
         float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 

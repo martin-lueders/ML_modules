@@ -27,7 +27,7 @@ struct TrigSwitch3_2 : Module {
 
 	TrigSwitch3_2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	int position=0;
 
@@ -40,7 +40,7 @@ struct TrigSwitch3_2 : Module {
 
 
 
-	SchmittTrigger stepTriggers[8];
+	dsp::SchmittTrigger stepTriggers[8];
 
 	float out1[8];
 	float out2[8];
@@ -82,7 +82,7 @@ struct TrigSwitch3_2 : Module {
 };
 
 
-void TrigSwitch3_2::step() {
+void TrigSwitch3_2::process(const ProcessArgs &args) {
 
 	if(outMode==ZERO) { 
 		for(int i=0; i<8; i++) {
@@ -95,7 +95,7 @@ void TrigSwitch3_2::step() {
 
 
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].value ) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
@@ -104,9 +104,9 @@ void TrigSwitch3_2::step() {
 	out3[position] = inputs[CV3_INPUT].normalize(0.0);
 
 	for(int i=0; i<8; i++) {
-		outputs[OUT1_OUTPUT+i].value = out1[i];
-		outputs[OUT2_OUTPUT+i].value = out2[i];
-		outputs[OUT3_OUTPUT+i].value = out3[i];
+		outputs[OUT1_OUTPUT+i].setVoltage(out1[i]);
+		outputs[OUT2_OUTPUT+i].setVoltage(out2[i]);
+		outputs[OUT3_OUTPUT+i].setVoltage(out3[i]);
 	}
 
 };
@@ -122,7 +122,7 @@ struct TrigSwitch3_2OutModeItem : MenuItem {
 	};
 
 
-	void step() override {
+	void process(const ProcessArgs &args) override {
 		rightText = (trigSwitch->outMode == outMode)? "✔" : "";
 	};
 
@@ -138,14 +138,15 @@ struct TrigSwitch3_2Widget : ModuleWidget {
 
 };
 
-TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) : ModuleWidget(module) {
+TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) {
+		setModule(module);
 
 	box.size = Vec(15*12, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigSwitch3_2.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigSwitch3_2.svg")));
 		addChild(panel);
 	}
 
@@ -159,20 +160,20 @@ TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) : ModuleWidget(m
 
 	for (int i=0; i<8; i++) {
 
-		addInput(createPort<MLPort>(             Vec(row1, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch3_2::TRIG_INPUT + i));
+		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch3_2::TRIG_INPUT + i));
 
 		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3_2::STEP_LIGHT+i));
 
 
-		addOutput(createPort<MLPort>(             Vec(row3, offset_y + i*delta_y),    PortWidget::OUTPUT, module, TrigSwitch3_2::OUT1_OUTPUT + i));
-		addOutput(createPort<MLPort>(             Vec(row3+32, offset_y + i*delta_y), PortWidget::OUTPUT, module, TrigSwitch3_2::OUT2_OUTPUT + i));
-		addOutput(createPort<MLPort>(             Vec(row3+64, offset_y + i*delta_y), PortWidget::OUTPUT, module, TrigSwitch3_2::OUT3_OUTPUT + i));
+		addOutput(createOutput<MLPort>(             Vec(row3, offset_y + i*delta_y),    PortWidget::OUTPUT, module, TrigSwitch3_2::OUT1_OUTPUT + i));
+		addOutput(createOutput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3_2::OUT2_OUTPUT + i));
+		addOutput(createOutput<MLPort>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3_2::OUT3_OUTPUT + i));
 
 	}
-	addInput(createPort<MLPort>(Vec(row3,    320), PortWidget::INPUT, module, TrigSwitch3_2::CV1_INPUT));
-	addInput(createPort<MLPort>(Vec(row3+32, 320), PortWidget::INPUT, module, TrigSwitch3_2::CV2_INPUT));
-	addInput(createPort<MLPort>(Vec(row3+64, 320), PortWidget::INPUT, module, TrigSwitch3_2::CV3_INPUT));
+	addInput(createInput<MLPort>(Vec(row3,    320), module, TrigSwitch3_2::CV1_INPUT));
+	addInput(createInput<MLPort>(Vec(row3+32, 320), module, TrigSwitch3_2::CV2_INPUT));
+	addInput(createInput<MLPort>(Vec(row3+64, 320), module, TrigSwitch3_2::CV3_INPUT));
 
 }
 

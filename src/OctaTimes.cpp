@@ -41,14 +41,14 @@ struct OctaTimes : Module {
 		NUM_LIGHTS
 	};
 
-	SchmittTrigger trigger[8];
+	dsp::SchmittTrigger trigger[8];
 	float out[8];
 
 
 
 	OctaTimes() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	void reset() override {
 		for(int i=0; i<8; i++) out[i] = 0.0; 
@@ -58,14 +58,14 @@ struct OctaTimes : Module {
 
 
 
-void OctaTimes::step() {
+void OctaTimes::process(const ProcessArgs &args) {
 
 	float in_A[8], in_B[8];
 
-	float normal = params[MULT_PARAM].value==1?1.0f:10.f;
+	float normal = params[MULT_PARAM].getValue()==1?1.0f:10.f;
 
 
-	float multiplier = params[MULT_PARAM].value==1?1.f:0.1f;
+	float multiplier = params[MULT_PARAM].getValue()==1?1.f:0.1f;
 
 	in_A[0] = inputs[IN1_INPUT].normalize(0.f);
 //	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(in_A[i-1]);
@@ -75,9 +75,9 @@ void OctaTimes::step() {
 	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].normalize(in_B[i-1]);
 
 	float sum = 0.0f;
-	for(int i=0; i<8; i++) sum += outputs[OUT1_OUTPUT+i].value = clamp(in_A[i] * in_B[i] * multiplier , -12.f, 12.f);
+	for(int i=0; i<8; i++) sum += outputs[OUT1_OUTPUT+i].setVoltage(clamp(in_A[i] * in_B[i] * multiplier , -12.f, 12.f));
 
-	outputs[SUM_OUTPUT].value = clamp(sum,-12.f,12.f);
+	outputs[SUM_OUTPUT].setVoltage(clamp(sum,-12.f,12.f));
 };
 
 
@@ -86,14 +86,15 @@ struct OctaTimesWidget : ModuleWidget {
 	OctaTimesWidget(OctaTimes *module);
 };
 
-OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
+OctaTimesWidget::OctaTimesWidget(OctaTimes *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaTimes.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaTimes.svg")));
 
 		addChild(panel);
 	}
@@ -109,12 +110,12 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTimes::IN1_INPUT+i));
-		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTimes::IN_B_1_INPUT+i));
-		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTimes::OUT1_OUTPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaTimes::IN1_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaTimes::IN_B_1_INPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTimes::OUT1_OUTPUT+i));
 	};
 	
-	addOutput(createPort<MLPort>(Vec(row3, 330 ), PortWidget::OUTPUT, module, OctaTimes::SUM_OUTPUT));
+	addOutput(createOutput<MLPort>(Vec(row3, 330 ), module, OctaTimes::SUM_OUTPUT));
 	addParam(createParam<CKSS>( Vec(row1 + 5, 330 ), module, OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0));
 
 }

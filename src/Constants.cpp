@@ -40,7 +40,7 @@ struct Constants : Module {
 	outputs[P_4_OUTPUT].value  = 4*semi;
 	outputs[P_5_OUTPUT].value  = 5*semi;
 	outputs[P_7_OUTPUT].value  = 7*semi;
-	outputs[P_12_OUTPUT].value = 1.0;
+	outputs[P_12_OUTPUT].setVoltage(1.0);
 
 	outputs[M_1_OUTPUT].value  = - semi;
 	outputs[M_2_OUTPUT].value  = - 2*semi;
@@ -48,17 +48,17 @@ struct Constants : Module {
 	outputs[M_4_OUTPUT].value  = - 4*semi;
 	outputs[M_5_OUTPUT].value  = - 5*semi;
 	outputs[M_7_OUTPUT].value  = - 7*semi;
-	outputs[M_12_OUTPUT].value = - 1.0;
+	outputs[M_12_OUTPUT].setVoltage(- 1.0);
 
 	};
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 };
 
 
 
-void Constants::step() {
+void Constants::process(const ProcessArgs &args) {
 
 
 };
@@ -69,14 +69,15 @@ struct ConstantsWidget : ModuleWidget {
 	ConstantsWidget(Constants *module);
 };
 
-ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
+ConstantsWidget::ConstantsWidget(Constants *module) {
+		setModule(module);
 
 	box.size = Vec(15*6, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Constants.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Constants.svg")));
 
 		addChild(panel);
 	}
@@ -92,8 +93,8 @@ ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
 
 	for(int i=0; i<7; i++) {
 
-		addOutput(createPort<MLPort>(Vec(offset_xR, offset_y + i*delta_y), PortWidget::OUTPUT, module, Constants::P_1_OUTPUT + i));
-		addOutput(createPort<MLPort>(Vec(offset_xL, offset_y + i*delta_y), PortWidget::OUTPUT, module, Constants::M_1_OUTPUT + i));
+		addOutput(createOutput<MLPort>(Vec(offset_xR, offset_y + i*delta_y), module, Constants::P_1_OUTPUT + i));
+		addOutput(createOutput<MLPort>(Vec(offset_xL, offset_y + i*delta_y), module, Constants::M_1_OUTPUT + i));
 
 	};
 

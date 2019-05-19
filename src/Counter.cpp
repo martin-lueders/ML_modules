@@ -27,11 +27,12 @@ struct Counter : Module {
 		NUM_LIGHTS
 	};
 
-	Counter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
+	Counter() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
-	void reset() override {counter=0; state=false; state2=false; gSampleRate=engineGetSampleRate();};
+	void reset() override {counter=0; state=false; state2=false; gSampleRate=args.sampleRate;};
 
 	int counter = 0;
 	bool state = false;
@@ -40,31 +41,31 @@ struct Counter : Module {
 
 	float gSampleRate;
 
-	void onSampleRateChange() override {gSampleRate = engineGetSampleRate();}
+	void onSampleRateChange() override {gSampleRate = args.sampleRate;}
 
         int max;
   
-	SchmittTrigger startTrigger, gateTrigger, stopTrigger;
-	PulseGenerator startPulse, stopPulse;
+	dsp::SchmittTrigger startTrigger, gateTrigger, stopTrigger;
+	dsp::PulseGenerator startPulse, stopPulse;
 };
 
 
 
-void Counter::step() {
+void Counter::process(const ProcessArgs &args) {
 
 
-	max = params[MAX_PARAM].value;
+	max = params[MAX_PARAM].getValue();
 
 
-	if( inputs[LENGTH_INPUT].active ) max = max * clamp(inputs[LENGTH_INPUT].value/10.0f,0.0f,1.0f);
+	if( inputs[LENGTH_INPUT].isConnected() ) max = max * clamp(inputs[LENGTH_INPUT].getVoltage()/10.0f,0.0f,1.0f);
 
-	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].value )) {
+	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].getValue() )) {
 		state=true; 
 		counter=gateTrigger.isHigh()?1:0;
 		startPulse.trigger(0.001);
 	};
 
-	if( stopTrigger.process(inputs[STOP_INPUT].normalize(0.0) + params[STOP_PARAM].value ))   {
+	if( stopTrigger.process(inputs[STOP_INPUT].normalize(0.0) + params[STOP_PARAM].getValue() ))   {
 		state=false; 
 		counter=0;
 		stopPulse.trigger(0.001);
@@ -90,7 +91,7 @@ void Counter::step() {
 	float stop  = (stopPulse.process( 1.0/gSampleRate)) ? 10.0 : 0.0;
 
 	outputs[GATE_OUTPUT].value  = out;
-	outputs[START_OUTPUT].value = start;
+	outputs[START_OUTPUT].setVoltage(start);
 	outputs[STOP_OUTPUT].value  = stop;
 
 };
@@ -101,24 +102,24 @@ struct NumberDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(NVGcontext *vg) override {
+  void draw(const DrawArgs &args) override {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-    nvgStrokeWidth(vg, 1.0);
-    nvgStrokeColor(vg, borderColor);
-    nvgStroke(vg);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
 
-    nvgFontSize(vg, 18);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
 
     std::string to_display = std::to_string(*value);
 
@@ -128,16 +129,16 @@ struct NumberDisplayWidget : TransparentWidget {
     Vec textPos = Vec(6.0f, 17.0f);
 
     NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "~~~", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~~", NULL);
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(vg, nvgTransRGBA(textColor, 16));
-    nvgText(vg, textPos.x, textPos.y, "\\\\\\", NULL);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\", NULL);
 
     textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+    nvgFillColor(args.vg, textColor);
+    nvgText(args.vg, textPos.x, textPos.y, to_display.c_str(), NULL);
   }
 };
 
@@ -146,13 +147,14 @@ struct CounterWidget : ModuleWidget {
 	CounterWidget(Counter *module);
 };
 
-CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
+CounterWidget::CounterWidget(Counter *module) {
+		setModule(module);
 	box.size = Vec(15*6, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Counter.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Counter.svg")));
 		addChild(panel);
 	}
 
@@ -163,19 +165,19 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 	addParam(createParam<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
-	addInput(createPort<MLPort>( Vec(53, 87), PortWidget::INPUT, module, Counter::LENGTH_INPUT));
+	addInput(createInput<MLPort>( Vec(53, 87), module, Counter::LENGTH_INPUT));
 
-	addInput(createPort<MLPort>(  Vec(13, 168), PortWidget::INPUT, module, Counter::GATE_INPUT));
-	addOutput(createPort<MLPort>(Vec(53, 168), PortWidget::OUTPUT, module, Counter::GATE_OUTPUT));
+	addInput(createInput<MLPort>(  Vec(13, 168), module, Counter::GATE_INPUT));
+	addOutput(createOutput<MLPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
 
-	addInput(createPort<MLPort>(  Vec(13, 241), PortWidget::INPUT, module, Counter::START_INPUT));
-	addOutput(createPort<MLPort>(Vec(53, 241), PortWidget::OUTPUT, module, Counter::START_OUTPUT));
+	addInput(createInput<MLPort>(  Vec(13, 241), module, Counter::START_INPUT));
+	addOutput(createOutput<MLPort>(Vec(53, 241), module, Counter::START_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
 
 
-	addInput(createPort<MLPort>(  Vec(13, 312), PortWidget::INPUT, module, Counter::STOP_INPUT));
-	addOutput(createPort<MLPort>(Vec(53, 312), PortWidget::OUTPUT, module, Counter::STOP_OUTPUT));
+	addInput(createInput<MLPort>(  Vec(13, 312), module, Counter::STOP_INPUT));
+	addOutput(createOutput<MLPort>(Vec(53, 312), module, Counter::STOP_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();

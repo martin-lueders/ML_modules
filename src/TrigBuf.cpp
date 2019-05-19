@@ -29,7 +29,7 @@ struct TrigBuf : Module {
 	TrigBuf() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	float arm1=0.0, arm2=0.0;
 	float out1=0.0, out2=0.0;
@@ -37,8 +37,8 @@ struct TrigBuf : Module {
 	bool gate1=false, gate2=false;
 	bool delayed1=false, delayed2=false;
 
-	SchmittTrigger armTrigger1, armTrigger2;
-	SchmittTrigger gateTrigger1, gateTrigger2;
+	dsp::SchmittTrigger armTrigger1, armTrigger2;
+	dsp::SchmittTrigger gateTrigger1, gateTrigger2;
 
 	void reset() override {
 
@@ -62,7 +62,7 @@ private:
 
 
 
-void TrigBuf::step() {
+void TrigBuf::process(const ProcessArgs &args) {
 
 
 	bool last_gate1 = gate1;
@@ -77,7 +77,7 @@ void TrigBuf::step() {
 	
 
 	
-	if( armTrigger1.process(inputs[ARM1_INPUT].normalize(0.0f) + params[ARM1_PARAM].value ) ) { 
+	if( armTrigger1.process(inputs[ARM1_INPUT].normalize(0.0f) + params[ARM1_PARAM].getValue() ) ) { 
 		if (!gate1) {arm1 = 10.0;}
 		else { 
 				// arm1 = 0.0;
@@ -109,7 +109,7 @@ void TrigBuf::step() {
 
 
 
-	if( armTrigger2.process(inputs[ARM2_INPUT].normalize(inputs[ARM1_INPUT].normalize(0.0f)) + params[ARM2_PARAM].value ) ) { 
+	if( armTrigger2.process(inputs[ARM2_INPUT].normalize(inputs[ARM1_INPUT].normalize(0.0f)) + params[ARM2_PARAM].getValue() ) ) { 
 		if (!gate2) {arm2 = 10.0;}
 		else { 
 			// arm2 = 0.0;
@@ -139,8 +139,8 @@ void TrigBuf::step() {
 	};
 
 
-	outputs[OUT1_OUTPUT].value = out1;
-	outputs[OUT2_OUTPUT].value = out2;
+	outputs[OUT1_OUTPUT].setVoltage(out1);
+	outputs[OUT2_OUTPUT].setVoltage(out2);
 
 	lights[ARM1_LIGHT].value = arm1;
 	lights[ARM2_LIGHT].value = arm2;
@@ -152,30 +152,31 @@ struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget(TrigBuf *module);
 };
 
-TrigBufWidget::TrigBufWidget(TrigBuf *module) : ModuleWidget(module) {
+TrigBufWidget::TrigBufWidget(TrigBuf *module) {
+		setModule(module);
 
 	box.size = Vec(15*4, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigBuf.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigBuf.svg")));
 		addChild(panel);
 	}
 
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addInput(createPort<MLPort>(Vec(9, 62), PortWidget::INPUT, module, TrigBuf::ARM1_INPUT));
-	addInput(createPort<MLPort>(Vec(9, 105), PortWidget::INPUT, module, TrigBuf::GATE1_INPUT));
-	addOutput(createPort<MLPort>(Vec(9, 150), PortWidget::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
+	addInput(createInput<MLPort>(Vec(9, 62), module, TrigBuf::ARM1_INPUT));
+	addInput(createInput<MLPort>(Vec(9, 105), module, TrigBuf::GATE1_INPUT));
+	addOutput(createOutput<MLPort>(Vec(9, 150), module, TrigBuf::OUT1_OUTPUT));
 
 	addParam(createParam<ML_SmallLEDButton>(Vec(40,66), module, TrigBuf::ARM1_PARAM, 0, 10, 0));
 	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 70), module, TrigBuf::ARM1_LIGHT));
 
-	addInput(createPort<MLPort>(Vec(9, 218), PortWidget::INPUT, module, TrigBuf::ARM2_INPUT));
-	addInput(createPort<MLPort>(Vec(9, 263), PortWidget::INPUT, module, TrigBuf::GATE2_INPUT));
-	addOutput(createPort<MLPort>(Vec(9, 305), PortWidget::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
+	addInput(createInput<MLPort>(Vec(9, 218), module, TrigBuf::ARM2_INPUT));
+	addInput(createInput<MLPort>(Vec(9, 263), module, TrigBuf::GATE2_INPUT));
+	addOutput(createOutput<MLPort>(Vec(9, 305), module, TrigBuf::OUT2_OUTPUT));
 
 	addParam(createParam<ML_SmallLEDButton>(Vec(40,222), module, TrigBuf::ARM2_PARAM, 0, 10, 0));
 	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));

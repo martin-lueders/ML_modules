@@ -43,14 +43,14 @@ struct ShiftRegister : Module {
 
 
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	int position=0;
 
 
 	float values[8] = {};
 
-	SchmittTrigger upTrigger, downTrigger, setTrigger;
+	dsp::SchmittTrigger upTrigger, downTrigger, setTrigger;
 
 	void reset() override {
 		position=0;
@@ -66,17 +66,17 @@ struct ShiftRegister : Module {
 
 
 
-void ShiftRegister::step() {
+void ShiftRegister::process(const ProcessArgs &args) {
 
-	if( inputs[TRIGGER_INPUT].active ) {
+	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
-		if( setTrigger.process(inputs[TRIGGER_INPUT].value) ) {
+		if( setTrigger.process(inputs[TRIGGER_INPUT].getVoltage()) ) {
 
 			for(int i=7; i>0; i--) values[i] = values[i-1];
-			values[0] = inputs[IN_INPUT].value;
+			values[0] = inputs[IN_INPUT].getVoltage();
 
 			for(int i=0; i<8; i++) {
-				outputs[OUT1_OUTPUT+i].value = values[i];
+				outputs[OUT1_OUTPUT+i].setVoltage(values[i]);
 				bool positive = values[i]>0;
 				float value = values[i]/10.0;
 				lights[STEP1_LIGHT+2*i].value   = positive?value:0.0;
@@ -95,14 +95,15 @@ struct ShiftRegisterWidget : ModuleWidget {
 	ShiftRegisterWidget(ShiftRegister *module);
 };
 
-ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(module) {
+ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) {
+		setModule(module);
 
 	box.size = Vec(15*4, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/ShiftReg.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ShiftReg.svg")));
 
 		addChild(panel);
 	}
@@ -117,13 +118,13 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(m
 
 	for( int i=0; i<8; i++) {
 
-		addOutput(createPort<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), PortWidget::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
+		addOutput(createOutput<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), module, ShiftRegister::OUT1_OUTPUT+i));
 		addChild(createLight<MLSmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 
-	addInput(createPort<MLPort>(Vec(offset_x+17, 58), PortWidget::INPUT, module, ShiftRegister::IN_INPUT));
-	addInput(createPort<MLPort>(Vec(offset_x+17, 94), PortWidget::INPUT, module, ShiftRegister::TRIGGER_INPUT));
+	addInput(createInput<MLPort>(Vec(offset_x+17, 58), module, ShiftRegister::IN_INPUT));
+	addInput(createInput<MLPort>(Vec(offset_x+17, 94), module, ShiftRegister::TRIGGER_INPUT));
 
 }
 

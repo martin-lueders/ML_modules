@@ -23,7 +23,7 @@ struct TrigSwitch2 : Module {
 
 	TrigSwitch2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	enum OutMode {
 		ZERO,
@@ -64,7 +64,7 @@ struct TrigSwitch2 : Module {
 	float outs[8] = {};
 
 
-	SchmittTrigger stepTriggers[8];
+	dsp::SchmittTrigger stepTriggers[8];
 
 
 	void reset() override {
@@ -77,13 +77,13 @@ struct TrigSwitch2 : Module {
 };
 
 
-void TrigSwitch2::step() {
+void TrigSwitch2::process(const ProcessArgs &args) {
 
 
 	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0; }
 
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].value ) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
 
 	};
 
@@ -91,7 +91,7 @@ void TrigSwitch2::step() {
 
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
 
-	for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].value = outs[i];
+	for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].setVoltage(outs[i]);
 	
 };
 
@@ -107,7 +107,7 @@ struct TrigSwitch2OutModeItem : MenuItem {
 	};
 
 
-	void step() override {
+	void process(const ProcessArgs &args) override {
 		rightText = (trigSwitch2->outMode == outMode)? "✔" : "";
 	};
 
@@ -121,14 +121,15 @@ struct TrigSwitch2Widget : ModuleWidget {
 	Menu *createContextMenu() override;
 };
 
-TrigSwitch2Widget::TrigSwitch2Widget(TrigSwitch2 *module) : ModuleWidget(module) {
+TrigSwitch2Widget::TrigSwitch2Widget(TrigSwitch2 *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigSwitch2.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigSwitch2.svg")));
 		addChild(panel);
 	}
 
@@ -142,15 +143,15 @@ TrigSwitch2Widget::TrigSwitch2Widget(TrigSwitch2 *module) : ModuleWidget(module)
 
 	for (int i=0; i<8; i++) {
 
-		addInput(createPort<MLPort>(             Vec(row1, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch2::TRIG_INPUT + i));
+		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch2::TRIG_INPUT + i));
 
 		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch2::STEP_PARAM + i, 0.0, 1.0, 0.0));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch2::STEP_LIGHT+i));
 		
-		addOutput(createPort<MLPort>(           Vec(row3, offset_y + i*delta_y), PortWidget::OUTPUT, module, TrigSwitch2::OUT_OUTPUT + i));
+		addOutput(createOutput<MLPort>(           Vec(row3, offset_y + i*delta_y), module, TrigSwitch2::OUT_OUTPUT + i));
 
 	}
-	addInput(createPort<MLPort>(Vec(row3, 320), PortWidget::INPUT, module, TrigSwitch2::CV_INPUT));
+	addInput(createInput<MLPort>(Vec(row3, 320), module, TrigSwitch2::CV_INPUT));
 
 }
 

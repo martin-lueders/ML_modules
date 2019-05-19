@@ -1,6 +1,6 @@
 #include "ML_components.hpp"
 
-#include "rack0.hpp"
+#include "rack.hpp"
 
 //#ifdef v_dev
 //#define Davies1900hSmallBlackKnob SmallMLKnob
@@ -12,15 +12,15 @@ extern Plugin *pluginInstance;
 
 struct NKK2 : SVGSwitch, Switch { //Toggle
 	NKK2() {
-		addFrame(SVG::load(asset::system("res/ComponentLibrary/NKK_0.svg")));
-		addFrame(SVG::load(asset::system("res/ComponentLibrary/NKK_2.svg")));
+		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_0.svg")));
+		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_2.svg")));
 	}
 };
 
 struct POLSWITCH : SVGSwitch, Switch { //Toggle
 	POLSWITCH() {
-		addFrame(SVG::load(asset::plugin(pluginInstance, "res/CKSS_0.svg")));
-		addFrame(SVG::load(asset::plugin(pluginInstance, "res/CKSS_1.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_0.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_1.svg")));
 	}
 };
 
@@ -28,25 +28,25 @@ struct POLSWITCH : SVGSwitch, Switch { //Toggle
 /*
 struct MLKnob : RoundKnob {
 	MLKnob() {
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 	}
 };
 
 struct RedMLKnob : RoundKnob {
 	RedMLKnob() {
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
 	}
 };
 
 struct SmallMLKnob : RoundKnob {
 	SmallMLKnob() {
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob_28.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
 	}
 };
 
 struct SmallRedMLKnob : RoundKnob {
 	SmallRedMLKnob() {
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob_28.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
 	}
 };
 */

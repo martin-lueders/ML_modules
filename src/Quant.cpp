@@ -21,9 +21,10 @@ struct Quant : Module {
 		NUM_LIGHTS
 	};
 
-	Quant() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {};
+	Quant() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);};
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 };
 
 
@@ -47,9 +48,9 @@ static void stepChannel(Input &in, Param &p_amount, Output &out) {
 
 }
 
-void Quant::step() {
-	if (outputs[OUT1_OUTPUT].active) stepChannel(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
-	if (outputs[OUT2_OUTPUT].active) stepChannel(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
+void Quant::process(const ProcessArgs &args) {
+	if (outputs[OUT1_OUTPUT].isConnected()) stepChannel(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
+	if (outputs[OUT2_OUTPUT].isConnected()) stepChannel(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
 }
 
 
@@ -57,13 +58,14 @@ struct QuantizerWidget : ModuleWidget {
 	QuantizerWidget(Quant *module);
 };
 
-QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
+QuantizerWidget::QuantizerWidget(Quant *module) {
+		setModule(module);
 	box.size = Vec(15*3, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Quantizer.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Quantizer.svg")));
 		addChild(panel);
 	}
 
@@ -71,12 +73,12 @@ QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 	addParam(createParam<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
-	addInput( createPort<MLPort>(Vec(9, 104), PortWidget::INPUT, module, Quant::IN1_INPUT));
-	addOutput(createPort<MLPort>(Vec(9, 150), PortWidget::OUTPUT, module, Quant::OUT1_OUTPUT));
+	addInput( createPort<MLPort>(Vec(9, 104), module, Quant::IN1_INPUT));
+	addOutput(createOutput<MLPort>(Vec(9, 150), module, Quant::OUT1_OUTPUT));
 
 	addParam(createParam<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
-	addInput( createPort<MLPort>(Vec(9, 246), PortWidget::INPUT, module, Quant::IN2_INPUT));
-	addOutput(createPort<MLPort>(Vec(9, 292), PortWidget::OUTPUT, module, Quant::OUT2_OUTPUT));
+	addInput( createPort<MLPort>(Vec(9, 246), module, Quant::IN2_INPUT));
+	addOutput(createOutput<MLPort>(Vec(9, 292), module, Quant::OUT2_OUTPUT));
 }
 
 Model *modelQuantizer = createModel<Quant, QuantizerWidget>("Quantizer");

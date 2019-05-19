@@ -39,13 +39,13 @@ struct SH8 : Module {
 		NUM_LIGHTS
 	};
 
-	SchmittTrigger trigger[8];
+	dsp::SchmittTrigger trigger[8];
 	float out[8];
 
 
 	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
 
-	void step() override;
+	void process(const ProcessArgs &args) override;
 
 	void reset() override {
 		for(int i=0; i<8; i++) out[i] = 0.0;
@@ -55,7 +55,7 @@ struct SH8 : Module {
 
 
 
-void SH8::step() {
+void SH8::process(const ProcessArgs &args) {
 
 	float in[8], trig[8];
 
@@ -76,7 +76,7 @@ void SH8::step() {
 
 	}
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].value = out[i];
+	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(out[i]);
 
 };
 
@@ -86,14 +86,15 @@ struct SH8Widget : ModuleWidget {
 	SH8Widget(SH8 *module);
 };
 
-SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
+SH8Widget::SH8Widget(SH8 *module) {
+		setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/SH8.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/SH8.svg")));
 
 		addChild(panel);
 	}
@@ -109,9 +110,9 @@ SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, SH8::IN1_INPUT+i));
-		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y  ), PortWidget::INPUT, module, SH8::TRIG1_INPUT+i));
-		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, SH8::OUT1_OUTPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, SH8::IN1_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, SH8::TRIG1_INPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, SH8::OUT1_OUTPUT+i));
 	};
 
 

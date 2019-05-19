@@ -45,81 +45,81 @@ WhiteLight::WhiteLight() {
 }
 
 BlueMLKnob::BlueMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 };
 
 SmallBlueMLKnob::SmallBlueMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
 };
 
 BlueSnapMLKnob::BlueSnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 	snap = true;
 };
 
 SmallBlueSnapMLKnob::SmallBlueSnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
 	snap = true;
 };
 
 
 RedMLKnob::RedMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
 };
 
 SmallRedMLKnob::SmallRedMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
 };
 
 RedSnapMLKnob::RedSnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
 	snap = true;
 };
 
 SmallRedSnapMLKnob::SmallRedSnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
 	snap = true;
 };
 
 
 
 GreyMLKnob::GreyMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/GreyKnob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
 };
 
 SmallGreyMLKnob::SmallGreyMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/GreyKnob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
 };
 
 
 GreySnapMLKnob::GreySnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/GreyKnob.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
 	snap = true;
 };
 
 SmallGreySnapMLKnob::SmallGreySnapMLKnob() {
-    setSVG(SVG::load(assetPlugin(pluginInstance,"res/GreyKnob_28.svg")));
+    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
 	snap = true;
 };
 
 
 
 MLPort::MLPort() {
-	setSVG(SVG::load(assetPlugin(pluginInstance, "res/Jack.svg")));
+	setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Jack.svg")));
 };
 
 
 MLButton::MLButton() {
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/MLButton_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/MLButton_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLButton_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLButton_1.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 };
 
 
 MLSmallButton::MLSmallButton() {
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/SmallButton_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/SmallButton_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_1.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 };
@@ -127,7 +127,7 @@ MLSmallButton::MLSmallButton() {
 
 ML_LEDButton::ML_LEDButton() {
 
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/LEDButton.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 
@@ -139,7 +139,7 @@ ML_LEDButton::ML_LEDButton() {
 
 ML_MediumLEDButton::ML_MediumLEDButton() {
 
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/LEDButton_medium.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton_medium.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 
@@ -152,7 +152,7 @@ ML_MediumLEDButton::ML_MediumLEDButton() {
 
 ML_SmallLEDButton::ML_SmallLEDButton() {
 
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/LEDButton_small.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton_small.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
 
@@ -167,8 +167,8 @@ ML_SmallLEDButton::ML_SmallLEDButton() {
 
 ML_ResetButton::ML_ResetButton() {
 
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/ResetButton_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/ResetButton_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ResetButton_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ResetButton_1.svg")));
 
 	sw->wrap();
 	box.size = sw->box.size;
@@ -176,9 +176,9 @@ ML_ResetButton::ML_ResetButton() {
 
 MLSwitch::MLSwitch() {
 
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/Switch_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/Switch_1.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/Switch_2.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Switch_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Switch_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Switch_2.svg")));
 
 	shadow->box.size = box.size;
 	shadow->blurRadius = 0.0f;
@@ -187,8 +187,8 @@ MLSwitch::MLSwitch() {
 };
 
 MLSwitch2::MLSwitch2() {
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/Switch_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/Switch_2.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Switch_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Switch_2.svg")));
 
 	shadow->box.size = box.size;
 	shadow->blurRadius = 0.0f;
@@ -197,9 +197,9 @@ MLSwitch2::MLSwitch2() {
 };
 
 BlueMLSwitch::BlueMLSwitch() {
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/BlueSwitch_0.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/BlueSwitch_1.svg")));
-	addFrame(SVG::load(assetPlugin(pluginInstance, "res/BlueSwitch_2.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BlueSwitch_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BlueSwitch_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BlueSwitch_2.svg")));
 
    	shadow->box.size = box.size;
 	shadow->blurRadius = 0.0f;
