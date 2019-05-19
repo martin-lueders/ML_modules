@@ -1,6 +1,5 @@
 #include "ML_modules.hpp"
 
-#include "dsp/digital.hpp"
 
 struct TrigSwitch2 : Module {
 	enum ParamIds {
@@ -33,7 +32,7 @@ struct TrigSwitch2 : Module {
 
 	OutMode outMode = ZERO;
 
-	json_t *toJson() override {
+	json_t *dataToJson() override {
 
 		json_t *rootJ = json_object();
 
@@ -46,7 +45,7 @@ struct TrigSwitch2 : Module {
 		return rootJ;
 	};
 	
-	void fromJson(json_t *rootJ) override {
+	void dataFromJson(json_t *rootJ) override {
 
 		// outMode:
 
@@ -117,8 +116,8 @@ struct TrigSwitch2OutModeItem : MenuItem {
 
 struct TrigSwitch2Widget : ModuleWidget {
 	TrigSwitch2Widget(TrigSwitch2 *module);
-	json_t *toJsonData() ;
-	void fromJsonData(json_t *root) ;
+	json_t *dataToJsonData() ;
+	void dataFromJsonData(json_t *root) ;
 	Menu *createContextMenu() override;
 };
 

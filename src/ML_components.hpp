@@ -20,7 +20,7 @@ struct MLSVGSwitch : virtual ParamWidget, FramebufferWidget {
 	/** Adds an SVG file to represent the next switch position */
 
 	void addFrame(std::shared_ptr<SVG> svg);
-	void onChange(EventChange &e) override;
+	void onChange(event::Change &e);
 
 };
 
@@ -111,46 +111,46 @@ struct MLPort : SVGPort {
 };
 
 
-struct MLButton : MLSVGSwitch, MomentarySwitch {
+struct MLButton : MLSVGSwitch, Switch { //Momentary
 	MLButton();
 };
 
-struct MLSmallButton : MLSVGSwitch, MomentarySwitch {
+struct MLSmallButton : MLSVGSwitch, Switch { // Momentary
 	MLSmallButton();
 };
 
-struct ML_ResetButton : MLSVGSwitch, MomentarySwitch {
+struct ML_ResetButton : MLSVGSwitch, Switch { //Momentary
 	ML_ResetButton();
 };
 
-struct ML_LEDButton : MLSVGSwitch, MomentarySwitch {
+struct ML_LEDButton : MLSVGSwitch, Switch { //Momentary
 	
 	ML_LEDButton();
 };
 
-struct ML_MediumLEDButton : MLSVGSwitch, MomentarySwitch {
+struct ML_MediumLEDButton : MLSVGSwitch, Switch { //Momentary
 	
 	ML_MediumLEDButton();
 };
 
 
-struct ML_SmallLEDButton : MLSVGSwitch, MomentarySwitch {
+struct ML_SmallLEDButton : MLSVGSwitch, Switch { //Momentary
 	
 	ML_SmallLEDButton();
 };
 
 
 
-struct MLSwitch : MLSVGSwitch, ToggleSwitch {
+struct MLSwitch : MLSVGSwitch, Switch { //Toggle
 
 	MLSwitch();
 };
 
-struct MLSwitch2 : MLSVGSwitch, ToggleSwitch {
+struct MLSwitch2 : MLSVGSwitch, Switch { //Toggle
 	MLSwitch2();
 };
 
-struct BlueMLSwitch : MLSVGSwitch, ToggleSwitch {
+struct BlueMLSwitch : MLSVGSwitch, Switch { //Toggle
 	BlueMLSwitch();
 };
 
@@ -167,7 +167,7 @@ struct MLScrew : FramebufferWidget {
 	    addChild(tw);
 	    sw = new SVGWidget();
 	    tw->addChild(sw);
-	    sw->setSVG(SVG::load(assetPlugin(pluginInstance, "res/MLScrew.svg")));
+	    sw->setSVG(SVG::load(asset::plugin(pluginInstance, "res/MLScrew.svg")));
 		tw->box.size = sw->box.size;	
 
         float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 

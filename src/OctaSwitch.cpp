@@ -1,6 +1,5 @@
 #include "ML_modules.hpp"
 
-#include "dsp/digital.hpp"
 
 struct OctaSwitch : Module {
 	enum ParamIds {

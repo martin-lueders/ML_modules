@@ -1,6 +1,5 @@
 #include "ML_modules.hpp"
 
-#include "dsp/digital.hpp"
 
 struct TrigSwitch3 : Module {
 	enum ParamIds {
@@ -47,7 +46,7 @@ struct TrigSwitch3 : Module {
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
 	};
 
-	json_t *toJson() override {
+	json_t *dataToJson() override {
 
 		json_t *rootJ = json_object();
 
@@ -57,7 +56,7 @@ struct TrigSwitch3 : Module {
 		return rootJ;
 	};
 	
-	void fromJson(json_t *rootJ) override {
+	void dataFromJson(json_t *rootJ) override {
 
 	
 		json_t *positionJ = json_object_get(rootJ, "position");

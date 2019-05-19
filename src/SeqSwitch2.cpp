@@ -1,6 +1,5 @@
 #include "ML_modules.hpp"
 
-#include "dsp/digital.hpp"
 
 struct SeqSwitch2 : Module {
 	enum ParamIds {
@@ -82,7 +81,7 @@ struct SeqSwitch2 : Module {
 
 	InputRange inputRange = Zero_Eight;
 
-	json_t *toJson() override {
+	json_t *dataToJson() override {
 
 		json_t *rootJ = json_object();
 
@@ -94,7 +93,7 @@ struct SeqSwitch2 : Module {
 		return rootJ;
 	};
 
-	void fromJson(json_t *rootJ) override {
+	void dataFromJson(json_t *rootJ) override {
 
 		// outMode:
 
@@ -161,8 +160,8 @@ void SeqSwitch2::step() {
 
 struct SeqSwitch2Widget : ModuleWidget {
 	SeqSwitch2Widget(SeqSwitch2 *module);
-	json_t *toJsonData() ;
-	void fromJsonData(json_t *root) ;
+	json_t *dataToJsonData() ;
+	void dataFromJsonData(json_t *root) ;
 	Menu *createContextMenu() override;
 };
 

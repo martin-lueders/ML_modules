@@ -28,7 +28,7 @@ void MLSVGSwitch::addFrame(std::shared_ptr<SVG> svg) {
 	}
 }
 
-void MLSVGSwitch::onChange(EventChange &e) {
+void MLSVGSwitch::onChange(event::Change &e) {
 	assert(frames.size() > 0);
 	float valueScaled = rescale(value, minValue, maxValue, 0, frames.size() - 1);
 	int index = clamp((int) roundf(valueScaled), 0, (int) frames.size() - 1);

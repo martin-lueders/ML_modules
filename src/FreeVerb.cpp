@@ -1,7 +1,6 @@
 #include "ML_modules.hpp"
 #include "../freeverb/revmodel.hpp"
 
-#include "dsp/digital.hpp"
 
 struct FreeVerb : Module {
 	enum ParamIds {

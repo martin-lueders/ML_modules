@@ -1,5 +1,4 @@
 #include "ML_modules.hpp"
-#include "dsp/digital.hpp"
 
 struct Quantum : Module {
 	enum ParamIds {
@@ -92,7 +91,7 @@ struct Quantum : Module {
 
 	}
 
-    json_t *toJson() override {
+    json_t *dataToJson() override {
         json_t *rootJ = json_object();
 
         json_t *scaleJ = json_array();
@@ -107,7 +106,7 @@ struct Quantum : Module {
         return rootJ;
     }
 
-    void fromJson(json_t *rootJ) override {
+    void dataFromJson(json_t *rootJ) override {
         json_t *scaleJ = json_object_get(rootJ, "scale");
         for (int i = 0; i < 12; i++) {
             json_t *semiJ = json_array_get(scaleJ, i);
@@ -296,8 +295,8 @@ struct QuantumTranposeModeItem : MenuItem {
 
 struct QuantumWidget : ModuleWidget {
 	QuantumWidget(Quantum *module);
-	json_t *toJsonData() ;
-	void fromJsonData(json_t *root) ;
+	json_t *dataToJsonData() ;
+	void dataFromJsonData(json_t *root) ;
 	Menu *createContextMenu() override;
 };
 
