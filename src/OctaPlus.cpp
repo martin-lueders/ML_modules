@@ -112,4 +112,4 @@ OctaPlusWidget::OctaPlusWidget(OctaPlus *module) : ModuleWidget(module) {
 
 }
 
-Model *modelOctaPlus = Model::create<OctaPlus, OctaPlusWidget>("ML modules", "OctaPlus", "OctaPlus", UTILITY_TAG);
+Model *modelOctaPlus = Model::create<OctaPlus, OctaPlusWidget>("OctaPlus");

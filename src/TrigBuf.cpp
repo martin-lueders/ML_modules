@@ -182,4 +182,4 @@ TrigBufWidget::TrigBufWidget(TrigBuf *module) : ModuleWidget(module) {
 	addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));
 }
 
-Model *modelTrigBuf = Model::create<TrigBuf, TrigBufWidget>("ML modules", "TrigBuf", "Trigger Buffer", UTILITY_TAG);
+Model *modelTrigBuf = Model::create<TrigBuf, TrigBufWidget>("TrigBuf");

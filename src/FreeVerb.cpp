@@ -145,4 +145,4 @@ FreeVerbWidget::FreeVerbWidget(FreeVerb *module) : ModuleWidget(module) {
 	addOutput(Port::create<MLPort>(Vec(55, 313), Port::OUTPUT, module, FreeVerb::OUT2_OUTPUT));
 }
 
-Model *modelFreeVerb = Model::create<FreeVerb, FreeVerbWidget>("ML modules", "FreeVerb", "FreeVerb", REVERB_TAG);
+Model *modelFreeVerb = Model::create<FreeVerb, FreeVerbWidget>("FreeVerb");

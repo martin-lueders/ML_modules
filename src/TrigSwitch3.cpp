@@ -126,4 +126,4 @@ TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) : ModuleWidget(module)
 
 }
 
-Model *modelTrigSwitch3 = Model::create<TrigSwitch3, TrigSwitch3Widget>("ML modules", "TrigSwitch3", "TrigSwitch3 8->1", SWITCH_TAG, UTILITY_TAG );
+Model *modelTrigSwitch3 = Model::create<TrigSwitch3, TrigSwitch3Widget>("TrigSwitch3");

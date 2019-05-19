@@ -143,4 +143,4 @@ OctaTrigWidget::OctaTrigWidget(OctaTrig *module) : ModuleWidget(module) {
 
 }
 
-Model *modelOctaTrig = Model::create<OctaTrig, OctaTrigWidget>("ML modules", "OctaTrig", "OctaTrig", UTILITY_TAG );
+Model *modelOctaTrig = Model::create<OctaTrig, OctaTrigWidget>("OctaTrig");

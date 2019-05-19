@@ -79,4 +79,4 @@ QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
 	addOutput(Port::create<MLPort>(Vec(9, 292), Port::OUTPUT, module, Quant::OUT2_OUTPUT));
 }
 
-Model *modelQuantizer = Model::create<Quant, QuantizerWidget>("ML modules", "Quantizer", "Quantizer (h-bar)", QUANTIZER_TAG);
+Model *modelQuantizer = Model::create<Quant, QuantizerWidget>("Quantizer");

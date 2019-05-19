@@ -165,4 +165,4 @@ TrigDelayWidget::TrigDelayWidget(TrigDelay *module) : ModuleWidget(module) {
 
 }
 
-Model *modelTrigDelay = Model::create<TrigDelay, TrigDelayWidget>("ML modules", "TrigDelay", "Trigger Delay", UTILITY_TAG, DELAY_TAG);
+Model *modelTrigDelay = Model::create<TrigDelay, TrigDelayWidget>("TrigDelay");

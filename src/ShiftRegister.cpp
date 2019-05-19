@@ -128,4 +128,4 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(m
 
 }
 
-Model *modelShiftRegister = Model::create<ShiftRegister, ShiftRegisterWidget>("ML modules", "ShiftRegister", "Shift Register",SAMPLE_AND_HOLD_TAG);
+Model *modelShiftRegister = Model::create<ShiftRegister, ShiftRegisterWidget>("ShiftRegister");

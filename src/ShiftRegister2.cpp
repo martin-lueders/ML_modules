@@ -206,4 +206,4 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 }
 
 
-Model *modelShiftRegister2 = Model::create<ShiftRegister2, ShiftRegister2Widget>("ML modules", "Evolution", "Evolution", SEQUENCER_TAG, SAMPLE_AND_HOLD_TAG);
+Model *modelShiftRegister2 = Model::create<ShiftRegister2, ShiftRegister2Widget>("Evolution");

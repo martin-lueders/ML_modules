@@ -76,4 +76,4 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) : ModuleWidget(module) {
 
 }
 
-Model *modelSum8mk2 = Model::create<Sum8mk2, Sum8mk2Widget>("ML modules", "Sum8mk2", "Sum8 MkII", UTILITY_TAG, MIXER_TAG);
+Model *modelSum8mk2 = Model::create<Sum8mk2, Sum8mk2Widget>("Sum8mk2");

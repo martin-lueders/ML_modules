@@ -100,4 +100,4 @@ ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
 
 }
 
-Model *modelConstants = Model::create<Constants, ConstantsWidget>("ML modules", "Constants", "Constants", UTILITY_TAG);
+Model *modelConstants = Model::create<Constants, ConstantsWidget>("Constants");

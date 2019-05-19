@@ -275,4 +275,4 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) : ModuleWidget(module) {
 
 }
 
-Model *modelSeqSwitch = Model::create<SeqSwitch, SeqSwitchWidget>("ML modules", "SeqSwitch", "Sequential Switch 8->1",SWITCH_TAG, SEQUENCER_TAG);
+Model *modelSeqSwitch = Model::create<SeqSwitch, SeqSwitchWidget>("SeqSwitch");

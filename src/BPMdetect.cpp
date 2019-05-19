@@ -312,23 +312,23 @@ BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
 
 
 	addInput(Port::create<MLPort>(Vec(column1+5,  row1+2), Port::INPUT, module, BPMdetect::GATE_INPUT));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
+  addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
 	addOutput(Port::create<MLPort>(Vec(column3-5,row1+2), Port::OUTPUT, module, BPMdetect::TRIG1_OUTPUT));
 
-    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
+  addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
+  addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
 	addOutput(Port::create<MLPort>(Vec(column3, row2+2), Port::OUTPUT, module, BPMdetect::TRIG2_OUTPUT));
 
 
-    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
+  addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
+  addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
 	addOutput(Port::create<MLPort>(Vec(column3, row3+2), Port::OUTPUT, module, BPMdetect::TRIG3_OUTPUT));
 
 	addOutput(Port::create<MLPort>(Vec(column1, row4), Port::OUTPUT, module, BPMdetect::LFO_OUTPUT));
 	addOutput(Port::create<MLPort>(Vec(column3, row4), Port::OUTPUT, module, BPMdetect::SEQ_OUTPUT));
 
-    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
-    addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
+  addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
+  addParam(ParamWidget::create<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
 	addOutput(Port::create<MLPort>(Vec(column3, row5), Port::OUTPUT, module, BPMdetect::DELAY_OUTPUT));
 
 	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
@@ -341,4 +341,4 @@ BPMdetectWidget::BPMdetectWidget(BPMdetect *module) : ModuleWidget(module) {
 
 }
 
-Model *modelBPMdetect = Model::create<BPMdetect, BPMdetectWidget>("ML modules", "BPMdetect", "BPM Tools", UTILITY_TAG, CLOCK_TAG);
+Model *modelBPMdetect = Model::create<BPMdetect, BPMdetectWidget>("BPMdetect");

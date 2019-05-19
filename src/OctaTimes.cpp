@@ -120,4 +120,4 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
 
 }
 
-Model *modelOctaTimes = Model::create<OctaTimes, OctaTimesWidget>("ML modules", "OctaTimes", "OctaTimes", UTILITY_TAG);
+Model *modelOctaTimes = Model::create<OctaTimes, OctaTimesWidget>("OctaTimes");

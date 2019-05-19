@@ -402,4 +402,4 @@ QuantumWidget::QuantumWidget(Quantum *module) : ModuleWidget(module) {
 
 }
 
-Model *modelQuantum = Model::create<Quantum, QuantumWidget>("ML modules", "Quantum", "Quantum", QUANTIZER_TAG);
+Model *modelQuantum = Model::create<Quantum, QuantumWidget>("Quantum");

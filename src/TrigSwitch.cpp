@@ -114,4 +114,4 @@ TrigSwitchWidget::TrigSwitchWidget(TrigSwitch *module) : ModuleWidget(module) {
 
 }
 
-Model *modelTrigSwitch = Model::create<TrigSwitch, TrigSwitchWidget>("ML modules", "TrigSwitch", "TrigSwitch 8->1", SWITCH_TAG, UTILITY_TAG );
+Model *modelTrigSwitch = Model::create<TrigSwitch, TrigSwitchWidget>("TrigSwitch");

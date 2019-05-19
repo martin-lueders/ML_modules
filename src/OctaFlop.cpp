@@ -141,4 +141,4 @@ OctaFlopWidget::OctaFlopWidget(OctaFlop *module) : ModuleWidget(module) {
 
 }
 
-Model *modelOctaFlop = Model::create<OctaFlop, OctaFlopWidget>("ML modules", "OctaFlop", "OctaFlop", UTILITY_TAG, CLOCK_TAG);
+Model *modelOctaFlop = Model::create<OctaFlop, OctaFlopWidget>("OctaFlop");

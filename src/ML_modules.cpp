@@ -7,8 +7,6 @@ Plugin *plugin;
 
 void init(rack::Plugin *p) {
  	plugin = p;
- 	plugin->slug = TOSTRING(SLUG);
-	plugin->version = TOSTRING(VERSION);
 
 
  	plugin->addModel(modelQuantizer);

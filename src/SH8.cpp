@@ -118,4 +118,4 @@ SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
 
 }
 
-Model *modelSH8 = Model::create<SH8, SH8Widget>("ML modules", "SH8", "S&H 8", SAMPLE_AND_HOLD_TAG);
+Model *modelSH8 = Model::create<SH8, SH8Widget>("SH8");

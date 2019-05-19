@@ -152,4 +152,4 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 }
 
 
-Model *modelOctaSwitch = Model::create<OctaSwitch, OctaSwitchWidget>("ML modules", "OctaSwitch", "OctaSwitch", SWITCH_TAG, UTILITY_TAG );
+Model *modelOctaSwitch = Model::create<OctaSwitch, OctaSwitchWidget>("OctaSwitch");

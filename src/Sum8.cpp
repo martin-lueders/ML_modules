@@ -80,4 +80,4 @@ Sum8Widget::Sum8Widget(Sum8 *module) : ModuleWidget(module) {
 
 }
 
-Model *modelSum8 = Model::create<Sum8, Sum8Widget>("ML modules", "Sum8", "Sum8", UTILITY_TAG, MIXER_TAG);
+Model *modelSum8 = Model::create<Sum8, Sum8Widget>("Sum8");

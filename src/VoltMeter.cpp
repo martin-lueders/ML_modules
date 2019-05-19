@@ -145,4 +145,4 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 
 }
 
-Model *modelVoltMeter = Model::create<VoltMeter, VoltMeterWidget>("ML modules", "VoltMeter", "Volt Meter", UTILITY_TAG);
+Model *modelVoltMeter = Model::create<VoltMeter, VoltMeterWidget>("VoltMeter");

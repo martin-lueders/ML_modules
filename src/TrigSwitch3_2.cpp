@@ -209,4 +209,4 @@ Menu *TrigSwitch3_2Widget::createContextMenu() {
 	return menu;
 };
 
-Model *modelTrigSwitch3_2 = Model::create<TrigSwitch3_2, TrigSwitch3_2Widget>("ML modules", "TrigSwitch3_2", "TrigSwitch3 1->8", SWITCH_TAG, UTILITY_TAG );
+Model *modelTrigSwitch3_2 = Model::create<TrigSwitch3_2, TrigSwitch3_2Widget>("TrigSwitch3_2");

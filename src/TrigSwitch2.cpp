@@ -185,4 +185,4 @@ Menu *TrigSwitch2Widget::createContextMenu() {
 	return menu;
 };
 
-Model *modelTrigSwitch2 = Model::create<TrigSwitch2, TrigSwitch2Widget>("ML modules", "TrigSwitch2", "TrigSwitch 1->8", SWITCH_TAG, UTILITY_TAG );
+Model *modelTrigSwitch2 = Model::create<TrigSwitch2, TrigSwitch2Widget>("TrigSwitch2");

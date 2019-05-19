@@ -194,4 +194,4 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 
 }
 
-Model *modelCounter = Model::create<Counter, CounterWidget>("ML modules", "Counter", "Counter", UTILITY_TAG);
+Model *modelCounter = Model::create<Counter, CounterWidget>("Counter");

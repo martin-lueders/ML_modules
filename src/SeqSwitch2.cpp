@@ -319,4 +319,4 @@ Menu *SeqSwitch2Widget::createContextMenu() {
 	return menu;
 };
 
-Model *modelSeqSwitch2 = Model::create<SeqSwitch2, SeqSwitch2Widget>("ML modules", "SeqSwitch2", "Sequential Switch 1->8", SWITCH_TAG);
+Model *modelSeqSwitch2 = Model::create<SeqSwitch2, SeqSwitch2Widget>("SeqSwitch2");
