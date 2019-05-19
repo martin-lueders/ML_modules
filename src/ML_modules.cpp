@@ -1,39 +1,39 @@
 #include "ML_modules.hpp"
 #include <math.h>
 
-Plugin *plugin;
+Plugin *pluginInstance;
 
 
 
 void init(rack::Plugin *p) {
- 	plugin = p;
+ 	pluginInstance = p;
 
 
- 	plugin->addModel(modelQuantizer);
- 	plugin->addModel(modelQuantum);
- 	plugin->addModel(modelTrigBuf);
-	plugin->addModel(modelSeqSwitch);
-	plugin->addModel(modelSeqSwitch2);
-	plugin->addModel(modelShiftRegister);
-	plugin->addModel(modelShiftRegister2);
-	plugin->addModel(modelFreeVerb);
-	plugin->addModel(modelSum8);
-	plugin->addModel(modelSum8mk2);
-	plugin->addModel(modelSH8);
-	plugin->addModel(modelConstants);
-	plugin->addModel(modelCounter);
-	plugin->addModel(modelTrigDelay);
-	plugin->addModel(modelBPMdetect);
-	plugin->addModel(modelVoltMeter);
-	plugin->addModel(modelOctaFlop);
-	plugin->addModel(modelOctaTrig);
-	plugin->addModel(modelOctaSwitch);
-	plugin->addModel(modelTrigSwitch);
- 	plugin->addModel(modelTrigSwitch2);
- 	plugin->addModel(modelTrigSwitch3);
- 	plugin->addModel(modelTrigSwitch3_2);
-	plugin->addModel(modelOctaPlus);
-	plugin->addModel(modelOctaTimes);
+ 	pluginInstance->addModel(modelQuantizer);
+ 	pluginInstance->addModel(modelQuantum);
+ 	pluginInstance->addModel(modelTrigBuf);
+	pluginInstance->addModel(modelSeqSwitch);
+	pluginInstance->addModel(modelSeqSwitch2);
+	pluginInstance->addModel(modelShiftRegister);
+	pluginInstance->addModel(modelShiftRegister2);
+	pluginInstance->addModel(modelFreeVerb);
+	pluginInstance->addModel(modelSum8);
+	pluginInstance->addModel(modelSum8mk2);
+	pluginInstance->addModel(modelSH8);
+	pluginInstance->addModel(modelConstants);
+	pluginInstance->addModel(modelCounter);
+	pluginInstance->addModel(modelTrigDelay);
+	pluginInstance->addModel(modelBPMdetect);
+	pluginInstance->addModel(modelVoltMeter);
+	pluginInstance->addModel(modelOctaFlop);
+	pluginInstance->addModel(modelOctaTrig);
+	pluginInstance->addModel(modelOctaSwitch);
+	pluginInstance->addModel(modelTrigSwitch);
+ 	pluginInstance->addModel(modelTrigSwitch2);
+ 	pluginInstance->addModel(modelTrigSwitch3);
+ 	pluginInstance->addModel(modelTrigSwitch3_2);
+	pluginInstance->addModel(modelOctaPlus);
+	pluginInstance->addModel(modelOctaTimes);
 }
 
 

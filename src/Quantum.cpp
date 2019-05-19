@@ -301,9 +301,9 @@ struct QuantumWidget : ModuleWidget {
 	Menu *createContextMenu() override;
 };
 
-Menu *QuantumWidget::createContextMenu() {
+Menu *QuantumcreateWidgetContextMenu() {
 
-        Menu *menu = ModuleWidget::createContextMenu();
+        Menu *menu = ModulecreateWidgetContextMenu();
 
         MenuLabel *spacerLabel = new MenuLabel();
         menu->addChild(spacerLabel);
@@ -372,34 +372,34 @@ QuantumWidget::QuantumWidget(Quantum *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantum.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Quantum.svg")));
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
-	addInput( Port::create<MLPort>(Vec(19, 42), Port::INPUT, module, Quantum::IN_INPUT));
-	addOutput(Port::create<MLPort>(Vec(75, 42), Port::OUTPUT, module, Quantum::OUT_OUTPUT));
+	addInput( createPort<MLPort>(Vec(19, 42), PortWidget::INPUT, module, Quantum::IN_INPUT));
+	addOutput(createPort<MLPort>(Vec(75, 42), PortWidget::OUTPUT, module, Quantum::OUT_OUTPUT));
 
-	addInput( Port::create<MLPort>(Vec(75, 90), Port::INPUT, module, Quantum::TRANSPOSE_INPUT));
-	addOutput(Port::create<MLPort>(Vec(75, 140), Port::OUTPUT, module, Quantum::GATE_OUTPUT));
-	addOutput(Port::create<MLPort>(Vec(75, 180), Port::OUTPUT, module, Quantum::TRIGGER_OUTPUT));
+	addInput( createPort<MLPort>(Vec(75, 90), PortWidget::INPUT, module, Quantum::TRANSPOSE_INPUT));
+	addOutput(createPort<MLPort>(Vec(75, 140), PortWidget::OUTPUT, module, Quantum::GATE_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(75, 180), PortWidget::OUTPUT, module, Quantum::TRIGGER_OUTPUT));
 
-	addInput(Port::create<MLPort>(Vec(75, 226), Port::INPUT, module, Quantum::NOTE_INPUT));
-	addInput(Port::create<MLPort>(Vec(75, 266), Port::INPUT, module, Quantum::SET_INPUT));
-	addInput(Port::create<MLPort>(Vec(75, 312), Port::INPUT, module, Quantum::RESET_INPUT));
+	addInput(createPort<MLPort>(Vec(75, 226), PortWidget::INPUT, module, Quantum::NOTE_INPUT));
+	addInput(createPort<MLPort>(Vec(75, 266), PortWidget::INPUT, module, Quantum::SET_INPUT));
+	addInput(createPort<MLPort>(Vec(75, 312), PortWidget::INPUT, module, Quantum::RESET_INPUT));
 
 	static const float offset_x = 24;
 	static const float offset_y = 333;
 
 	for(int i=0; i<12; i++) {
-		addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(offset_x+4, -22*i+4+offset_y), module, Quantum::SEMI_1_LIGHT+i));
+		addParam(createParam<ML_SmallLEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(createLight<MLSmallLight<GreenLight>>(Vec(offset_x+4, -22*i+4+offset_y), module, Quantum::SEMI_1_LIGHT+i));
 	}
 
 }
 
-Model *modelQuantum = Model::create<Quantum, QuantumWidget>("Quantum");
+Model *modelQuantum = createModel<Quantum, QuantumWidget>("Quantum");

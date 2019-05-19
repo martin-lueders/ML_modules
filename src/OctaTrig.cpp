@@ -118,29 +118,29 @@ OctaTrigWidget::OctaTrigWidget(OctaTrig *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/OctaTrig.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaTrig.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 50, row3 = 80, row4 = 110;
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, OctaTrig::IN1_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTrig::IN1_INPUT+i));
 
-		addOutput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::UP1_OUTPUT+i));
-		addOutput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::DN1_OUTPUT+i));
-		addOutput(Port::create<MLPort>(Vec(row4, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTrig::SUM1_OUTPUT+i));
+		addOutput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::UP1_OUTPUT+i));
+		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::DN1_OUTPUT+i));
+		addOutput(createPort<MLPort>(Vec(row4, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTrig::SUM1_OUTPUT+i));
 	};
 
 
 }
 
-Model *modelOctaTrig = Model::create<OctaTrig, OctaTrigWidget>("OctaTrig");
+Model *modelOctaTrig = createModel<OctaTrig, OctaTrigWidget>("OctaTrig");

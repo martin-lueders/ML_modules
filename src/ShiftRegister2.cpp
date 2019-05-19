@@ -103,7 +103,7 @@ struct IntDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   IntDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override {
@@ -157,15 +157,15 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/ShiftReg2.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/ShiftReg2.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
@@ -179,31 +179,31 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) : ModuleWidge
 	display->value = &module->numSteps;
 	addChild(display);
 
-	addInput(Port::create<MLPort>(Vec(column1,  44), Port::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
-	addInput(Port::create<MLPort>(Vec(column1, 96), Port::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
+	addInput(createPort<MLPort>(Vec(column1,  44), PortWidget::INPUT, module, ShiftRegister2::TRIGGER_INPUT));
+	addInput(createPort<MLPort>(Vec(column1, 96), PortWidget::INPUT, module, ShiftRegister2::NUM_STEPS_INPUT));
         
-	addParam(ParamWidget::create<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
+	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
 
-	addInput(Port::create<MLPort>(Vec(column1+8,  135), Port::INPUT, module, ShiftRegister2::IN1_INPUT));
-	addInput(Port::create<MLPort>(Vec(column2-8,  135), Port::INPUT, module, ShiftRegister2::IN2_INPUT));
+	addInput(createPort<MLPort>(Vec(column1+8,  135), PortWidget::INPUT, module, ShiftRegister2::IN1_INPUT));
+	addInput(createPort<MLPort>(Vec(column2-8,  135), PortWidget::INPUT, module, ShiftRegister2::IN2_INPUT));
 
 
-	addInput(Port::create<MLPort>(Vec(column1+3,  183), Port::INPUT, module, ShiftRegister2::PROB1_INPUT));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
+	addInput(createPort<MLPort>(Vec(column1+3,  183), PortWidget::INPUT, module, ShiftRegister2::PROB1_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(Port::create<MLPort>(Vec(column1+3,  229), Port::INPUT, module, ShiftRegister2::PROB2_INPUT));
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+	addInput(createPort<MLPort>(Vec(column1+3,  229), PortWidget::INPUT, module, ShiftRegister2::PROB2_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
 	
-	addInput(Port::create<MLPort>(Vec(column1+3,  275), Port::INPUT, module, ShiftRegister2::MIX1_INPUT));
-	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
+	addInput(createPort<MLPort>(Vec(column1+3,  275), PortWidget::INPUT, module, ShiftRegister2::MIX1_INPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
 
 
-	addParam(ParamWidget::create<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
+	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
 
 
-	addOutput(Port::create<MLPort>(Vec(column1-2, 328 ), Port::OUTPUT, module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(Port::create<MLPort>(Vec(column2+2, 328 ), Port::OUTPUT, module, ShiftRegister2::AUX_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(column1-2, 328 ), PortWidget::OUTPUT, module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(column2+2, 328 ), PortWidget::OUTPUT, module, ShiftRegister2::AUX_OUTPUT));
 }
 
 
-Model *modelShiftRegister2 = Model::create<ShiftRegister2, ShiftRegister2Widget>("Evolution");
+Model *modelShiftRegister2 = createModel<ShiftRegister2, ShiftRegister2Widget>("Evolution");

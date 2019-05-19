@@ -160,26 +160,26 @@ TrigBufWidget::TrigBufWidget(TrigBuf *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigBuf.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigBuf.svg")));
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addInput(Port::create<MLPort>(Vec(9, 62), Port::INPUT, module, TrigBuf::ARM1_INPUT));
-	addInput(Port::create<MLPort>(Vec(9, 105), Port::INPUT, module, TrigBuf::GATE1_INPUT));
-	addOutput(Port::create<MLPort>(Vec(9, 150), Port::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
+	addInput(createPort<MLPort>(Vec(9, 62), PortWidget::INPUT, module, TrigBuf::ARM1_INPUT));
+	addInput(createPort<MLPort>(Vec(9, 105), PortWidget::INPUT, module, TrigBuf::GATE1_INPUT));
+	addOutput(createPort<MLPort>(Vec(9, 150), PortWidget::OUTPUT, module, TrigBuf::OUT1_OUTPUT));
 
-	addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(40,66), module, TrigBuf::ARM1_PARAM, 0, 10, 0));
-	addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(44, 70), module, TrigBuf::ARM1_LIGHT));
+	addParam(createParam<ML_SmallLEDButton>(Vec(40,66), module, TrigBuf::ARM1_PARAM, 0, 10, 0));
+	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 70), module, TrigBuf::ARM1_LIGHT));
 
-	addInput(Port::create<MLPort>(Vec(9, 218), Port::INPUT, module, TrigBuf::ARM2_INPUT));
-	addInput(Port::create<MLPort>(Vec(9, 263), Port::INPUT, module, TrigBuf::GATE2_INPUT));
-	addOutput(Port::create<MLPort>(Vec(9, 305), Port::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
+	addInput(createPort<MLPort>(Vec(9, 218), PortWidget::INPUT, module, TrigBuf::ARM2_INPUT));
+	addInput(createPort<MLPort>(Vec(9, 263), PortWidget::INPUT, module, TrigBuf::GATE2_INPUT));
+	addOutput(createPort<MLPort>(Vec(9, 305), PortWidget::OUTPUT, module, TrigBuf::OUT2_OUTPUT));
 
-	addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(40,222), module, TrigBuf::ARM2_PARAM, 0, 10, 0));
-	addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));
+	addParam(createParam<ML_SmallLEDButton>(Vec(40,222), module, TrigBuf::ARM2_PARAM, 0, 10, 0));
+	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));
 }
 
-Model *modelTrigBuf = Model::create<TrigBuf, TrigBufWidget>("TrigBuf");
+Model *modelTrigBuf = createModel<TrigBuf, TrigBufWidget>("TrigBuf");

@@ -8,7 +8,7 @@
 
 using namespace rack;
 
-extern Plugin *plugin;
+extern Plugin *pluginInstance;
 
 struct NKK2 : SVGSwitch, ToggleSwitch {
 	NKK2() {
@@ -19,8 +19,8 @@ struct NKK2 : SVGSwitch, ToggleSwitch {
 
 struct POLSWITCH : SVGSwitch, ToggleSwitch {
 	POLSWITCH() {
-		addFrame(SVG::load(assetPlugin(plugin, "res/CKSS_0.svg")));
-		addFrame(SVG::load(assetPlugin(plugin, "res/CKSS_1.svg")));
+		addFrame(SVG::load(assetPlugin(pluginInstance, "res/CKSS_0.svg")));
+		addFrame(SVG::load(assetPlugin(pluginInstance, "res/CKSS_1.svg")));
 	}
 };
 
@@ -28,25 +28,25 @@ struct POLSWITCH : SVGSwitch, ToggleSwitch {
 /*
 struct MLKnob : RoundKnob {
 	MLKnob() {
-		setSVG(SVG::load(assetPlugin(plugin,"res/Knob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob.svg")));
 	}
 };
 
 struct RedMLKnob : RoundKnob {
 	RedMLKnob() {
-		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob.svg")));
 	}
 };
 
 struct SmallMLKnob : RoundKnob {
 	SmallMLKnob() {
-		setSVG(SVG::load(assetPlugin(plugin,"res/Knob_28.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/Knob_28.svg")));
 	}
 };
 
 struct SmallRedMLKnob : RoundKnob {
 	SmallRedMLKnob() {
-		setSVG(SVG::load(assetPlugin(plugin,"res/RedKnob_28.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/RedKnob_28.svg")));
 	}
 };
 */

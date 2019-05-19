@@ -76,13 +76,13 @@ ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Constants.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Constants.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 
 
@@ -92,12 +92,12 @@ ConstantsWidget::ConstantsWidget(Constants *module) : ModuleWidget(module) {
 
 	for(int i=0; i<7; i++) {
 
-		addOutput(Port::create<MLPort>(Vec(offset_xR, offset_y + i*delta_y), Port::OUTPUT, module, Constants::P_1_OUTPUT + i));
-		addOutput(Port::create<MLPort>(Vec(offset_xL, offset_y + i*delta_y), Port::OUTPUT, module, Constants::M_1_OUTPUT + i));
+		addOutput(createPort<MLPort>(Vec(offset_xR, offset_y + i*delta_y), PortWidget::OUTPUT, module, Constants::P_1_OUTPUT + i));
+		addOutput(createPort<MLPort>(Vec(offset_xL, offset_y + i*delta_y), PortWidget::OUTPUT, module, Constants::M_1_OUTPUT + i));
 
 	};
 
 
 }
 
-Model *modelConstants = Model::create<Constants, ConstantsWidget>("Constants");
+Model *modelConstants = createModel<Constants, ConstantsWidget>("Constants");

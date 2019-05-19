@@ -54,7 +54,7 @@ struct VoltDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   VoltDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) {
@@ -111,22 +111,22 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/VoltMeter.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/VoltMeter.svg")));
 		addChild(panel);
 	}
 
 
 	const float delta_y = 70;
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 	for(int i=0; i<4; i++) {
 
-		addInput(Port::create<MLPort>(Vec(12, 60+i*delta_y), Port::INPUT, module, VoltMeter::IN1_INPUT+i));
+		addInput(createPort<MLPort>(Vec(12, 60+i*delta_y), PortWidget::INPUT, module, VoltMeter::IN1_INPUT+i));
 
 
 		VoltDisplayWidget *display = new VoltDisplayWidget();
@@ -145,4 +145,4 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) : ModuleWidget(module) {
 
 }
 
-Model *modelVoltMeter = Model::create<VoltMeter, VoltMeterWidget>("VoltMeter");
+Model *modelVoltMeter = createModel<VoltMeter, VoltMeterWidget>("VoltMeter");

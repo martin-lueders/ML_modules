@@ -94,15 +94,15 @@ SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/SH8.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/SH8.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
@@ -110,12 +110,12 @@ SH8Widget::SH8Widget(SH8 *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, SH8::IN1_INPUT+i));
-		addInput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y  ), Port::INPUT, module, SH8::TRIG1_INPUT+i));
-		addOutput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, SH8::OUT1_OUTPUT+i));
+		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, SH8::IN1_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y  ), PortWidget::INPUT, module, SH8::TRIG1_INPUT+i));
+		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, SH8::OUT1_OUTPUT+i));
 	};
 
 
 }
 
-Model *modelSH8 = Model::create<SH8, SH8Widget>("SH8");
+Model *modelSH8 = createModel<SH8, SH8Widget>("SH8");

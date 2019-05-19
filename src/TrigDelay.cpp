@@ -138,31 +138,31 @@ TrigDelayWidget::TrigDelayWidget(TrigDelay *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigDelay.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigDelay.svg")));
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
-	addInput(Port::create<MLPort>(Vec(52, 70), Port::INPUT, module, TrigDelay::DELAY1_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
+	addInput(createPort<MLPort>(Vec(52, 70), PortWidget::INPUT, module, TrigDelay::DELAY1_INPUT));
 
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1));
-	addInput(Port::create<MLPort>(Vec(52, 113), Port::INPUT, module, TrigDelay::LENGTH1_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1));
+	addInput(createPort<MLPort>(Vec(52, 113), PortWidget::INPUT, module, TrigDelay::LENGTH1_INPUT));
 
-	addInput(Port::create<MLPort>(Vec(12, 164), Port::INPUT, module, TrigDelay::GATE1_INPUT));
-	addOutput(Port::create<MLPort>(Vec(52, 164), Port::OUTPUT, module, TrigDelay::OUT1_OUTPUT));
+	addInput(createPort<MLPort>(Vec(12, 164), PortWidget::INPUT, module, TrigDelay::GATE1_INPUT));
+	addOutput(createPort<MLPort>(Vec(52, 164), PortWidget::OUTPUT, module, TrigDelay::OUT1_OUTPUT));
 
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
-	addInput(Port::create<MLPort>(Vec(52, 152 + 71), Port::INPUT, module, TrigDelay::DELAY2_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
+	addInput(createPort<MLPort>(Vec(52, 152 + 71), PortWidget::INPUT, module, TrigDelay::DELAY2_INPUT));
 
-    addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1));
-	addInput(Port::create<MLPort>(Vec(52, 152 + 114), Port::INPUT, module, TrigDelay::LENGTH2_INPUT));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1));
+	addInput(createPort<MLPort>(Vec(52, 152 + 114), PortWidget::INPUT, module, TrigDelay::LENGTH2_INPUT));
 
-	addInput(Port::create<MLPort>(Vec(12, 152 + 165), Port::INPUT, module, TrigDelay::GATE2_INPUT));
-	addOutput(Port::create<MLPort>(Vec(52, 152 + 165), Port::OUTPUT, module, TrigDelay::OUT2_OUTPUT));
+	addInput(createPort<MLPort>(Vec(12, 152 + 165), PortWidget::INPUT, module, TrigDelay::GATE2_INPUT));
+	addOutput(createPort<MLPort>(Vec(52, 152 + 165), PortWidget::OUTPUT, module, TrigDelay::OUT2_OUTPUT));
 
 }
 
-Model *modelTrigDelay = Model::create<TrigDelay, TrigDelayWidget>("TrigDelay");
+Model *modelTrigDelay = createModel<TrigDelay, TrigDelayWidget>("TrigDelay");

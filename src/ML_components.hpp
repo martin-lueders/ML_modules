@@ -4,7 +4,7 @@
 
 using namespace rack;
 
-extern Plugin *plugin;
+extern Plugin *pluginInstance;
 
 
 
@@ -167,7 +167,7 @@ struct MLScrew : FramebufferWidget {
 	    addChild(tw);
 	    sw = new SVGWidget();
 	    tw->addChild(sw);
-	    sw->setSVG(SVG::load(assetPlugin(plugin, "res/MLScrew.svg")));
+	    sw->setSVG(SVG::load(assetPlugin(pluginInstance, "res/MLScrew.svg")));
 		tw->box.size = sw->box.size;	
 
         float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 

@@ -94,15 +94,15 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/OctaTimes.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaTimes.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
@@ -110,14 +110,14 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) : ModuleWidget(module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, OctaTimes::IN1_INPUT+i));
-		addInput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y  ), Port::INPUT, module, OctaTimes::IN_B_1_INPUT+i));
-		addOutput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaTimes::OUT1_OUTPUT+i));
+		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTimes::IN1_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaTimes::IN_B_1_INPUT+i));
+		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaTimes::OUT1_OUTPUT+i));
 	};
 	
-	addOutput(Port::create<MLPort>(Vec(row3, 330 ), Port::OUTPUT, module, OctaTimes::SUM_OUTPUT));
-	addParam(ParamWidget::create<CKSS>( Vec(row1 + 5, 330 ), module, OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0));
+	addOutput(createPort<MLPort>(Vec(row3, 330 ), PortWidget::OUTPUT, module, OctaTimes::SUM_OUTPUT));
+	addParam(createParam<CKSS>( Vec(row1 + 5, 330 ), module, OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0));
 
 }
 
-Model *modelOctaTimes = Model::create<OctaTimes, OctaTimesWidget>("OctaTimes");
+Model *modelOctaTimes = createModel<OctaTimes, OctaTimesWidget>("OctaTimes");

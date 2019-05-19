@@ -59,25 +59,25 @@ Sum8Widget::Sum8Widget(Sum8 *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Sum8.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Sum8.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 
 
 
 	const float offset_y = 70, delta_y = 26.5, offset_x=9.5;
 
-	for( int i=0; i<8; i++) addInput(Port::create<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), Port::INPUT, module, Sum8::IN1_INPUT+i));
+	for( int i=0; i<8; i++) addInput(createPort<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), PortWidget::INPUT, module, Sum8::IN1_INPUT+i));
 
 
-	addOutput(Port::create<MLPort>(Vec(offset_x, 320), Port::OUTPUT, module, Sum8::OUT_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(offset_x, 320), PortWidget::OUTPUT, module, Sum8::OUT_OUTPUT));
 
 
 }
 
-Model *modelSum8 = Model::create<Sum8, Sum8Widget>("Sum8");
+Model *modelSum8 = createModel<Sum8, Sum8Widget>("Sum8");

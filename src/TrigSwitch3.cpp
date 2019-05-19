@@ -95,35 +95,35 @@ TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) : ModuleWidget(module)
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/TrigSwitch3.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/TrigSwitch3.svg")));
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = row1+33, row3 = row2 + 25;
 
 	for (int i=0; i<8; i++) {
 
-		addInput(Port::create<MLPort>(             Vec(row1, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::TRIG_INPUT + i));
+		addInput(createPort<MLPort>(             Vec(row1, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch3::TRIG_INPUT + i));
 
-		addParam(ParamWidget::create<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3::STEP_PARAM + i, 0.0, 1.0, 0.0));
-		addChild(ModuleLightWidget::create<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3::STEP_LIGHT+i));
+		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3::STEP_LIGHT+i));
 
 
-		addInput(Port::create<MLPort>(             Vec(row3, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT1 + i));
-		addInput(Port::create<MLPort>(             Vec(row3+32, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT2 + i));
-		addInput(Port::create<MLPort>(             Vec(row3+64, offset_y + i*delta_y), Port::INPUT, module, TrigSwitch3::CV_INPUT3 + i));
+		addInput(createPort<MLPort>(             Vec(row3, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch3::CV_INPUT1 + i));
+		addInput(createPort<MLPort>(             Vec(row3+32, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch3::CV_INPUT2 + i));
+		addInput(createPort<MLPort>(             Vec(row3+64, offset_y + i*delta_y), PortWidget::INPUT, module, TrigSwitch3::CV_INPUT3 + i));
 
 	}
-	addOutput(Port::create<MLPort>(Vec(row3,    320), Port::OUTPUT, module, TrigSwitch3::OUT1_OUTPUT));
-	addOutput(Port::create<MLPort>(Vec(row3+32, 320), Port::OUTPUT, module, TrigSwitch3::OUT2_OUTPUT));
-	addOutput(Port::create<MLPort>(Vec(row3+64, 320), Port::OUTPUT, module, TrigSwitch3::OUT3_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(row3,    320), PortWidget::OUTPUT, module, TrigSwitch3::OUT1_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(row3+32, 320), PortWidget::OUTPUT, module, TrigSwitch3::OUT2_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(row3+64, 320), PortWidget::OUTPUT, module, TrigSwitch3::OUT3_OUTPUT));
 
 }
 
-Model *modelTrigSwitch3 = Model::create<TrigSwitch3, TrigSwitch3Widget>("TrigSwitch3");
+Model *modelTrigSwitch3 = createModel<TrigSwitch3, TrigSwitch3Widget>("TrigSwitch3");

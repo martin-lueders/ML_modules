@@ -114,31 +114,31 @@ OctaFlopWidget::OctaFlopWidget(OctaFlop *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/OctaFlop.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaFlop.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 55, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y  ), Port::INPUT, module, OctaFlop::TRIG1_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y  ), PortWidget::INPUT, module, OctaFlop::TRIG1_INPUT+i));
 
-		// addParam(ParamWidget::create<ML_SmallLEDButton>(Vec(row2 - 3, offset_y + 5 + i*delta_y), module, OctaFlop::TOGGLE_PARAM+i, 0.0, 10.0, 0.0));
-        addChild(ModuleLightWidget::create<MLSmallLight<GreenLight>>(Vec(row2 +1, offset_y + 9 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
-		addOutput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::OUTPUT, module, OctaFlop::OUT1_OUTPUT+i));
+		// addParam(createParam<ML_SmallLEDButton>(Vec(row2 - 3, offset_y + 5 + i*delta_y), module, OctaFlop::TOGGLE_PARAM+i, 0.0, 10.0, 0.0));
+        addChild(createLight<MLSmallLight<GreenLight>>(Vec(row2 +1, offset_y + 9 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
+		addOutput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaFlop::OUT1_OUTPUT+i));
 	};
 
-    addParam(ParamWidget::create<MLButton>(Vec(row1+3, 320), module, OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0));
-	addInput(Port::create<MLPort>(Vec(row3, 320), Port::INPUT, module, OctaFlop::RESET_INPUT));
+    addParam(createParam<MLButton>(Vec(row1+3, 320), module, OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0));
+	addInput(createPort<MLPort>(Vec(row3, 320), PortWidget::INPUT, module, OctaFlop::RESET_INPUT));
 
 }
 
-Model *modelOctaFlop = Model::create<OctaFlop, OctaFlopWidget>("OctaFlop");
+Model *modelOctaFlop = createModel<OctaFlop, OctaFlopWidget>("OctaFlop");

@@ -52,13 +52,13 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Sum8mk2.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Sum8mk2.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 
 
@@ -66,14 +66,14 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) : ModuleWidget(module) {
 	const float offset_y = 70, delta_y = 26.5, offset_x=9.5;
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), Port::INPUT, module, Sum8mk2::IN_INPUT+i));
-        addParam(ParamWidget::create<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0));
+		addInput(createPort<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), PortWidget::INPUT, module, Sum8mk2::IN_INPUT+i));
+        addParam(createParam<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0));
 	}
 
 
-	addOutput(Port::create<MLPort>(Vec(offset_x, 320), Port::OUTPUT, module, Sum8mk2::OUT_OUTPUT));
+	addOutput(createPort<MLPort>(Vec(offset_x, 320), PortWidget::OUTPUT, module, Sum8mk2::OUT_OUTPUT));
 
 
 }
 
-Model *modelSum8mk2 = Model::create<Sum8mk2, Sum8mk2Widget>("Sum8mk2");
+Model *modelSum8mk2 = createModel<Sum8mk2, Sum8mk2Widget>("Sum8mk2");

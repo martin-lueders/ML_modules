@@ -65,7 +65,7 @@ struct ThresholdDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   ThresholdDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) {
@@ -117,30 +117,30 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/OctaSwitch.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/OctaSwitch.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
-	addChild(Widget::create<MLScrew>(Vec(box.size.x-30, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
 
-	addInput(Port::create<MLPort>(   Vec(row1,  328 ), Port::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
-	addParam(ParamWidget::create<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
+	addInput(createPort<MLPort>(   Vec(row1,  328 ), PortWidget::INPUT, module, OctaSwitch::THRESHOLD_INPUT));
+	addParam(createParam<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
 
 
 	for( int i=0; i<8; i++) {
-		addInput(Port::create<MLPort>(Vec(row1, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::GATE_INPUT+i));
-		addInput(Port::create<MLPort>(Vec(row2, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::A_INPUT+i));
-		addInput(Port::create<MLPort>(Vec(row3, offset_y + i*delta_y ), Port::INPUT, module, OctaSwitch::B_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row1, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::GATE_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row2, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::A_INPUT+i));
+		addInput(createPort<MLPort>(Vec(row3, offset_y + i*delta_y ), PortWidget::INPUT, module, OctaSwitch::B_INPUT+i));
 
-		addOutput(Port::create<MLPort>(Vec(row4, offset_y + i*delta_y ), Port::OUTPUT, module, OctaSwitch::OUT_OUTPUT+i));
+		addOutput(createPort<MLPort>(Vec(row4, offset_y + i*delta_y ), PortWidget::OUTPUT, module, OctaSwitch::OUT_OUTPUT+i));
 	};
 
 	ThresholdDisplayWidget *display = new ThresholdDisplayWidget();
@@ -152,4 +152,4 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) : ModuleWidget(module) {
 }
 
 
-Model *modelOctaSwitch = Model::create<OctaSwitch, OctaSwitchWidget>("OctaSwitch");
+Model *modelOctaSwitch = createModel<OctaSwitch, OctaSwitchWidget>("OctaSwitch");

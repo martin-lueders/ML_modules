@@ -103,13 +103,13 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(m
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/ShiftReg.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/ShiftReg.svg")));
 
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 
 
@@ -118,14 +118,14 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) : ModuleWidget(m
 
 	for( int i=0; i<8; i++) {
 
-		addOutput(Port::create<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), Port::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
-		addChild(ModuleLightWidget::create<MLSmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
+		addOutput(createPort<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), PortWidget::OUTPUT, module, ShiftRegister::OUT1_OUTPUT+i));
+		addChild(createLight<MLSmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 
-	addInput(Port::create<MLPort>(Vec(offset_x+17, 58), Port::INPUT, module, ShiftRegister::IN_INPUT));
-	addInput(Port::create<MLPort>(Vec(offset_x+17, 94), Port::INPUT, module, ShiftRegister::TRIGGER_INPUT));
+	addInput(createPort<MLPort>(Vec(offset_x+17, 58), PortWidget::INPUT, module, ShiftRegister::IN_INPUT));
+	addInput(createPort<MLPort>(Vec(offset_x+17, 94), PortWidget::INPUT, module, ShiftRegister::TRIGGER_INPUT));
 
 }
 
-Model *modelShiftRegister = Model::create<ShiftRegister, ShiftRegisterWidget>("ShiftRegister");
+Model *modelShiftRegister = createModel<ShiftRegister, ShiftRegisterWidget>("ShiftRegister");

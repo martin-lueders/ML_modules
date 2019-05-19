@@ -102,7 +102,7 @@ struct NumberDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override {
@@ -153,31 +153,31 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Counter.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Counter.svg")));
 		addChild(panel);
 	}
 
 
 	
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
-	addInput(Port::create<MLPort>( Vec(53, 87), Port::INPUT, module, Counter::LENGTH_INPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addInput(createPort<MLPort>( Vec(53, 87), PortWidget::INPUT, module, Counter::LENGTH_INPUT));
 
-	addInput(Port::create<MLPort>(  Vec(13, 168), Port::INPUT, module, Counter::GATE_INPUT));
-	addOutput(Port::create<MLPort>(Vec(53, 168), Port::OUTPUT, module, Counter::GATE_OUTPUT));
-
-
-	addInput(Port::create<MLPort>(  Vec(13, 241), Port::INPUT, module, Counter::START_INPUT));
-	addOutput(Port::create<MLPort>(Vec(53, 241), Port::OUTPUT, module, Counter::START_OUTPUT));
-	addParam(ParamWidget::create<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
+	addInput(createPort<MLPort>(  Vec(13, 168), PortWidget::INPUT, module, Counter::GATE_INPUT));
+	addOutput(createPort<MLPort>(Vec(53, 168), PortWidget::OUTPUT, module, Counter::GATE_OUTPUT));
 
 
-	addInput(Port::create<MLPort>(  Vec(13, 312), Port::INPUT, module, Counter::STOP_INPUT));
-	addOutput(Port::create<MLPort>(Vec(53, 312), Port::OUTPUT, module, Counter::STOP_OUTPUT));
-	addParam(ParamWidget::create<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
+	addInput(createPort<MLPort>(  Vec(13, 241), PortWidget::INPUT, module, Counter::START_INPUT));
+	addOutput(createPort<MLPort>(Vec(53, 241), PortWidget::OUTPUT, module, Counter::START_OUTPUT));
+	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
+
+
+	addInput(createPort<MLPort>(  Vec(13, 312), PortWidget::INPUT, module, Counter::STOP_INPUT));
+	addOutput(createPort<MLPort>(Vec(53, 312), PortWidget::OUTPUT, module, Counter::STOP_OUTPUT));
+	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();
 	display->box.pos = Vec(20,56);
@@ -194,4 +194,4 @@ CounterWidget::CounterWidget(Counter *module) : ModuleWidget(module) {
 
 }
 
-Model *modelCounter = Model::create<Counter, CounterWidget>("Counter");
+Model *modelCounter = createModel<Counter, CounterWidget>("Counter");

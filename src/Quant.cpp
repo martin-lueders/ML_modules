@@ -63,20 +63,20 @@ QuantizerWidget::QuantizerWidget(Quant *module) : ModuleWidget(module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(plugin,"res/Quantizer.svg")));
+		panel->setBackground(SVG::load(assetPlugin(pluginInstance,"res/Quantizer.svg")));
 		addChild(panel);
 	}
 
-	addChild(Widget::create<MLScrew>(Vec(15, 0)));
-	addChild(Widget::create<MLScrew>(Vec(15, 365)));
+	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
-	addInput( Port::create<MLPort>(Vec(9, 104), Port::INPUT, module, Quant::IN1_INPUT));
-	addOutput(Port::create<MLPort>(Vec(9, 150), Port::OUTPUT, module, Quant::OUT1_OUTPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
+	addInput( createPort<MLPort>(Vec(9, 104), PortWidget::INPUT, module, Quant::IN1_INPUT));
+	addOutput(createPort<MLPort>(Vec(9, 150), PortWidget::OUTPUT, module, Quant::OUT1_OUTPUT));
 
-	addParam(ParamWidget::create<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
-	addInput( Port::create<MLPort>(Vec(9, 246), Port::INPUT, module, Quant::IN2_INPUT));
-	addOutput(Port::create<MLPort>(Vec(9, 292), Port::OUTPUT, module, Quant::OUT2_OUTPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
+	addInput( createPort<MLPort>(Vec(9, 246), PortWidget::INPUT, module, Quant::IN2_INPUT));
+	addOutput(createPort<MLPort>(Vec(9, 292), PortWidget::OUTPUT, module, Quant::OUT2_OUTPUT));
 }
 
-Model *modelQuantizer = Model::create<Quant, QuantizerWidget>("Quantizer");
+Model *modelQuantizer = createModel<Quant, QuantizerWidget>("Quantizer");
