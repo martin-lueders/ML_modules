@@ -25,7 +25,12 @@ struct TrigSwitch3_2 : Module {
 		NUM_LIGHTS = STEP_LIGHT+8
 	};
 
-	TrigSwitch3_2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	TrigSwitch3_2() { 
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+		for(int i=0; i<8; i++) configParam(TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0);
+
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
@@ -46,7 +51,7 @@ struct TrigSwitch3_2 : Module {
 	float out2[8];
 	float out3[8];
 
-	void reset() override {
+	void onReset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) {
@@ -63,7 +68,6 @@ struct TrigSwitch3_2 : Module {
 
 		json_object_set_new(rootJ, "outMode", json_integer(outMode));
 		json_object_set_new(rootJ, "position", json_integer(position));
-	
 
 		return rootJ;
 	};
@@ -78,7 +82,6 @@ struct TrigSwitch3_2 : Module {
 
 	};
 
-
 };
 
 
@@ -92,16 +95,14 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 		}
 	}
 
-
-
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	out1[position] = inputs[CV1_INPUT].normalize(0.0);
-	out2[position] = inputs[CV2_INPUT].normalize(0.0);
-	out3[position] = inputs[CV3_INPUT].normalize(0.0);
+	out1[position] = inputs[CV1_INPUT].getNormalVoltage(0.0);
+	out2[position] = inputs[CV2_INPUT].getNormalVoltage(0.0);
+	out3[position] = inputs[CV3_INPUT].getNormalVoltage(0.0);
 
 	for(int i=0; i<8; i++) {
 		outputs[OUT1_OUTPUT+i].setVoltage(out1[i]);
@@ -117,12 +118,12 @@ struct TrigSwitch3_2OutModeItem : MenuItem {
 	TrigSwitch3_2 *trigSwitch;
 	TrigSwitch3_2::OutMode outMode;
 
-	void onAction(EventAction &e) override {
+	void onAction(const event::Action &e) override {
 		trigSwitch->outMode = outMode;
 	};
 
 
-	void process(const ProcessArgs &args) override {
+	void step() override {
 		rightText = (trigSwitch->outMode == outMode)? "✔" : "";
 	};
 
@@ -134,17 +135,17 @@ struct TrigSwitch3_2Widget : ModuleWidget {
 	TrigSwitch3_2Widget(TrigSwitch3_2 *module);
 	json_t *dataToJsonData();
 	void dataFromJsonData(json_t *root) ;
-	Menu *createContextMenu() override;
+	void appendContextMenu(Menu*) override;
 
 };
 
 TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) {
-		setModule(module);
-
+	
+	setModule(module);
 	box.size = Vec(15*12, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigSwitch3_2.svg")));
 		addChild(panel);
@@ -162,11 +163,11 @@ TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) {
 
 		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch3_2::TRIG_INPUT + i));
 
-		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3_2::STEP_PARAM + i));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3_2::STEP_LIGHT+i));
 
 
-		addOutput(createOutput<MLPort>(             Vec(row3, offset_y + i*delta_y),    PortWidget::OUTPUT, module, TrigSwitch3_2::OUT1_OUTPUT + i));
+		addOutput(createOutput<MLPort>(             Vec(row3, offset_y + i*delta_y),    module, TrigSwitch3_2::OUT1_OUTPUT + i));
 		addOutput(createOutput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3_2::OUT2_OUTPUT + i));
 		addOutput(createOutput<MLPort>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3_2::OUT3_OUTPUT + i));
 
@@ -179,12 +180,7 @@ TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) {
 
 
 
-Menu *TrigSwitch3_2createWidgetContextMenu() {
-
-	Menu *menu = ModulecreateWidgetContextMenu();
-
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
+void TrigSwitch3_2Widget::appendContextMenu(Menu *menu) {
 
 	TrigSwitch3_2 *trigSwitch = dynamic_cast<TrigSwitch3_2*>(module);
 	assert(trigSwitch);
@@ -205,8 +201,6 @@ Menu *TrigSwitch3_2createWidgetContextMenu() {
 	lastItem->outMode = TrigSwitch3_2::LAST;
 	menu->addChild(lastItem);
 
-
-	return menu;
 };
 
 Model *modelTrigSwitch3_2 = createModel<TrigSwitch3_2, TrigSwitch3_2Widget>("TrigSwitch3_2");

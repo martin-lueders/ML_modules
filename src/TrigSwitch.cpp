@@ -20,22 +20,24 @@ struct TrigSwitch : Module {
 		NUM_LIGHTS = STEP_LIGHT+8
 	};
 
-	TrigSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	TrigSwitch() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+        for (int i=0; i<8; i++) configParam(TrigSwitch::STEP_PARAM + i, 0.0, 1.0, 0.0);
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
 	int position=0;
 
-
-
-        const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
-        const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
+    const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
+    const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
 
 
 	dsp::SchmittTrigger stepTriggers[8];
 
 
-	void reset() override {
+	void onReset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
@@ -45,17 +47,14 @@ struct TrigSwitch : Module {
 	json_t *dataToJson() override {
 
 		json_t *rootJ = json_object();
-
 	
 		json_object_set_new(rootJ, "position", json_integer(position));
 	
-
 		return rootJ;
 	};
 	
 	void dataFromJson(json_t *rootJ) override {
 
-	
 		json_t *positionJ = json_object_get(rootJ, "position");
 		if(positionJ) position = json_integer_value(positionJ);
 
@@ -67,11 +66,11 @@ struct TrigSwitch : Module {
 void TrigSwitch::process(const ProcessArgs &args) {
 
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0))  + params[STEP_PARAM+i].getValue() ) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0))  + params[STEP_PARAM+i].getValue() ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	outputs[OUT_OUTPUT].setVoltage(inputs[CV_INPUT+position].normalize(0.0));
+	outputs[OUT_OUTPUT].setVoltage(inputs[CV_INPUT+position].getNormalVoltage(0.0));
 };
 
 
@@ -81,12 +80,13 @@ struct TrigSwitchWidget : ModuleWidget {
 };
 
 TrigSwitchWidget::TrigSwitchWidget(TrigSwitch *module) {
-		setModule(module);
+		
+	setModule(module);
 
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigSwitch.svg")));
 		addChild(panel);
@@ -104,7 +104,7 @@ TrigSwitchWidget::TrigSwitchWidget(TrigSwitch *module) {
 
 		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch::TRIG_INPUT + i));
 
-		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch::STEP_PARAM + i)); 
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch::STEP_LIGHT+i));
 		
 		addInput(createInput<MLPort>(             Vec(row3, offset_y + i*delta_y), module, TrigSwitch::CV_INPUT + i));

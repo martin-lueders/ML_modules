@@ -39,7 +39,11 @@ struct ShiftRegister : Module {
         };
 
 
-	ShiftRegister() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	ShiftRegister() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+
+		onReset(); 
+	};
 
 
 
@@ -52,7 +56,7 @@ struct ShiftRegister : Module {
 
 	dsp::SchmittTrigger upTrigger, downTrigger, setTrigger;
 
-	void reset() override {
+	void onReset() override {
 		position=0;
 		for(int i=0; i<8; i++) {
 			lights[i].value = 0.0;
@@ -101,7 +105,7 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) {
 	box.size = Vec(15*4, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ShiftReg.svg")));
 

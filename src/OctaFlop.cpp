@@ -56,7 +56,13 @@ struct OctaFlop : Module {
 	bool state[8] = {};
 
 
-	OctaFlop() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { for(int i=0; i<8; i++) state[i]=false; };
+	OctaFlop() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+		for(int i=0; i<8; i++) {
+	        configParam(OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0); 
+			state[i]=false; 
+		}
+	};
 
 	void process(const ProcessArgs &args) override;
 
@@ -70,8 +76,8 @@ void OctaFlop::process(const ProcessArgs &args) {
 
 
 
-	trig[0] = inputs[TRIG1_INPUT].normalize(0.0) ;
-	for(int i=1; i<8; i++) trig[i] = inputs[TRIG1_INPUT+i].normalize(10.0-out[i-1]) ;
+	trig[0] = inputs[TRIG1_INPUT].getNormalVoltage(0.0) ;
+	for(int i=1; i<8; i++) trig[i] = inputs[TRIG1_INPUT+i].getNormalVoltage(10.0-out[i-1]) ;
 
 
 	for(int i=0; i<8; i++) {
@@ -84,7 +90,7 @@ void OctaFlop::process(const ProcessArgs &args) {
 
 	}
 
-	if(resetTrigger.process(params[RESET_PARAM].getValue() + inputs[RESET_INPUT].normalize(0.0))) {
+	if(resetTrigger.process(params[RESET_PARAM].getValue() + inputs[RESET_INPUT].getNormalVoltage(0.0))) {
 		for(int i=0; i<8; i++) {
 			state[i]=false;
 			out[i] = 0.0;
@@ -112,7 +118,7 @@ OctaFlopWidget::OctaFlopWidget(OctaFlop *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaFlop.svg")));
 
@@ -131,13 +137,13 @@ OctaFlopWidget::OctaFlopWidget(OctaFlop *module) {
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaFlop::TRIG1_INPUT+i));
 
-		// addParam(createParam<ML_SmallLEDButton>(Vec(row2 - 3, offset_y + 5 + i*delta_y), module, OctaFlop::TOGGLE_PARAM+i, 0.0, 10.0, 0.0));
+		// addParam(createParam<ML_SmallLEDButton>(Vec(row2 - 3, offset_y + 5 + i*delta_y), module, OctaFlop::TOGGLE_PARAM+i));
         addChild(createLight<MLSmallLight<GreenLight>>(Vec(row2 +1, offset_y + 9 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
 		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaFlop::OUT1_OUTPUT+i));
 	};
 
-    addParam(createParam<MLButton>(Vec(row1+3, 320), module, OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0));
-	addInput(createInput<MLPort>(Vec(row3, 320), module, OctaFlop::RESET_INPUT));
+        addParam(createParam<MLButton>(Vec(row1+3, 320), module, OctaFlop::RESET_PARAM));
+		addInput(createInput<MLPort>(Vec(row3, 320), module, OctaFlop::RESET_INPUT));
 
 }
 

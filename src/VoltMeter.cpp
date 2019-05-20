@@ -39,7 +39,7 @@ void VoltMeter::process(const ProcessArgs &args) {
 
 	for(int i=0; i<4; i++) {
 		active[i] = inputs[IN1_INPUT+i].isConnected();
-		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].normalize(0.0);
+		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].getNormalVoltage(0.0);
 	};
 
 
@@ -110,7 +110,7 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) {
 //	label = new TextField*[4];
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/VoltMeter.svg")));
 		addChild(panel);

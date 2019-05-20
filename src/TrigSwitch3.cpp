@@ -25,7 +25,11 @@ struct TrigSwitch3 : Module {
 		NUM_LIGHTS = STEP_LIGHT+8
 	};
 
-	TrigSwitch3() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	TrigSwitch3() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+		for(int i=0; i<8; i++) configParam(TrigSwitch3::STEP_PARAM + i, 0.0, 1.0, 0.0);
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
@@ -40,7 +44,7 @@ struct TrigSwitch3 : Module {
 	dsp::SchmittTrigger stepTriggers[8];
 
 
-	void reset() override {
+	void onReset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
@@ -71,13 +75,13 @@ struct TrigSwitch3 : Module {
 void TrigSwitch3::process(const ProcessArgs &args) {
 
 	for(int i=0; i<8; i++) {
-		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].normalize(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
+		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	outputs[OUT1_OUTPUT].setVoltage(inputs[CV_INPUT1+position].normalize(0.0));
-	outputs[OUT2_OUTPUT].setVoltage(inputs[CV_INPUT2+position].normalize(0.0));
-	outputs[OUT3_OUTPUT].setVoltage(inputs[CV_INPUT3+position].normalize(0.0));
+	outputs[OUT1_OUTPUT].setVoltage(inputs[CV_INPUT1+position].getNormalVoltage(0.0));
+	outputs[OUT2_OUTPUT].setVoltage(inputs[CV_INPUT2+position].getNormalVoltage(0.0));
+	outputs[OUT3_OUTPUT].setVoltage(inputs[CV_INPUT3+position].getNormalVoltage(0.0));
 
 };
 
@@ -88,12 +92,12 @@ struct TrigSwitch3Widget : ModuleWidget {
 };
 
 TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) {
-		setModule(module);
-
+	
+	setModule(module);
 	box.size = Vec(15*12, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigSwitch3.svg")));
 		addChild(panel);
@@ -110,10 +114,8 @@ TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) {
 	for (int i=0; i<8; i++) {
 
 		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch3::TRIG_INPUT + i));
-
-		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3::STEP_PARAM + i, 0.0, 1.0, 0.0));
+		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3::STEP_PARAM + i));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3::STEP_LIGHT+i));
-
 
 		addInput(createInput<MLPort>(             Vec(row3, offset_y + i*delta_y), module, TrigSwitch3::CV_INPUT1 + i));
 		addInput(createInput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3::CV_INPUT2 + i));

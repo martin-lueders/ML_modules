@@ -43,11 +43,14 @@ struct OctaPlus : Module {
 	float out[8];
 
 
-	OctaPlus() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	OctaPlus() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
-	void reset() override {
+	void onReset() override {
 		for(int i=0; i<8; i++) out[i] = 0.0;
 	};
 
@@ -64,11 +67,11 @@ void OctaPlus::process(const ProcessArgs &args) {
 
 
 
-	in_A[0] = inputs[IN1_INPUT].normalize(random);
-	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(in_A[i-1]);
+	in_A[0] = inputs[IN1_INPUT].getNormalVoltage(random);
+	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].getNormalVoltage(in_A[i-1]);
 
-	in_B[0] = inputs[IN_B_1_INPUT].normalize(random);
-	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].normalize(in_B[i-1]);
+	in_B[0] = inputs[IN_B_1_INPUT].getNormalVoltage(random);
+	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].getNormalVoltage(in_B[i-1]);
 
 	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(in_A[i] + in_B[i]);
 
@@ -86,7 +89,7 @@ OctaPlusWidget::OctaPlusWidget(OctaPlus *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaPlus.svg")));
 

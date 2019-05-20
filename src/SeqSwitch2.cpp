@@ -46,7 +46,19 @@ struct SeqSwitch2 : Module {
                 NUM_LIGHTS
         };
 
-	SeqSwitch2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	SeqSwitch2() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+        configParam(SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0);
+        configParam(SeqSwitch2::STEP1_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP2_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP3_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP4_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP5_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP6_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP7_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch2::STEP8_PARAM, 0.0, 1.0, 0.0);
+		onReset(); 
+	};
 
 
 	void process(const ProcessArgs &args) override;
@@ -60,7 +72,7 @@ struct SeqSwitch2 : Module {
 
 	dsp::SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
 
-	void reset() override {
+	void onReset() override {
 		position=0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
 	};
@@ -148,7 +160,7 @@ void SeqSwitch2::process(const ProcessArgs &args) {
 	while( position < 0 )         position += numSteps;
 	while( position >= numSteps ) position -= numSteps;
 
-	outs[position] = inputs[IN_INPUT].normalize(0.0);
+	outs[position] = inputs[IN_INPUT].getNormalVoltage(0.0);
 
 
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
@@ -162,7 +174,7 @@ struct SeqSwitch2Widget : ModuleWidget {
 	SeqSwitch2Widget(SeqSwitch2 *module);
 	json_t *dataToJsonData() ;
 	void dataFromJsonData(json_t *root) ;
-	Menu *createContextMenu() override;
+	void appendContextMenu(Menu*) override;
 };
 
 SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
@@ -171,7 +183,7 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/SeqSwitch2.svg")));
 		addChild(panel);
@@ -183,7 +195,7 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 
-	addParam(createParam<RedSnapMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS, 1.0, 8.0, 8.0));
+	addParam(createParam<RedSnapMLKnob>(Vec(14,  63), module, SeqSwitch2::NUM_STEPS));
 
 	addInput(createInput<MLPort>(Vec(81, 64), module, SeqSwitch2::NUMSTEPS_INPUT));
 
@@ -203,16 +215,15 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
 	addOutput(createOutput<MLPort>(Vec(62, offset_y + 2*delta_y), module, SeqSwitch2::OUT7_OUTPUT));
 	addOutput(createOutput<MLPort>(Vec(62, offset_y + 3*delta_y), module, SeqSwitch2::OUT8_OUTPUT));
 
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP1_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP2_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP3_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP4_PARAM, 0.0, 1.0, 0.0));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP1_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP2_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP3_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP4_PARAM));
 
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP5_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP6_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP7_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP8_PARAM, 0.0, 1.0, 0.0));
-
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP5_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP6_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch2::STEP7_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch2::STEP8_PARAM));
 
     addChild(createLight<MLMediumLight<GreenLight>>(Vec(15, offset_y + 7 + 0*delta_y), module, SeqSwitch2::STEP1_LIGHT));
     addChild(createLight<MLMediumLight<GreenLight>>(Vec(15, offset_y + 7 + 1*delta_y), module, SeqSwitch2::STEP2_LIGHT));
@@ -234,12 +245,12 @@ struct SeqSwitch2OutModeItem : MenuItem {
 	SeqSwitch2 *seqSwitch2;
 	SeqSwitch2::OutMode outMode;
 
-	void onAction(EventAction &e) override {
+	void onAction(const event::Action &e) override {
 		seqSwitch2->outMode = outMode;
 	};
 
 
-	void process(const ProcessArgs &args) override {
+	void step() override {
 		rightText = (seqSwitch2->outMode == outMode)? "✔" : "";
 	};
 
@@ -251,23 +262,19 @@ struct SeqSwitch2RangeItem : MenuItem {
 	SeqSwitch2::InputRange inputRange;
 
 
-	void onAction(EventAction &e) override {
+	void onAction(const event::Action &e) override {
 		seqSwitch2->inputRange = inputRange;
 	};
 
 
-	void process(const ProcessArgs &args) override {
+	void step() override {
 		rightText = (seqSwitch2->inputRange == inputRange)? "✔" : "";
 	};
 
 };
 
-Menu *SeqSwitch2createWidgetContextMenu() {
+void SeqSwitch2Widget::appendContextMenu(Menu *menu) {
 
-	Menu *menu = ModulecreateWidgetContextMenu();
-
-	MenuLabel *spacerLabel = new MenuLabel();
-	menu->addChild(spacerLabel);
 
 	SeqSwitch2 *seqSwitch2 = dynamic_cast<SeqSwitch2*>(module);
 	assert(seqSwitch2);
@@ -316,7 +323,6 @@ Menu *SeqSwitch2createWidgetContextMenu() {
 	fiveFiveItem->inputRange = SeqSwitch2::MinusFive_Five;;
 	menu->addChild(fiveFiveItem);
 
-	return menu;
 };
 
 Model *modelSeqSwitch2 = createModel<SeqSwitch2, SeqSwitch2Widget>("SeqSwitch2");

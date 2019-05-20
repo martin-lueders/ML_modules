@@ -25,7 +25,11 @@ struct OctaSwitch : Module {
 	float threshold = 0.0;
 
 
-	OctaSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { };
+	OctaSwitch() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+		configParam(OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0);
+ 
+	};
 
 
 	void process(const ProcessArgs &args) override;
@@ -38,9 +42,9 @@ void OctaSwitch::process(const ProcessArgs &args) {
 
 	bool gate[8];
 
-	threshold = inputs[THRESHOLD_INPUT].normalize(params[THRESHOLD_PARAM].getValue());
+	threshold = inputs[THRESHOLD_INPUT].getNormalVoltage(params[THRESHOLD_PARAM].getValue());
 
-	gate[0] = inputs[GATE_INPUT].normalize(0.0) > threshold;
+	gate[0] = inputs[GATE_INPUT].getNormalVoltage(0.0) > threshold;
 
 	for(int i=1; i<8; i++) {
 		
@@ -52,7 +56,7 @@ void OctaSwitch::process(const ProcessArgs &args) {
 
 
 	for(int i=0; i<8; i++) { 
-		outputs[OUT_OUTPUT+i].value  = gate[i] ? inputs[B_INPUT+i].normalize(0.0) : inputs[A_INPUT+i].normalize(0.0);
+		outputs[OUT_OUTPUT+i].value  = gate[i] ? inputs[B_INPUT+i].getNormalVoltage(0.0) : inputs[A_INPUT+i].getNormalVoltage(0.0);
 	}
 
 };
@@ -115,7 +119,7 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) {
 	box.size = Vec(15*10, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaSwitch.svg")));
 
@@ -132,8 +136,7 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 47, row3 = 77, row4 = 110;
 
 	addInput(createInput<MLPort>(   Vec(row1,  328 ), module, OctaSwitch::THRESHOLD_INPUT));
-	addParam(createParam<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0));
-
+	addParam(createParam<SmallBlueMLKnob>(  Vec(row2-5,  326), module, OctaSwitch::THRESHOLD_PARAM));
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y ), module, OctaSwitch::GATE_INPUT+i));

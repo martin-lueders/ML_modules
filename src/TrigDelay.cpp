@@ -31,11 +31,15 @@ struct TrigDelay : Module {
 	};
 
 
-	TrigDelay() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
+	TrigDelay() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+        configParam(TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0);
+        configParam(TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1);
+        configParam(TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0);
+        configParam(TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1);
 
-		gSampleRate = args.sampleRate;
+
 		// minLength = 0.001;
-
 	};
 
 
@@ -48,20 +52,11 @@ struct TrigDelay : Module {
 	dsp::PulseGenerator on1, on2;
 
 
-
-	float gSampleRate;
-
-	void onSampleRateChange() { gSampleRate = args.sampleRate; }
-
-	void reset() override {
+	void onReset() override {
 
 		gate1=false;
 		gate2=false;
 	};
-
-private:
-
-
 
 };
 
@@ -69,6 +64,8 @@ private:
 
 
 void TrigDelay::process(const ProcessArgs &args) {
+
+	float gSampleTime = args.sampleTime;
 
 
 	float delayTime1 = params[DELAY1_PARAM].getValue();
@@ -105,22 +102,22 @@ void TrigDelay::process(const ProcessArgs &args) {
 	};
 
 
-	if(  gate1 && !delay1.process(1.0/gSampleRate) ) {
+	if(  gate1 && !delay1.process(gSampleTime) ) {
 			
 		on1.trigger(length1);
 		gate1 = false;
 
 	};
 
-	if(  gate2 && !delay2.process(1.0/gSampleRate) ) {
+	if(  gate2 && !delay2.process(gSampleTime) ) {
 			
 		on2.trigger(length2);
 		gate2 = false;
 
 	};
 
-	outputs[OUT1_OUTPUT].setVoltage(on1.process(1.0/gSampleRate) ? 10.0 : 0.0);
-	outputs[OUT2_OUTPUT].setVoltage(on2.process(1.0/gSampleRate) ? 10.0 : 0.0);
+	outputs[OUT1_OUTPUT].setVoltage(on1.process(gSampleTime) ? 10.0 : 0.0);
+	outputs[OUT2_OUTPUT].setVoltage(on2.process(gSampleTime) ? 10.0 : 0.0);
 
 };
 
@@ -131,12 +128,13 @@ struct TrigDelayWidget : ModuleWidget {
 };
 
 TrigDelayWidget::TrigDelayWidget(TrigDelay *module) {
-		setModule(module);
+		
+	setModule(module);
 
 	box.size = Vec(15*6, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TrigDelay.svg")));
 		addChild(panel);
@@ -145,24 +143,25 @@ TrigDelayWidget::TrigDelayWidget(TrigDelay *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-    addParam(createParam<SmallBlueMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  69), module, TrigDelay::DELAY1_PARAM));
 	addInput(createInput<MLPort>(Vec(52, 70), module, TrigDelay::DELAY1_INPUT));
 
-    addParam(createParam<SmallBlueMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  112), module, TrigDelay::LENGTH1_PARAM));
 	addInput(createInput<MLPort>(Vec(52, 113), module, TrigDelay::LENGTH1_INPUT));
 
 	addInput(createInput<MLPort>(Vec(12, 164), module, TrigDelay::GATE1_INPUT));
 	addOutput(createOutput<MLPort>(Vec(52, 164), module, TrigDelay::OUT1_OUTPUT));
 
-    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM));
 	addInput(createInput<MLPort>(Vec(52, 152 + 71), module, TrigDelay::DELAY2_INPUT));
 
-    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1));
+    addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 112), module, TrigDelay::LENGTH2_PARAM));
 	addInput(createInput<MLPort>(Vec(52, 152 + 114), module, TrigDelay::LENGTH2_INPUT));
 
 	addInput(createInput<MLPort>(Vec(12, 152 + 165), module, TrigDelay::GATE2_INPUT));
 	addOutput(createOutput<MLPort>(Vec(52, 152 + 165), module, TrigDelay::OUT2_OUTPUT));
 
 }
+
 
 Model *modelTrigDelay = createModel<TrigDelay, TrigDelayWidget>("TrigDelay");

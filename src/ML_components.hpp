@@ -6,22 +6,16 @@ using namespace rack;
 
 extern Plugin *pluginInstance;
 
-
-
-
-struct MLSVGSwitch : virtual ParamWidget, FramebufferWidget {
+struct MLSVGSwitch : Switch {
 
 	CircularShadow *shadow;
 
-	std::vector<std::shared_ptr<SVG>> frames;
-	SVGWidget *sw;
+	std::vector<std::shared_ptr<Svg>> frames;
+	SvgWidget *sw;
 
 	MLSVGSwitch();
 	/** Adds an SVG file to represent the next switch position */
-
-	void addFrame(std::shared_ptr<SVG> svg);
-	void onChange(event::Change &e);
-
+	void addFrame(std::shared_ptr<Svg> svg);
 };
 
 
@@ -106,51 +100,51 @@ struct SmallGreySnapMLKnob : RoundKnob {
 };
 
 
-struct MLPort : SVGPort {
+struct MLPort : SvgPort {
 	MLPort();
 };
 
 
-struct MLButton : MLSVGSwitch, Switch { //Momentary
+struct MLButton : MLSVGSwitch { //Momentary
 	MLButton();
 };
 
-struct MLSmallButton : MLSVGSwitch, Switch { // Momentary
+struct MLSmallButton : MLSVGSwitch { // Momentary
 	MLSmallButton();
 };
 
-struct ML_ResetButton : MLSVGSwitch, Switch { //Momentary
+struct ML_ResetButton : MLSVGSwitch { //Momentary
 	ML_ResetButton();
 };
 
-struct ML_LEDButton : MLSVGSwitch, Switch { //Momentary
+struct ML_LEDButton : MLSVGSwitch  { //Momentary
 	
 	ML_LEDButton();
 };
 
-struct ML_MediumLEDButton : MLSVGSwitch, Switch { //Momentary
+struct ML_MediumLEDButton : MLSVGSwitch { //Momentary
 	
 	ML_MediumLEDButton();
 };
 
 
-struct ML_SmallLEDButton : MLSVGSwitch, Switch { //Momentary
+struct ML_SmallLEDButton : MLSVGSwitch { //Momentary
 	
 	ML_SmallLEDButton();
 };
 
 
 
-struct MLSwitch : MLSVGSwitch, Switch { //Toggle
+struct MLSwitch : MLSVGSwitch { //Toggle
 
 	MLSwitch();
 };
 
-struct MLSwitch2 : MLSVGSwitch, Switch { //Toggle
+struct MLSwitch2 : MLSVGSwitch { //Toggle
 	MLSwitch2();
 };
 
-struct BlueMLSwitch : MLSVGSwitch, Switch { //Toggle
+struct BlueMLSwitch : MLSVGSwitch { //Toggle
 	BlueMLSwitch();
 };
 
@@ -158,16 +152,16 @@ struct BlueMLSwitch : MLSVGSwitch, Switch { //Toggle
 
 struct MLScrew : FramebufferWidget {
 
-    SVGWidget *sw;
+    SvgWidget *sw;
     TransformWidget *tw;
 
 	MLScrew() {
 
         tw = new TransformWidget();
 	    addChild(tw);
-	    sw = new SVGWidget();
+	    sw = new SvgWidget();
 	    tw->addChild(sw);
-	    sw->setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLScrew.svg")));
+	    sw->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLScrew.svg")));
 		tw->box.size = sw->box.size;	
 
         float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 

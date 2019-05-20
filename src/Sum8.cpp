@@ -25,7 +25,9 @@ struct Sum8 : Module {
 	};
 
 
-	Sum8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+	Sum8() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+	};
 
 
 	void process(const ProcessArgs &args) override;
@@ -40,7 +42,7 @@ void Sum8::process(const ProcessArgs &args) {
 
 
 
-	for(int i=0; i<8; i++) out += inputs[IN1_INPUT+i].normalize(0.0);
+	for(int i=0; i<8; i++) out += inputs[IN1_INPUT+i].getNormalVoltage(0.0);
 
 	outputs[OUT_OUTPUT].setVoltage(out);
 
@@ -58,7 +60,7 @@ Sum8Widget::Sum8Widget(Sum8 *module) {
 	box.size = Vec(15*3, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Sum8.svg")));
 

@@ -28,11 +28,16 @@ struct Counter : Module {
 	};
 
 	Counter() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); reset(); };
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); 
+        configParam(Counter::MAX_PARAM, 0.0, 128.0, 8.0);
+        configParam(Counter::START_PARAM, 0.0, 10.0, 0.0);
+        configParam(Counter::STOP_PARAM, 0.0, 10.0, 0.0);
+
+		onReset(); };
 
 	void process(const ProcessArgs &args) override;
 
-	void reset() override {counter=0; state=false; state2=false; gSampleRate=args.sampleRate;};
+	void onReset() override {counter=0; state=false; state2=false; };
 
 	int counter = 0;
 	bool state = false;
@@ -41,9 +46,9 @@ struct Counter : Module {
 
 	float gSampleRate;
 
-	void onSampleRateChange() override {gSampleRate = args.sampleRate;}
+	// void onSampleRateChange() override {gSampleRate = args.sampleRate;}
 
-        int max;
+    int max;
   
 	dsp::SchmittTrigger startTrigger, gateTrigger, stopTrigger;
 	dsp::PulseGenerator startPulse, stopPulse;
@@ -59,19 +64,19 @@ void Counter::process(const ProcessArgs &args) {
 
 	if( inputs[LENGTH_INPUT].isConnected() ) max = max * clamp(inputs[LENGTH_INPUT].getVoltage()/10.0f,0.0f,1.0f);
 
-	if( startTrigger.process(inputs[START_INPUT].normalize(0.0) + params[START_PARAM].getValue() )) {
+	if( startTrigger.process(inputs[START_INPUT].getNormalVoltage(0.0) + params[START_PARAM].getValue() )) {
 		state=true; 
 		counter=gateTrigger.isHigh()?1:0;
 		startPulse.trigger(0.001);
 	};
 
-	if( stopTrigger.process(inputs[STOP_INPUT].normalize(0.0) + params[STOP_PARAM].getValue() ))   {
+	if( stopTrigger.process(inputs[STOP_INPUT].getNormalVoltage(0.0) + params[STOP_PARAM].getValue() ))   {
 		state=false; 
 		counter=0;
 		stopPulse.trigger(0.001);
 	};
 
-	if( gateTrigger.process(inputs[GATE_INPUT].normalize(0.0) ) ) {
+	if( gateTrigger.process(inputs[GATE_INPUT].getNormalVoltage(0.0) ) ) {
 
 		if(state) counter++; 
 
@@ -87,8 +92,8 @@ void Counter::process(const ProcessArgs &args) {
 
 	float out = (gateTrigger.isHigh()&&state) ? 10.0 : 0.0;
 
-	float start = (startPulse.process(1.0/gSampleRate)) ? 10.0 : 0.0;
-	float stop  = (stopPulse.process( 1.0/gSampleRate)) ? 10.0 : 0.0;
+	float start = (startPulse.process(args.sampleTime)) ? 10.0 : 0.0;
+	float stop  = (stopPulse.process(args.sampleTime)) ? 10.0 : 0.0;
 
 	outputs[GATE_OUTPUT].value  = out;
 	outputs[START_OUTPUT].setVoltage(start);
@@ -152,7 +157,7 @@ CounterWidget::CounterWidget(Counter *module) {
 	box.size = Vec(15*6, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Counter.svg")));
 		addChild(panel);
@@ -164,7 +169,7 @@ CounterWidget::CounterWidget(Counter *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addParam(createParam<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM, 0.0, 128.0, 8.0));
+	addParam(createParam<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM));
 	addInput(createInput<MLPort>( Vec(53, 87), module, Counter::LENGTH_INPUT));
 
 	addInput(createInput<MLPort>(  Vec(13, 168), module, Counter::GATE_INPUT));
@@ -173,12 +178,11 @@ CounterWidget::CounterWidget(Counter *module) {
 
 	addInput(createInput<MLPort>(  Vec(13, 241), module, Counter::START_INPUT));
 	addOutput(createOutput<MLPort>(Vec(53, 241), module, Counter::START_OUTPUT));
-	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM, 0.0, 10.0, 0.0));
-
+	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM));
 
 	addInput(createInput<MLPort>(  Vec(13, 312), module, Counter::STOP_INPUT));
 	addOutput(createOutput<MLPort>(Vec(53, 312), module, Counter::STOP_OUTPUT));
-	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM, 0.0, 10.0, 0.0));
+	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();
 	display->box.pos = Vec(20,56);

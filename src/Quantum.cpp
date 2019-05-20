@@ -60,7 +60,13 @@ struct Quantum : Module {
 
 	bool transpose_select = true;
 
-	Quantum() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) { reset(); };
+	Quantum() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); 
+		for(int i=0; i<12; i++) {
+		    configParam(Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0);
+		}
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 	dsp::PulseGenerator pulse;
@@ -71,7 +77,7 @@ struct Quantum : Module {
 	dsp::SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
 	float semiLight[12] = {};
 
-    void reset() override {
+    void onReset() override {
         for (int i = 0; i < 12; i++) {
             semiState[i] = false;
 			semiLight[i] = 0.0;
@@ -81,7 +87,7 @@ struct Quantum : Module {
 		last_semi   = 0;
 	}
 
-	void randomize() override {
+	void onRandomize() override {
 		for (int i = 0; i<12; i++) {
 			semiState[i] = (random::uniform() > 0.5);
 			semiLight[i] = semiState[i]?1.0:0.0;
@@ -146,7 +152,7 @@ void Quantum::process(const ProcessArgs &args) {
 	float quantized = 0.f;
 
 	float v=inputs[IN_INPUT].getVoltage();
-	float t=inputs[TRANSPOSE_INPUT].normalize(0.0);
+	float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0);
 
 //	int octave   = floor(v);
 //	int octave_t = floor(t);
@@ -173,14 +179,14 @@ void Quantum::process(const ProcessArgs &args) {
 
 
    	if( inputs[RESET_INPUT].isConnected() ) {
-		if( resetTrigger.process(inputs[RESET_INPUT].getVoltage()) ) reset();
+		if( resetTrigger.process(inputs[RESET_INPUT].getVoltage()) ) onReset();
         };
 
 
 	if( inputs[SET_INPUT].isConnected() ) {
 		if( setTrigger.process(inputs[SET_INPUT].getVoltage() ) ) {
 
-			float n=inputs[NOTE_INPUT].normalize(0.0);
+			float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
 			int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
 			if(semi_n<0) semi_n+=12;
 
@@ -267,12 +273,12 @@ struct QuantumModeItem : MenuItem {
         Quantum *quantum;
         Quantum::Mode mode;
 
-
-        void onAction(EventAction &e) override {
+ 
+        void onAction(const event::Action &e) override {
                 quantum->mode = mode;
         };
 
-        void process(const ProcessArgs &args) override {
+        void step() override {
                 rightText = (quantum->mode == mode)? "✔" : "";
         };
 
@@ -283,11 +289,11 @@ struct QuantumTranposeModeItem : MenuItem {
 	Quantum *quantum;
 	bool transpose_select;
 
-    void onAction(EventAction &e) override {
+    void onAction(const event::Action &e) override {
             quantum->transpose_select = transpose_select;
   	};
 
-    void process(const ProcessArgs &args) override {
+    void step() override {
             rightText = (quantum->transpose_select == transpose_select)? "✔" : "";
     };
 
@@ -297,15 +303,12 @@ struct QuantumWidget : ModuleWidget {
 	QuantumWidget(Quantum *module);
 	json_t *dataToJsonData() ;
 	void dataFromJsonData(json_t *root) ;
-	Menu *createContextMenu() override;
+	void appendContextMenu(Menu *) override;
 };
 
-Menu *QuantumcreateWidgetContextMenu() {
+void QuantumWidget::appendContextMenu(Menu *menu) {
 
-        Menu *menu = ModulecreateWidgetContextMenu();
 
-        MenuLabel *spacerLabel = new MenuLabel();
-        menu->addChild(spacerLabel);
 
         Quantum *quantum = dynamic_cast<Quantum*>(module);
         assert(quantum);
@@ -361,16 +364,15 @@ Menu *QuantumcreateWidgetContextMenu() {
 		menu->addChild(trans_select_off_Item);
 
 
-
-	return menu;
 };
 
 QuantumWidget::QuantumWidget(Quantum *module) {
-		setModule(module);
+		
+	setModule(module);
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Quantum.svg")));
 		addChild(panel);
@@ -381,10 +383,10 @@ QuantumWidget::QuantumWidget(Quantum *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
-	addInput( createPort<MLPort>(Vec(19, 42), module, Quantum::IN_INPUT));
+	addInput(createInput<MLPort>(Vec(19, 42), module, Quantum::IN_INPUT));
 	addOutput(createOutput<MLPort>(Vec(75, 42), module, Quantum::OUT_OUTPUT));
 
-	addInput( createPort<MLPort>(Vec(75, 90), module, Quantum::TRANSPOSE_INPUT));
+	addInput(createInput<MLPort>(Vec(75, 90), module, Quantum::TRANSPOSE_INPUT));
 	addOutput(createOutput<MLPort>(Vec(75, 140), module, Quantum::GATE_OUTPUT));
 	addOutput(createOutput<MLPort>(Vec(75, 180), module, Quantum::TRIGGER_OUTPUT));
 
@@ -396,7 +398,7 @@ QuantumWidget::QuantumWidget(Quantum *module) {
 	static const float offset_y = 333;
 
 	for(int i=0; i<12; i++) {
-		addParam(createParam<ML_SmallLEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0));
+		addParam(createParam<ML_SmallLEDButton>(Vec(offset_x, -22*i+offset_y), module, Quantum::SEMI_1_PARAM + i));
 		addChild(createLight<MLSmallLight<GreenLight>>(Vec(offset_x+4, -22*i+4+offset_y), module, Quantum::SEMI_1_LIGHT+i));
 	}
 

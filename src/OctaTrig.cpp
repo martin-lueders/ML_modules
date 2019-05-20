@@ -56,15 +56,17 @@ struct OctaTrig : Module {
 	float out_up[8] = {};
 	float out_dn[8] = {};
 
-	float delta;
+	// float delta;
 
 
-	OctaTrig() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { 
+	OctaTrig() {
+
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
 		for(int i=0; i<8; i++) state[i]=false; 
-		onSampleRateChange();
+		// onSampleRateChange();
 	};
 
-	void onSampleRateChange() override { delta = 1.0/args.sampleRate; }
+	// void onSampleRateChange() override { delta = 1.0/args.sampleRate; }
 
 	void process(const ProcessArgs &args) override;
 
@@ -76,11 +78,11 @@ void OctaTrig::process(const ProcessArgs &args) {
 
 	bool gate[8];
 
-
+	float delta = args.sampleTime;
 
 	for(int i=0; i<8; i++) {
 		
-		gate[i] = inputs[IN1_INPUT+i].normalize(0.0) > 1.0;
+		gate[i] = inputs[IN1_INPUT+i].getNormalVoltage(0.0) > 1.0;
 
 		if (gate[i]^state[i]) {
 
@@ -116,7 +118,7 @@ OctaTrigWidget::OctaTrigWidget(OctaTrig *module) {
 	box.size = Vec(15*10, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/OctaTrig.svg")));
 

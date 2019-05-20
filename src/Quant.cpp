@@ -22,7 +22,10 @@ struct Quant : Module {
 	};
 
 	Quant() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);};
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0);
+        configParam(Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0);
+	};
 
 	void process(const ProcessArgs &args) override;
 };
@@ -32,7 +35,7 @@ static void stepChannel(Input &in, Param &p_amount, Output &out) {
 
 
 
-	float v = in.normalize(0.0);
+	float v = in.getNormalVoltage(0.0);
 
 	float amount = p_amount.value;
 
@@ -59,11 +62,12 @@ struct QuantizerWidget : ModuleWidget {
 };
 
 QuantizerWidget::QuantizerWidget(Quant *module) {
-		setModule(module);
+
+	setModule(module);
 	box.size = Vec(15*3, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Quantizer.svg")));
 		addChild(panel);
@@ -72,13 +76,15 @@ QuantizerWidget::QuantizerWidget(Quant *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addParam(createParam<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0));
-	addInput( createPort<MLPort>(Vec(9, 104), module, Quant::IN1_INPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM));
+	addInput(createInput<MLPort>(Vec(9, 104), module, Quant::IN1_INPUT));
 	addOutput(createOutput<MLPort>(Vec(9, 150), module, Quant::OUT1_OUTPUT));
 
-	addParam(createParam<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0));
-	addInput( createPort<MLPort>(Vec(9, 246), module, Quant::IN2_INPUT));
+	addParam(createParam<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM));
+	addInput(createInput<MLPort>(Vec(9, 246), module, Quant::IN2_INPUT));
 	addOutput(createOutput<MLPort>(Vec(9, 292), module, Quant::OUT2_OUTPUT));
 }
+
+
 
 Model *modelQuantizer = createModel<Quant, QuantizerWidget>("Quantizer");

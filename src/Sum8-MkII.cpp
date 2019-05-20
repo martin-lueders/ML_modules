@@ -19,7 +19,12 @@ struct Sum8mk2 : Module {
 	};
 
 
-	Sum8mk2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {};
+	Sum8mk2() { 
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
+		for(int i=0; i<8; i++) {
+		    configParam(Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0);
+		};
+	};
 
 
 	void process(const ProcessArgs &args) override;
@@ -33,7 +38,7 @@ void Sum8mk2::process(const ProcessArgs &args) {
 	float out=0.0;
 
 
-	for(int i=0; i<8; i++) out += inputs[IN_INPUT+i].normalize(0.0) * (2*params[POLARITY_PARAM+i].getValue() - 1.0);
+	for(int i=0; i<8; i++) out += inputs[IN_INPUT+i].getNormalVoltage(0.0) * (2*params[POLARITY_PARAM+i].getValue() - 1.0);
 
 	outputs[OUT_OUTPUT].setVoltage(out);
 
@@ -51,7 +56,7 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) {
 	box.size = Vec(15*5, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Sum8mk2.svg")));
 
@@ -68,7 +73,7 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) {
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), module, Sum8mk2::IN_INPUT+i));
-        addParam(createParam<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0));
+        addParam(createParam<POLSWITCH>( Vec(offset_x + 37, offset_y + i*delta_y + 2 ), module, Sum8mk2::POLARITY_PARAM + i));
 	}
 
 

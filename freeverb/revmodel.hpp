@@ -45,13 +45,13 @@ private:
 	float	roomsize,roomsize1;
 	float	damp,damp1, damp2;
 	float   feedback_allpass;
-	float	wet,wet1,wet2;
+	float	wet;
 	float	dry;
 	float	width;
 	float	mode;
 
 	float 	conversion;
-	float math_e = 2.71828;
+	// float math_e = 2.71828;
 
 	// The following are all declared inline 
 	// to remove the need for dynamic allocation

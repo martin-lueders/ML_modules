@@ -15,20 +15,21 @@ MLSVGSwitch::MLSVGSwitch() {
     addChild(shadow);
     shadow->box.size = Vec();
 
-	sw = new SVGWidget();
+	sw = new SvgWidget();
 	addChild(sw);
 }
 
-void MLSVGSwitch::addFrame(std::shared_ptr<SVG> svg) {
+void MLSVGSwitch::addFrame(std::shared_ptr<Svg> svg) {
 	frames.push_back(svg);
 	// If this is our first frame, automatically set SVG and size
 	if (!sw->svg) {
-		sw->setSVG(svg);
+		sw->setSvg(svg);
 		box.size = sw->box.size;
 	}
 }
 
-void MLSVGSwitch::onChange(event::Change &e) {
+/*
+void MLSVGSwitch::onChange(const event::Change &e) {
 	assert(frames.size() > 0);
 	float valueScaled = rescale(value, minValue, maxValue, 0, frames.size() - 1);
 	int index = clamp((int) roundf(valueScaled), 0, (int) frames.size() - 1);
@@ -36,80 +37,81 @@ void MLSVGSwitch::onChange(event::Change &e) {
 	dirty = true;
 	ParamWidget::onChange(e);
 }
-
+*/
 
 
 
 WhiteLight::WhiteLight() {
-	addBaseColor(COLOR_WHITE);
+	addBaseColor(color::WHITE);
 }
 
 BlueMLKnob::BlueMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 };
 
 SmallBlueMLKnob::SmallBlueMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
 };
 
 BlueSnapMLKnob::BlueSnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 	snap = true;
 };
 
 SmallBlueSnapMLKnob::SmallBlueSnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
 	snap = true;
 };
 
 
 RedMLKnob::RedMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
 };
 
 SmallRedMLKnob::SmallRedMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
 };
 
 RedSnapMLKnob::RedSnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
 	snap = true;
 };
 
 SmallRedSnapMLKnob::SmallRedSnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
 	snap = true;
 };
 
 
 
 GreyMLKnob::GreyMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
 };
 
 SmallGreyMLKnob::SmallGreyMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
 };
 
 
 GreySnapMLKnob::GreySnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
 	snap = true;
 };
 
 SmallGreySnapMLKnob::SmallGreySnapMLKnob() {
-    setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
 	snap = true;
 };
 
 
 
 MLPort::MLPort() {
-	setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Jack.svg")));
+	setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Jack.svg")));
 };
 
 
 MLButton::MLButton() {
+	momentary = true;
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLButton_0.svg")));
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLButton_1.svg")));
 	sw->wrap();
@@ -118,6 +120,7 @@ MLButton::MLButton() {
 
 
 MLSmallButton::MLSmallButton() {
+	momentary = true;
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_0.svg")));
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_1.svg")));
 	sw->wrap();
@@ -126,6 +129,7 @@ MLSmallButton::MLSmallButton() {
 
 
 ML_LEDButton::ML_LEDButton() {
+	momentary = true;
 
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton.svg")));
 	sw->wrap();
@@ -139,6 +143,7 @@ ML_LEDButton::ML_LEDButton() {
 
 ML_MediumLEDButton::ML_MediumLEDButton() {
 
+	momentary = true;
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton_medium.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
@@ -152,6 +157,7 @@ ML_MediumLEDButton::ML_MediumLEDButton() {
 
 ML_SmallLEDButton::ML_SmallLEDButton() {
 
+	momentary = true;
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LEDButton_small.svg")));
 	sw->wrap();
 	box.size = sw->box.size;
@@ -167,6 +173,7 @@ ML_SmallLEDButton::ML_SmallLEDButton() {
 
 ML_ResetButton::ML_ResetButton() {
 
+	momentary = true;
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ResetButton_0.svg")));
 	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ResetButton_1.svg")));
 

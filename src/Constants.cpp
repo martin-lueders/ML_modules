@@ -30,7 +30,9 @@ struct Constants : Module {
 	};
 
 
-	Constants() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
+	Constants() {
+
+	config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
 
 	double semi = 1.0/12.0;
 
@@ -75,7 +77,7 @@ ConstantsWidget::ConstantsWidget(Constants *module) {
 	box.size = Vec(15*6, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Constants.svg")));
 

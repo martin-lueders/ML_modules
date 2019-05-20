@@ -35,9 +35,13 @@ struct FreeVerb : Module {
 
 	dsp::SchmittTrigger buttonTrigger;
 
-	FreeVerb() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) {
+	FreeVerb() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+        configParam(FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5);
+        configParam(FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5);
+        configParam(FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0);
 
-	float gSampleRate = args.sampleRate;
+		float gSampleRate = APP->engine->getSampleRate();
 
 		reverb.init(gSampleRate);
 
@@ -53,7 +57,7 @@ struct FreeVerb : Module {
 
 void FreeVerb::onSampleRateChange() {
 
-	float gSampleRate = args.sampleRate;
+	float gSampleRate = APP->engine->getSampleRate();
 
 	reverb.init(gSampleRate);
 
@@ -121,7 +125,7 @@ FreeVerbWidget::FreeVerbWidget(FreeVerb *module) {
 	box.size = Vec(15*6, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/FreeVerb.svg")));
 		addChild(panel);
@@ -136,10 +140,12 @@ FreeVerbWidget::FreeVerbWidget(FreeVerb *module) {
 	addInput(createInput<MLPort>(Vec(53, 183), module, FreeVerb::DAMP_INPUT));
 	addInput(createInput<MLPort>(Vec(53, 246), module, FreeVerb::FREEZE_INPUT));
 
-    addParam(createParam<SmallBlueMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<SmallBlueMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<ML_MediumLEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0));
-    addChild(createLight<MLMediumLight<GreenLight>>(Vec(18,254), module, FreeVerb::FREEZE_LIGHT));
+        addParam(createParam<SmallBlueMLKnob>(Vec(10, 122), module, FreeVerb::ROOMSIZE_PARAM));
+        addParam(createParam<SmallBlueMLKnob>(Vec(10, 186), module, FreeVerb::DAMP_PARAM));
+        addParam(createParam<ML_MediumLEDButton>(Vec(14, 250), module, FreeVerb::FREEZE_PARAM));
+        addChild(createLight<MLMediumLight<GreenLight>>(Vec(18,254), module, FreeVerb::FREEZE_LIGHT));
+
+
 
 	addOutput(createOutput<MLPort>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
 	addOutput(createOutput<MLPort>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));

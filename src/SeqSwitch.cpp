@@ -46,7 +46,20 @@ struct SeqSwitch : Module {
 		NUM_LIGHTS
 	};
 
-	SeqSwitch() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	SeqSwitch() { 
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;  
+        configParam(SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0);
+        configParam(SeqSwitch::STEP1_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP2_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP3_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP4_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP5_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP6_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP7_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::STEP8_PARAM, 0.0, 1.0, 0.0);
+
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
@@ -90,7 +103,7 @@ struct SeqSwitch : Module {
 
         InputRange inputRange = Zero_Eight;
 
-	void reset() override {
+	void onReset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
@@ -140,7 +153,7 @@ void SeqSwitch::process(const ProcessArgs &args) {
 	while( position < 0 )         position += numSteps;
 	while( position >= numSteps ) position -= numSteps;
 
-	out = inputs[IN1_INPUT+position].normalize(0.0);
+	out = inputs[IN1_INPUT+position].getNormalVoltage(0.0);
 
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
 
@@ -153,11 +166,11 @@ struct SeqSwitchRangeItem : MenuItem {
         SeqSwitch *seqSwitch;
         SeqSwitch::InputRange inputRange;
 
-        void onAction(EventAction &e) override {
+        void onAction(const event::Action &e) override {
                 seqSwitch->inputRange = inputRange;
         };
 
-        void process(const ProcessArgs &args) override {
+        void step() override {
                 rightText = (seqSwitch->inputRange == inputRange)? "✔" : "";
         };
 
@@ -168,16 +181,12 @@ struct SeqSwitchWidget : ModuleWidget {
 	SeqSwitchWidget(SeqSwitch *module);
 	json_t *dataToJsonData() ;
 	void dataFromJsonData(json_t *root) ;
-	Menu *createContextMenu() override;
+	void appendContextMenu(Menu*) override;
 };
 
-Menu *SeqSwitchcreateWidgetContextMenu() {
+void SeqSwitchWidget::appendContextMenu(Menu* menu) {
 
-        Menu *menu = ModulecreateWidgetContextMenu();
-
-        MenuLabel *spacerLabel = new MenuLabel();
-        menu->addChild(spacerLabel);
-
+    
         SeqSwitch *seqSwitch = dynamic_cast<SeqSwitch*>(module);
         assert(seqSwitch);
 
@@ -208,8 +217,6 @@ Menu *SeqSwitchcreateWidgetContextMenu() {
         fiveFiveItem->seqSwitch = seqSwitch;
         fiveFiveItem->inputRange = SeqSwitch::MinusFive_Five;;
         menu->addChild(fiveFiveItem);
-
-        return menu;
 };
 
 
@@ -219,7 +226,7 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/SeqSwitch.svg")));
 		addChild(panel);
@@ -230,11 +237,11 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
-	addParam(createParam<RedSnapMLKnob>(Vec(14,  63), module, SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0));
+	addParam(createParam<RedSnapMLKnob>(Vec(14,  63), module, SeqSwitch::NUM_STEPS));
 
 	addInput(createInput<MLPort>(Vec(81, 64), module, SeqSwitch::NUMSTEPS_INPUT));
 
-	addInput(createInput<MLPort>(Vec(9, 272),  PortWidget::INPUT, module, SeqSwitch::TRIGUP_INPUT));
+	addInput(createInput<MLPort>(Vec(9, 272),  module, SeqSwitch::TRIGUP_INPUT));
 	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch::RESET_INPUT));
 	addInput(createInput<MLPort>(Vec(85, 272), module, SeqSwitch::TRIGDN_INPUT));
 
@@ -250,15 +257,15 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addInput(createInput<MLPort>(Vec(62, offset_y + 2*delta_y), module, SeqSwitch::IN7_INPUT));
 	addInput(createInput<MLPort>(Vec(62, offset_y + 3*delta_y), module, SeqSwitch::IN8_INPUT));
 
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 0*delta_y), module, SeqSwitch::STEP1_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 1*delta_y), module, SeqSwitch::STEP2_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 2*delta_y), module, SeqSwitch::STEP3_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 3*delta_y), module, SeqSwitch::STEP4_PARAM, 0.0, 1.0, 0.0));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 0*delta_y), module, SeqSwitch::STEP1_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 1*delta_y), module, SeqSwitch::STEP2_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 2*delta_y), module, SeqSwitch::STEP3_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 3*delta_y), module, SeqSwitch::STEP4_PARAM));
 
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch::STEP5_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch::STEP6_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch::STEP7_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch::STEP8_PARAM, 0.0, 1.0, 0.0));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 0*delta_y), module, SeqSwitch::STEP5_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 1*delta_y), module, SeqSwitch::STEP6_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 2*delta_y), module, SeqSwitch::STEP7_PARAM));
+	addParam(createParam<ML_MediumLEDButton>(Vec(89, offset_y + 3 + 3*delta_y), module, SeqSwitch::STEP8_PARAM));
 
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(15, offset_y + 7 + 0*delta_y), module, SeqSwitch::STEP1_LIGHT));
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(15, offset_y + 7 + 1*delta_y), module, SeqSwitch::STEP2_LIGHT));
@@ -270,7 +277,7 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 2*delta_y), module, SeqSwitch::STEP7_LIGHT));
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
 
-	addInput(createInput<MLPort>( Vec(19, 318),  PortWidget::INPUT, module, SeqSwitch::POS_INPUT));
+	addInput(createInput<MLPort>( Vec(19, 318),  module, SeqSwitch::POS_INPUT));
 	addOutput(createOutput<MLPort>(Vec(75, 318), module, SeqSwitch::OUT1_OUTPUT));
 
 }

@@ -1,5 +1,5 @@
 #include "ML_modules.hpp"
-#include "math.hpp"
+// #include "math.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -35,7 +35,17 @@ struct BPMdetect : Module {
 	};
 
 	BPMdetect() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); misses = 0; onSampleRateChange();};
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); misses = 0; 
+	
+	    configParam(BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5);
+        configParam(BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0);
+        configParam(BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0);
+        configParam(BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0);
+        configParam(BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0);
+        configParam(BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0);
+        configParam(BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0);
+
+	};
 
 	void process(const ProcessArgs &args) override;
 
@@ -48,7 +58,6 @@ struct BPMdetect : Module {
 	float timer2 = 0.0;
 	float timer3 = 0.0;
 	float seconds = 0.0;
-	float deltaT;
 	float BPM=0.0;
 	float lfo_volts=0.0;
 	float delay_volts=0.0;
@@ -59,9 +68,9 @@ struct BPMdetect : Module {
 		return ( ((timer - mult*seconds) * (timer - mult*seconds) / (seconds*seconds) < 0.2 ) && misses < 4);
 	}
 
-	float gSampleRate;
-	void reset() {onSampleRateChange();};
-	void onSampleRateChange() override {gSampleRate = args.sampleRate; deltaT = 1.0/gSampleRate;}
+	// float gSampleRate;
+	// void reset() {onSampleRateChange();};
+	// void onSampleRateChange() override {gSampleRate = args.sampleRate; deltaT = 1.0/gSampleRate;}
 
 	dsp::SchmittTrigger gateTrigger;
 	dsp::PulseGenerator outPulse1, outPulse2, outPulse3;
@@ -71,6 +80,7 @@ struct BPMdetect : Module {
 
 void BPMdetect::process(const ProcessArgs &args) {
 
+	float deltaT=args.sampleTime;
 
 	float mult2 = roundf(params[MULT2_PARAM].getValue());
 	float mult3 = roundf(params[MULT3_PARAM].getValue());
@@ -213,133 +223,109 @@ struct NumberDisplayWidget2 : TransparentWidget {
 };
 
 
-struct FineMenuItem : MenuItem {
-
-        BPMdetect *module;
-        bool mfine;
-
-        void onAction(event::Action &e)  {
-                module->fine = mfine;
-        };
-
-        void process(const ProcessArgs &args) override {
-                rightText = (module->fine == mfine)? "✔" : "";
-        };
-
-};
-
-struct NormalMenuItem : MenuItem {
-
-        BPMdetect *module;
-        bool mfine;
-
-        void onAction(event::Action &e) {
-                module->fine = mfine;
-        };
-
-        void process(const ProcessArgs &args) override {
-                rightText = (module->fine != mfine)? "✔" : "";
-        };
-
-};
 
 struct BPMdetectWidget : ModuleWidget {
-	BPMdetectWidget(BPMdetect *module);
+
 	json_t *dataToJsonData() ;
-	void dataFromJsonData(json_t *root) ;
-	Menu *createContextMenu() ;
-};
+	void dataFromJsonData(json_t *root);
 
 
-Menu *BPMdetectcreateWidgetContextMenu() {
 
-        Menu *menu = ModulecreateWidgetContextMenu();
-
-        MenuLabel *spacerLabel = new MenuLabel();
-        menu->addChild(spacerLabel);
-
-        BPMdetect *myModule = dynamic_cast<BPMdetect*>(module);
-        assert(myModule);
-
-        MenuLabel *modeLabel2 = new MenuLabel();
-        modeLabel2->text = "Swing Range";
-        menu->addChild(modeLabel2);
-
-       
-
-        FineMenuItem *fineMenuItem = new FineMenuItem();
-        fineMenuItem->text = "Fine";
-        fineMenuItem->module = myModule;
-        fineMenuItem->mfine = true;
-        menu->addChild(fineMenuItem);
-
-        NormalMenuItem *normalMenuItem = new NormalMenuItem();
-        normalMenuItem->text = "Legacy";
-        normalMenuItem->module = myModule;
-        normalMenuItem->mfine = false;
-        menu->addChild(normalMenuItem);
-
-
-        return menu;
-};
-
-BPMdetectWidget::BPMdetectWidget(BPMdetect *module) {
+	BPMdetectWidget(BPMdetect *module) {
 		setModule(module);
-	box.size = Vec(15*10, 380);
+		box.size = Vec(15*10, 380);
 
-	{
-		SVGPanel *panel = new SVGPanel();
-		panel->box.size = box.size;
-		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/BPMdetect.svg")));
-		addChild(panel);
-	}
+		{
+			SvgPanel *panel = new SvgPanel();
+			panel->box.size = box.size;
+			panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/BPMdetect.svg")));
+			addChild(panel);
+		}
 
-	const float column1 = 15;
-	const float column2 = 61;
-	const float column3 = 110;
+		const float column1 = 15;
+		const float column2 = 61;
+		const float column3 = 110;
 
-	const float row1 = 84;
-	const float row2 = 140;
-	const float row3 = row2 + 60;
-	const float row4 = row3 + 58;
-	const float row5 = 316;
+		const float row1 = 84;
+		const float row2 = 140;
+		const float row3 = row2 + 60;
+		const float row4 = row3 + 58;
+		const float row5 = 316;
+
+		addChild(createWidget<MLScrew>(Vec(15, 0)));
+		addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
+		addChild(createWidget<MLScrew>(Vec(15, 365)));
+		addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
+
+		addInput(createInput<MLPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
+  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM));
+		addOutput(createOutput<MLPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
+
+	  addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM));
+  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM));
+		addOutput(createOutput<MLPort>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
+
+	  addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM));
+  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM));
+		addOutput(createOutput<MLPort>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
+
+		addOutput(createOutput<MLPort>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
+		addOutput(createOutput<MLPort>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
+
+  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM));
+  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM));
+		addOutput(createOutput<MLPort>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
+
+		NumberDisplayWidget2 *display = new NumberDisplayWidget2();
+		display->box.pos = Vec(25,40);
+		display->box.size = Vec(100, 20);
+		if(module) display->value = &module->BPM;
+		addChild(display);
+	};
+
+	void appendContextMenu(Menu *menu) override {
+
+	    BPMdetect *myModule = dynamic_cast<BPMdetect*>(module);
+		assert(myModule);
+
+		struct FineMenuItem : MenuItem {
+
+    		BPMdetect *module;
+    		bool mfine;
+
+    		void onAction(const event::Action &e) override {
+    		    module->fine = mfine;
+    		};
+
+    		void step() override {
+        	    rightText = (module->fine == mfine)? "✔" : "";
+        	};
+
+		};
+
+		struct NormalMenuItem : MenuItem {
+
+	    	BPMdetect *module;
+	    	bool mfine;
+
+    		void onAction(const event::Action &e) override {
+        	    module->fine = mfine;
+    		};
+
+	    	void step() override {
+	    	    rightText = (module->fine != mfine)? "✔" : "";
+	       	};
+
+		};
+    
+	    menu->addChild(construct<MenuLabel>());
+
+    	menu->addChild(construct<MenuLabel>(&MenuLabel::text, "Swing Range"));
+    	menu->addChild(construct<FineMenuItem>(&MenuItem::text, "Fine", &FineMenuItem::module, myModule, &FineMenuItem::mfine, true));
+    	menu->addChild(construct<NormalMenuItem>(&MenuItem::text, "Legacy", &NormalMenuItem::module, myModule, &NormalMenuItem::mfine, false));
+	};
+};
 
 
-
-	addChild(createWidget<MLScrew>(Vec(15, 0)));
-	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
-	addChild(createWidget<MLScrew>(Vec(15, 365)));
-	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
-
-
-	addInput(createInput<MLPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5));
-	addOutput(createOutput<MLPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
-
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createOutput<MLPort>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
-
-
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0));
-	addOutput(createOutput<MLPort>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
-
-	addOutput(createOutput<MLPort>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
-
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0));
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0));
-	addOutput(createOutput<MLPort>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
-
-	NumberDisplayWidget2 *display = new NumberDisplayWidget2();
-	display->box.pos = Vec(25,40);
-	display->box.size = Vec(100, 20);
-	if(module) display->value = &module->BPM;
-	addChild(display);
-
-
-
-}
 
 Model *modelBPMdetect = createModel<BPMdetect, BPMdetectWidget>("BPMdetect");

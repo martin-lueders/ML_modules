@@ -43,11 +43,14 @@ struct SH8 : Module {
 	float out[8];
 
 
-	SH8() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	SH8() {
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+		onReset(); 
+	};
 
 	void process(const ProcessArgs &args) override;
 
-	void reset() override {
+	void onReset() override {
 		for(int i=0; i<8; i++) out[i] = 0.0;
 	};
 
@@ -61,14 +64,14 @@ void SH8::process(const ProcessArgs &args) {
 
 	float random = 0;
 
-	trig[0] = inputs[TRIG1_INPUT].normalize(0.0);
-	for(int i=1; i<8; i++) trig[i] = inputs[TRIG1_INPUT+i].normalize(trig[i-1]);
+	trig[0] = inputs[TRIG1_INPUT].getNormalVoltage(0.0);
+	for(int i=1; i<8; i++) trig[i] = inputs[TRIG1_INPUT+i].getNormalVoltage(trig[i-1]);
 
 
 
-	in[0] = inputs[IN1_INPUT].normalize(random);
+	in[0] = inputs[IN1_INPUT].getNormalVoltage(random);
 
-	for(int i=1; i<8; i++) in[i] = inputs[IN1_INPUT+i].normalize(in[i-1]);
+	for(int i=1; i<8; i++) in[i] = inputs[IN1_INPUT+i].getNormalVoltage(in[i-1]);
 
 	for(int i=0; i<8; i++) {
 
@@ -92,7 +95,7 @@ SH8Widget::SH8Widget(SH8 *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/SH8.svg")));
 

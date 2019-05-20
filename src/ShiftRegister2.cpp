@@ -34,7 +34,15 @@ struct ShiftRegister2 : Module {
 		NUM_LIGHTS
 	};
 
-	ShiftRegister2() : Module( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) { reset(); };
+	ShiftRegister2() { 
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+	  configParam(ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0);
+		configParam(ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0);
+		configParam(ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0);
+	  configParam(ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0);
+	  configParam(ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0);
+		onReset(); 
+	};
 
 
 
@@ -47,7 +55,7 @@ struct ShiftRegister2 : Module {
 
 	inline float randf() {return rand()/(RAND_MAX-1.0);}
 
-	void reset() override {
+	void onReset() override {
 
 	};
 
@@ -58,25 +66,25 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::process(const ProcessArgs &args) {
 
-	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].getValue() * clamp(inputs[NUM_STEPS_INPUT].normalize(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
+	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].getValue() * clamp(inputs[NUM_STEPS_INPUT].getNormalVoltage(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
 
 
 	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
 		if( trigTrigger.process(inputs[TRIGGER_INPUT].getVoltage()) ) {
 
-			float new_in1 = inputs[IN1_INPUT].normalize( randf()*10.0-5.0 );
-			float new_in2 = inputs[IN2_INPUT].normalize( new_in1 + 1.0 );
+			float new_in1 = inputs[IN1_INPUT].getNormalVoltage( randf()*10.0-5.0 );
+			float new_in2 = inputs[IN2_INPUT].getNormalVoltage( new_in1 + 1.0 );
 
 			for(int i=32; i>0; i--) values[i] = values[i-1];
 
-			float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
-			float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
+			float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
 
 			bool replace = ( randf() < p1 );
 			bool rnd2 = ( randf() < p2 );
 
-			float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].normalize(0.0f),-10.0f,10.0f)/10.0f;
+			float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
 
 
 			if(replace) {
@@ -155,7 +163,7 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 	box.size = Vec(15*8, 380);
 
 	{
-		SVGPanel *panel = new SVGPanel();
+		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
 		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ShiftReg2.svg")));
 
@@ -182,24 +190,22 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 	addInput(createInput<MLPort>(Vec(column1,  44), module, ShiftRegister2::TRIGGER_INPUT));
 	addInput(createInput<MLPort>(Vec(column1, 96), module, ShiftRegister2::NUM_STEPS_INPUT));
         
-	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0));
+	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM));
 
 	addInput(createInput<MLPort>(Vec(column1+8,  135), module, ShiftRegister2::IN1_INPUT));
 	addInput(createInput<MLPort>(Vec(column2-8,  135), module, ShiftRegister2::IN2_INPUT));
 
 
 	addInput(createInput<MLPort>(Vec(column1+3,  183), module, ShiftRegister2::PROB1_INPUT));
-    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0));
-	
+  addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM));
+
 	addInput(createInput<MLPort>(Vec(column1+3,  229), module, ShiftRegister2::PROB2_INPUT));
-    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0));
+  addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM));
 	
 	addInput(createInput<MLPort>(Vec(column1+3,  275), module, ShiftRegister2::MIX1_INPUT));
-	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0));
-
-
-	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0));
-
+	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM));
+  
+	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM));
 
 	addOutput(createOutput<MLPort>(Vec(column1-2, 328 ), module, ShiftRegister2::OUT_OUTPUT));
 	addOutput(createOutput<MLPort>(Vec(column2+2, 328 ), module, ShiftRegister2::AUX_OUTPUT));

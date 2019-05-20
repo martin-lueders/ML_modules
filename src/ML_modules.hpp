@@ -10,14 +10,14 @@ using namespace rack;
 
 extern Plugin *pluginInstance;
 
-struct NKK2 : SVGSwitch, Switch { //Toggle
+struct NKK2 : SvgSwitch { //Toggle
 	NKK2() {
 		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_0.svg")));
 		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_2.svg")));
 	}
 };
 
-struct POLSWITCH : SVGSwitch, Switch { //Toggle
+struct POLSWITCH : SvgSwitch { //Toggle
 	POLSWITCH() {
 		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_0.svg")));
 		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_1.svg")));
