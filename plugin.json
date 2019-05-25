@@ -1,0 +1,165 @@
+{
+  "slug": "ML_modules",
+  "name": "ML_modules",
+  "version": "1.0.0",
+  "license": "BSD-3-Clause",
+  "author": "Martin Lueders",
+  "authorEmail": "mlmodules@gmail.com",
+  "authorUrl": "",
+  "pluginUrl": "https://github.com/martin-lueders/ML_modules/wiki",
+  "manualUrl": "https://github.com/martin-lueders/ML_modules/wiki",
+  "sourceUrl": "https://github.com/martin-lueders/ML_modules",
+  "donateUrl": "https://paypal.me/MartinLueders",
+  "modules": [
+    {
+      "slug": "BPMdetect",
+      "name": "BPM Tools",
+      "description": "",
+      "tags": ["Clock generator", "Clock modulator"]
+    },
+    {
+      "slug": "Constants",
+      "name": "Constants",
+      "description": "",
+      "tags": ["Utility"]
+    },
+    {
+      "slug": "Counter",
+      "name": "Counter",
+      "description": "",
+      "tags": ["Clock modulator"]
+    },
+    {
+      "slug": "FreeVerb",
+      "name": "FreeVerb",
+      "description": "",
+      "tags": ["Effect","Reverb"]
+    },
+    {
+      "slug": "OctaFlop",
+      "name": "OctaFlop",
+      "description": "",
+      "tags": ["Utility","Clock modulator"]
+    },
+    {
+      "slug": "OctaPlus",
+      "name": "OctaPlus",
+      "description": "",
+      "tags": ["Utility", "Mixer"]
+    },
+    {
+      "slug": "OctaSwitch",
+      "name": "OctaSwitch",
+      "description": "",
+      "tags": ["Switch"]
+    },
+    {
+      "slug": "OctaTimes",
+      "name": "OctaTimes",
+      "description": "",
+      "tags": ["Utility","Ring modulator"]
+    },
+    {
+      "slug": "OctaTrig",
+      "name": "OctaTrig",
+      "description": "",
+      "tags": ["Clock modulator"]
+    },
+    {
+      "slug": "Quantizer",
+      "name": "Quantizer (h-bar)",
+      "description": "",
+      "tags": ["Quantizer"]
+    },
+    {
+      "slug": "Quantum",
+      "name": "Quantum",
+      "description": "",
+      "tags": ["Quantizer"]
+    },
+    {
+      "slug": "SH8",
+      "name": "S&H 8",
+      "description": "",
+      "tags": ["Sample and hold"]
+    },
+    {
+      "slug": "SeqSwitch",
+      "name": "Sequential Switch 8->1",
+      "description": "",
+      "tags": ["Switch", "Sequencer"]
+    },
+    {
+      "slug": "SeqSwitch2",
+      "name": "Sequential Switch 1->8",
+      "description": "",
+      "tags": ["Switch"]
+    },
+    {
+      "slug": "ShiftRegister",
+      "name": "Shift Register",
+      "description": "",
+      "tags": ["Sample and hold"]
+    },
+    {
+      "slug": "Evolution",
+      "name": "Evolution",
+      "description": "",
+      "tags": ["Serquencer","Sample and hold"]
+    },
+    {
+      "slug": "Sum8mk2",
+      "name": "Sum8 MkII",
+      "description": "",
+      "tags": ["Mixer"]
+    },
+    {
+      "slug": "Sum8",
+      "name": "Sum8",
+      "description": "",
+      "tags": ["Mixer"]
+    },
+    {
+      "slug": "TrigBuf",
+      "name": "Trigger Buffer",
+      "description": "",
+      "tags": ["Utility", "Logic"]
+    },
+    {
+      "slug": "TrigDelay",
+      "name": "Trigger Delay",
+      "description": "",
+      "tags": ["Utility","Delay"]
+    },
+    {
+      "slug": "TrigSwitch",
+      "name": "TrigSwitch 8->1",
+      "description": "",
+      "tags": ["Switch"]
+    },
+    {
+      "slug": "TrigSwitch2",
+      "name": "TrigSwitch 1->8",
+      "description": "",
+      "tags": ["Switch"]
+    },
+    {
+      "slug": "TrigSwitch3 8->1",
+      "name": "TrigSwitch3",
+      "description": "",
+      "tags": ["Switch"]
+    },
+    {
+      "slug": "TrigSwitch3_2",
+      "name": "TrigSwitch3 1->8",
+      "description": "",
+      "tags": []
+    },
+    {
+      "slug": "VoltMeter",
+      "name": "Volt Meter",
+      "description": "",
+      "tags": ["Utility"]
+    }
+  ]
+}
