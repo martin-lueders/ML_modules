@@ -48,8 +48,8 @@ void VoltMeter::process(const ProcessArgs &args) {
 
 struct VoltDisplayWidget : TransparentWidget {
 
-  float  *value;
-  bool *on;
+  float  *value=0;
+  bool *on = 0;
 
   std::shared_ptr<Font> font;
 
@@ -76,7 +76,7 @@ struct VoltDisplayWidget : TransparentWidget {
 
     char display_string[10];
 
-    sprintf(display_string,"%6.2f",*value);
+    if(value) sprintf(display_string,"%6.2f",*value);
 
     Vec textPos = Vec(6.0f, 17.0f);
 
@@ -88,7 +88,7 @@ struct VoltDisplayWidget : TransparentWidget {
     nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
     nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\\\", NULL);
 
-	if(*on) {
+	if(on && *on) {
 	    textColor = nvgRGB(0xf0, 0x00, 0x00);
 		nvgFillColor(args.vg, textColor);
 		nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
@@ -133,8 +133,8 @@ VoltMeterWidget::VoltMeterWidget(VoltMeter *module) {
 		VoltDisplayWidget *display = new VoltDisplayWidget();
 		display->box.pos = Vec(10,90+i*delta_y);
 		display->box.size = Vec(100, 20);
-		display->value = &module->volts[i];
-		display->on = &module->active[i];
+		if(module) display->value = &module->volts[i];
+		if(module) display->on = &module->active[i];
 		addChild(display);
 
 //		label[i] = new TextField();

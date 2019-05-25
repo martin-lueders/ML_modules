@@ -103,7 +103,7 @@ void Counter::process(const ProcessArgs &args) {
 
 struct NumberDisplayWidget : TransparentWidget {
 
-  int *value;
+  int *value = 0;
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget() {
@@ -126,7 +126,9 @@ struct NumberDisplayWidget : TransparentWidget {
     nvgFontFaceId(args.vg, font->handle);
     nvgTextLetterSpacing(args.vg, 2.5);
 
-    std::string to_display = std::to_string(*value);
+    std::string to_display = "";
+
+		if(value) {to_display = std::to_string(*value);}
 
 
     while(to_display.length()<3) to_display = ' ' + to_display;
@@ -187,14 +189,14 @@ CounterWidget::CounterWidget(Counter *module) {
 	NumberDisplayWidget *display = new NumberDisplayWidget();
 	display->box.pos = Vec(20,56);
 	display->box.size = Vec(50, 20);
-	display->value = &module->max;
+	if(module) display->value = &module->max;
 	addChild(display);
 
 	
 	NumberDisplayWidget *display2 = new NumberDisplayWidget();
 	display2->box.pos = Vec(20,145);
 	display2->box.size = Vec(50, 20);
-	display2->value = &module->counter;
+	if(module) display2->value = &module->counter;
 	addChild(display2);
 
 }

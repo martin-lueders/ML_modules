@@ -106,7 +106,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 
 struct IntDisplayWidget : TransparentWidget {
 
-  int *value;
+  int *value=0;
   std::shared_ptr<Font> font;
 
   IntDisplayWidget() {
@@ -134,7 +134,7 @@ struct IntDisplayWidget : TransparentWidget {
     char displayStr[3];
 //    while(to_display.length()<1) to_display = ' ' + to_display;
 
-    sprintf(displayStr, "%2u", (unsigned) *value);
+    if(value) {sprintf(displayStr, "%2u", (unsigned) *value);}
 
     Vec textPos = Vec(6.0f, 17.0f);
 
@@ -158,7 +158,8 @@ struct ShiftRegister2Widget : ModuleWidget {
 };
 
 ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
-		setModule(module);
+		
+	setModule(module);
 
 	box.size = Vec(15*8, 380);
 
@@ -184,7 +185,7 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 	IntDisplayWidget *display = new IntDisplayWidget();
 	display->box.pos = Vec(65,46);
 	display->box.size = Vec(40, 20);
-	display->value = &module->numSteps;
+	if(module) display->value = &(module->numSteps);
 	addChild(display);
 
 	addInput(createInput<MLPort>(Vec(column1,  44), module, ShiftRegister2::TRIGGER_INPUT));

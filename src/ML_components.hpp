@@ -6,18 +6,19 @@ using namespace rack;
 
 extern Plugin *pluginInstance;
 
-struct MLSVGSwitch : Switch {
+/*
+struct MLSVGSwitch : SvgSwitch {
 
-	CircularShadow *shadow;
+	// CircularShadow *shadow;
 
-	std::vector<std::shared_ptr<Svg>> frames;
-	SvgWidget *sw;
+	// std::vector<std::shared_ptr<Svg>> frames;
+	// SvgWidget *sw;
 
 	MLSVGSwitch();
-	/** Adds an SVG file to represent the next switch position */
-	void addFrame(std::shared_ptr<Svg> svg);
+	// Adds an SVG file to represent the next switch position 
+	// void addFrame(std::shared_ptr<Svg> svg);
 };
-
+*/
 
 
 template <typename BASE>
@@ -105,46 +106,46 @@ struct MLPort : SvgPort {
 };
 
 
-struct MLButton : MLSVGSwitch { //Momentary
+struct MLButton : SvgSwitch { //Momentary
 	MLButton();
 };
 
-struct MLSmallButton : MLSVGSwitch { // Momentary
+struct MLSmallButton : SvgSwitch { // Momentary
 	MLSmallButton();
 };
 
-struct ML_ResetButton : MLSVGSwitch { //Momentary
+struct ML_ResetButton : SvgSwitch { //Momentary
 	ML_ResetButton();
 };
 
-struct ML_LEDButton : MLSVGSwitch  { //Momentary
+struct ML_LEDButton : SvgSwitch  { //Momentary
 	
 	ML_LEDButton();
 };
 
-struct ML_MediumLEDButton : MLSVGSwitch { //Momentary
+struct ML_MediumLEDButton : SvgSwitch { //Momentary
 	
 	ML_MediumLEDButton();
 };
 
 
-struct ML_SmallLEDButton : MLSVGSwitch { //Momentary
+struct ML_SmallLEDButton : SvgSwitch { //Momentary
 	
 	ML_SmallLEDButton();
 };
 
 
 
-struct MLSwitch : MLSVGSwitch { //Toggle
+struct MLSwitch : SvgSwitch { //Toggle
 
 	MLSwitch();
 };
 
-struct MLSwitch2 : MLSVGSwitch { //Toggle
+struct MLSwitch2 : SvgSwitch { //Toggle
 	MLSwitch2();
 };
 
-struct BlueMLSwitch : MLSVGSwitch { //Toggle
+struct BlueMLSwitch : SvgSwitch { //Toggle
 	BlueMLSwitch();
 };
 

@@ -204,7 +204,7 @@ struct NumberDisplayWidget2 : TransparentWidget {
 
     char display_string[10];
 
-    sprintf(display_string,"%6.1f",*value);
+    if(value) sprintf(display_string,"%6.1f",*value);
 
     Vec textPos = Vec(6.0f, 17.0f);
 

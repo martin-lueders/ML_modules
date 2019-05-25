@@ -63,7 +63,7 @@ void OctaSwitch::process(const ProcessArgs &args) {
 
 struct ThresholdDisplayWidget : TransparentWidget {
 
-  float  *value;
+  float  *value=0 ;
 
   std::shared_ptr<Font> font;
 
@@ -89,7 +89,7 @@ struct ThresholdDisplayWidget : TransparentWidget {
 
     char display_string[10];
 
-    sprintf(display_string,"%5.1f",*value);
+    if(value) sprintf(display_string,"%5.1f",*value);
 
     Vec textPos = Vec(3.0f, 17.0f);
 
@@ -149,7 +149,7 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) {
 	ThresholdDisplayWidget *display = new ThresholdDisplayWidget();
 	display->box.pos = Vec(row3-3,330);
 	display->box.size = Vec(65, 20);
-	display->value = &module->threshold;
+	if(module) display->value = &module->threshold;
 	addChild(display);
 
 }
