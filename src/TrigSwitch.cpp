@@ -65,12 +65,18 @@ struct TrigSwitch : Module {
 
 void TrigSwitch::process(const ProcessArgs &args) {
 
+	float values[PORT_MAX_CHANNELS];
+
+	memset(values, 0, 16*sizeof(float));
+
 	for(int i=0; i<8; i++) {
 		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0))  + params[STEP_PARAM+i].getValue() ) position = i;
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	outputs[OUT_OUTPUT].setVoltage(inputs[CV_INPUT+position].getNormalVoltage(0.0));
+	if(inputs[CV_INPUT+position].isConnected()) inputs[CV_INPUT+position].readVoltages(values);
+	outputs[OUT_OUTPUT].setChannels( inputs[CV_INPUT+position].getChannels() );
+	outputs[OUT_OUTPUT].writeVoltages(values);
 };
 
 

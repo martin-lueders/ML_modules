@@ -31,29 +31,40 @@ struct Quant : Module {
 };
 
 
-static void stepChannel(Input &in, Param &p_amount, Output &out) {
+static void stepPart(Input &in, Param &p_amount, Output &out) {
 
+	using namespace simd;
 
+	int channels = in.getChannels();
+	int channels_padded = channels + (4-channels%4);
 
-	float v = in.getNormalVoltage(0.0);
+	float in_values[channels_padded];
+	float out_values[channels_padded];
+
+	out.setChannels(channels);
 
 	float amount = p_amount.value;
+	
+	if (in.isConnected()) 	in.readVoltages(in_values);
+	else                    memset(in_values, 0, channels_padded*sizeof(float));
 
-	int octave = round(v);
+	for(int batch=0; batch<channels_padded/4; batch++) {
 
-	float rest = v - 1.0*octave;
+		float_4 v=float_4::load(&in_values[4*batch]);
+		float_4 octave = round(v);
+		float_4 rest = v - 1.0*octave;
+		float_4 semi   = round( rest*12.0 );
+		float_4 quantized = 1.0*octave + semi/12.0;
+		float_4 result = quantized + amount*(v-quantized);
+		result.store(&out_values[4*batch]);
+	}
 
-	int semi   = round( rest*12.0 );
-
-	float quantized = 1.0*octave + semi/12.0;
-
-	out.value = quantized + amount*(v-quantized);
-
+	out.writeVoltages(out_values);
 }
 
 void Quant::process(const ProcessArgs &args) {
-	if (outputs[OUT1_OUTPUT].isConnected()) stepChannel(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
-	if (outputs[OUT2_OUTPUT].isConnected()) stepChannel(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
+	if (outputs[OUT1_OUTPUT].isConnected()) stepPart(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
+	if (outputs[OUT2_OUTPUT].isConnected()) stepPart(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
 }
 
 

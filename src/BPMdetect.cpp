@@ -179,7 +179,7 @@ void BPMdetect::process(const ProcessArgs &args) {
 
 struct NumberDisplayWidget2 : TransparentWidget {
 
-  float  *value;
+  float  *value=0;
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget2() {

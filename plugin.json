@@ -69,19 +69,19 @@
       "slug": "Quantizer",
       "name": "Quantizer (h-bar)",
       "description": "",
-      "tags": ["Quantizer"]
+      "tags": ["Quantizer", "Polyphonic"]
     },
     {
       "slug": "Quantum",
       "name": "Quantum",
       "description": "",
-      "tags": ["Quantizer"]
+      "tags": ["Quantizer", "Polyphonic"]
     },
     {
       "slug": "SH8",
       "name": "S&H 8",
       "description": "",
-      "tags": ["Sample and hold"]
+      "tags": ["Sample and hold", "Polyphonic"]
     },
     {
       "slug": "SeqSwitch",
@@ -111,37 +111,37 @@
       "slug": "Sum8mk2",
       "name": "Sum8 MkII",
       "description": "",
-      "tags": ["Mixer"]
+      "tags": ["Mixer", "Polyphonic"]
     },
     {
       "slug": "Sum8",
       "name": "Sum8",
       "description": "",
-      "tags": ["Mixer"]
+      "tags": ["Mixer", "Polyphonic"]
     },
     {
       "slug": "TrigBuf",
       "name": "Trigger Buffer",
       "description": "",
-      "tags": ["Utility", "Logic"]
+      "tags": ["Utility", "Logic", "Dual"]
     },
     {
       "slug": "TrigDelay",
       "name": "Trigger Delay",
       "description": "",
-      "tags": ["Utility","Delay"]
+      "tags": ["Utility","Delay", "Dual"]
     },
     {
       "slug": "TrigSwitch",
       "name": "TrigSwitch 8->1",
       "description": "",
-      "tags": ["Switch"]
+      "tags": ["Switch", "Polyphonic"]
     },
     {
       "slug": "TrigSwitch2",
       "name": "TrigSwitch 1->8",
       "description": "",
-      "tags": ["Switch"]
+      "tags": ["Switch", "Polyphonic"]
     },
     {
       "slug": "TrigSwitch3 8->1",

@@ -85,7 +85,7 @@ void TrigDelay::process(const ProcessArgs &args) {
 
 	if( inputs[GATE1_INPUT].isConnected() ) {
 	       
-		if(gateTrigger1.process(inputs[GATE1_INPUT].getVoltage())) {
+		if(gateTrigger1.process( inputs[GATE1_INPUT].getVoltage() ) ) {
 			delay1.trigger(delayTime1);
 			gate1 = true;
 		};

@@ -1,6 +1,19 @@
 #include "ML_modules.hpp"
 
 
+struct SH_channel {
+	
+	dsp::SchmittTrigger trigger[PORT_MAX_CHANNELS];
+
+	void step(int channels, float *in, float *trig, float *out) {
+
+		for(int c=0; c<channels; c++) {
+			if( trigger[c].process(trig[c]) ) out[c] = in[c];
+		}
+	}
+
+};
+
 struct SH8 : Module {
 	enum ParamIds {
 		NUM_PARAMS
@@ -39,8 +52,9 @@ struct SH8 : Module {
 		NUM_LIGHTS
 	};
 
-	dsp::SchmittTrigger trigger[8];
-	float out[8];
+	SH_channel sh_channel[8];
+
+	float out[8*PORT_MAX_CHANNELS];
 
 
 	SH8() {
@@ -51,7 +65,7 @@ struct SH8 : Module {
 	void process(const ProcessArgs &args) override;
 
 	void onReset() override {
-		for(int i=0; i<8; i++) out[i] = 0.0;
+		memset(out,   0, 8*PORT_MAX_CHANNELS * sizeof(float));
 	};
 
 };
@@ -60,26 +74,65 @@ struct SH8 : Module {
 
 void SH8::process(const ProcessArgs &args) {
 
-	float in[8], trig[8];
+	float in[  PORT_MAX_CHANNELS];
+	float trig[PORT_MAX_CHANNELS];
 
-	float random = 0;
+	memset(in,   0, PORT_MAX_CHANNELS * sizeof(float));
+	memset(trig, 0, PORT_MAX_CHANNELS * sizeof(float));
 
-	trig[0] = inputs[TRIG1_INPUT].getNormalVoltage(0.0);
-	for(int i=1; i<8; i++) trig[i] = inputs[TRIG1_INPUT+i].getNormalVoltage(trig[i-1]);
+	// float random = 0;
 
+	int in_channels = 0;
+	// int trig_channels[8];
 
+	if(inputs[IN1_INPUT].isConnected() ) {
+		in_channels = inputs[IN1_INPUT].getChannels();
+		inputs[IN1_INPUT].readVoltages(in);
+	}
 
-	in[0] = inputs[IN1_INPUT].getNormalVoltage(random);
+	if( inputs[TRIG1_INPUT].isConnected() ) {
+	
+		if (inputs[TRIG1_INPUT].getChannels()==1) {
+			float val = inputs[TRIG1_INPUT].getVoltage();
+			for(int c=0; c<in_channels; c++) trig[c] = val;
+		} else {
+			inputs[TRIG1_INPUT].readVoltages(trig);
+		}
 
-	for(int i=1; i<8; i++) in[i] = inputs[IN1_INPUT+i].getNormalVoltage(in[i-1]);
-
-	for(int i=0; i<8; i++) {
-
-		if( trigger[i].process(trig[i]) ) out[i] = in[i];
+		sh_channel[0].step(in_channels, in, trig, out);
 
 	}
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(out[i]);
+	if( outputs[OUT1_OUTPUT].isConnected() ) {
+		outputs[OUT1_OUTPUT].setChannels(in_channels);
+		outputs[OUT1_OUTPUT].writeVoltages(out);
+	}
+
+	for(int i=1; i<8; i++) {
+
+		if( inputs[TRIG1_INPUT+i].isConnected() ) {
+			if ( inputs[TRIG1_INPUT+i].getChannels()==1 ) {
+				float val = inputs[TRIG1_INPUT+i].getVoltage();
+				for(int c=0; c<in_channels; c++) trig[c] = val;
+			} else {
+				inputs[TRIG1_INPUT+i].readVoltages(trig);
+			}
+		}
+		
+			
+		if(inputs[IN1_INPUT+i].isConnected() ) {
+			in_channels = inputs[IN1_INPUT+i].getChannels();
+			inputs[IN1_INPUT+i].readVoltages(in);
+		}
+
+		sh_channel[i].step(in_channels, in, trig, out+i*PORT_MAX_CHANNELS );
+
+		if( outputs[OUT1_OUTPUT+i].isConnected() ) {
+			outputs[OUT1_OUTPUT+i].setChannels(in_channels);
+			outputs[OUT1_OUTPUT+i].writeVoltages(out+i*PORT_MAX_CHANNELS);
+		}
+
+	}
 
 };
 

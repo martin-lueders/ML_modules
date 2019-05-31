@@ -35,12 +35,27 @@ struct Sum8mk2 : Module {
 
 void Sum8mk2::process(const ProcessArgs &args) {
 
-	float out=0.0;
+	float out[PORT_MAX_CHANNELS];
+	float in[PORT_MAX_CHANNELS];
 
+	int channels[8];
+	int max_channels = 0;
 
-	for(int i=0; i<8; i++) out += inputs[IN_INPUT+i].getNormalVoltage(0.0) * (2*params[POLARITY_PARAM+i].getValue() - 1.0);
+	for(int i=0; i<8; i++) {
+		int c = channels[i] = inputs[IN_INPUT+i].getChannels();
+		max_channels = c>max_channels?c:max_channels;
+	}
 
-	outputs[OUT_OUTPUT].setVoltage(out);
+	outputs[OUT_OUTPUT].setChannels(max_channels);
+
+	for(int i=0; i<8; i++) {
+		if(inputs[IN_INPUT+i].isConnected()) {
+			float sign = (2*params[POLARITY_PARAM+i].getValue() - 1.0);
+			inputs[IN_INPUT+i].readVoltages(in);
+			for(int c=0; c<channels[i]; c++) out[c]+=in[c]  * sign;
+		}
+	}
+	outputs[OUT_OUTPUT].writeVoltages(out);
 
 };
 

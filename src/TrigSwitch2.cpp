@@ -24,7 +24,7 @@ struct TrigSwitch2 : Module {
 	TrigSwitch2() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
 		for(int i=0; i<8l; i++) configParam(TrigSwitch2::STEP_PARAM + i, 0.0, 1.0, 0.0);
-
+		channels_last = 0;
 		onReset(); 
 	};
 
@@ -36,6 +36,8 @@ struct TrigSwitch2 : Module {
 	};
 
 	OutMode outMode = ZERO;
+
+	int channels_last;
 
 	json_t *dataToJson() override {
 
@@ -66,7 +68,7 @@ struct TrigSwitch2 : Module {
 	int position=0;
 
 
-	float outs[8] = {};
+	float outs[8*PORT_MAX_CHANNELS] = {};
 
 
 	dsp::SchmittTrigger stepTriggers[8];
@@ -76,7 +78,7 @@ struct TrigSwitch2 : Module {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
-		for(int i=0; i<8; i++) outs[i]=0.0;
+		memset(outs, 0, 8*PORT_MAX_CHANNELS);
 	};
 
 };
@@ -85,18 +87,32 @@ struct TrigSwitch2 : Module {
 void TrigSwitch2::process(const ProcessArgs &args) {
 
 
-	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0; }
+	if(outMode==ZERO) memset(outs, 0, 8*PORT_MAX_CHANNELS);
+
+	int channels = inputs[CV_INPUT].getChannels();
+
+	if(channels!=channels_last) {
+		for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].setChannels(channels);
+		channels_last = channels;
+	}
 
 	for(int i=0; i<8; i++) {
 		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
 
 	};
 
-	outs[position] = inputs[CV_INPUT].getNormalVoltage(0.0);
+	// outs[position] = inputs[CV_INPUT].getNormalVoltage(0.0);
 
-	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
+	if( inputs[CV_INPUT].isConnected()) {
+		inputs[CV_INPUT].readVoltages(outs + PORT_MAX_CHANNELS*position);
+	} else {
+		memset(outs+PORT_MAX_CHANNELS*position, 0, PORT_MAX_CHANNELS*sizeof(float));
+	}
 
-	for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].setVoltage(outs[i]);
+	for(int i=0; i<8; i++) {
+		lights[i].value = (i==position)?1.0:0.0;
+		outputs[OUT_OUTPUT+i].writeVoltages(outs+PORT_MAX_CHANNELS*i);
+	}
 	
 };
 

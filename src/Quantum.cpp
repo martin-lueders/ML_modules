@@ -69,9 +69,9 @@ struct Quantum : Module {
 	};
 
 	void process(const ProcessArgs &args) override;
-	dsp::PulseGenerator pulse;
+	dsp::PulseGenerator pulse[PORT_MAX_CHANNELS];
 
-	int last_octave=0, last_semi=0;
+	int last_octave[PORT_MAX_CHANNELS], last_semi[PORT_MAX_CHANNELS];
 
 	bool semiState[12] = {};
 	dsp::SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
@@ -83,8 +83,11 @@ struct Quantum : Module {
 			semiLight[i] = 0.0;
         }
 		mode = CLOSEST_UP;
-		last_octave = 0;
-		last_semi   = 0;
+
+		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
+			last_octave[c] = 0;
+			last_semi[c]   = 0;
+		};
 	}
 
 	void onRandomize() override {
@@ -92,8 +95,10 @@ struct Quantum : Module {
 			semiState[i] = (random::uniform() > 0.5);
 			semiLight[i] = semiState[i]?1.0:0.0;
 		};
-		last_octave = 0;
-		last_semi   = 0;
+		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
+			last_octave[c] = 0;
+			last_semi[c]   = 0;
+		};
 
 	}
 
@@ -140,6 +145,16 @@ struct Quantum : Module {
 
 void Quantum::process(const ProcessArgs &args) {
 
+	int channels = inputs[IN_INPUT].getChannels();
+	int channels_padded = channels + (4-channels%4);
+
+	outputs[OUT_OUTPUT].setChannels(channels);
+	outputs[GATE_OUTPUT].setChannels(channels);
+	outputs[TRIGGER_OUTPUT].setChannels(channels);
+	
+
+	// update LED buttons:
+
 	for(int i=0; i<12; i++) {
 
 		if (semiTriggers[i].process(params[Quantum::SEMI_1_PARAM + i].getValue())) {
@@ -148,124 +163,130 @@ void Quantum::process(const ProcessArgs &args) {
 		lights[i].value = semiState[i]?1.0f:0.0f;
 	}
 
+
+	
 	float gate = 0.f, trigger=0.f;
 	float quantized = 0.f;
 
-	float v=inputs[IN_INPUT].getVoltage();
-	float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0);
 
 //	int octave   = floor(v);
 //	int octave_t = floor(t);
 
-	gate = mode==LAST? 0.0: 10.0;
-
-
-	int semi_full   = round( 12.0f*v );
-	int semi_t = round( 12.0f*t );
-
-	int octave   = semi_full/12;
-
-	int semi = semi_full % 12;
-
-	if (semi<0) {
-		semi+=12;
-		octave-=1;
-	}
-
-	// transpose to shifted scale:
-
-	int tmp_semi = modulo (semi-semi_t, 12) ;
-
-
-
    	if( inputs[RESET_INPUT].isConnected() ) {
 		if( resetTrigger.process(inputs[RESET_INPUT].getVoltage()) ) onReset();
-        };
-
-
-	if( inputs[SET_INPUT].isConnected() ) {
-		if( setTrigger.process(inputs[SET_INPUT].getVoltage() ) ) {
-
-			float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
-			int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
-			if(semi_n<0) semi_n+=12;
-
-			semiState[semi_n] = !semiState[semi_n];
-			semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
-		}
 	};
 
-
-	if( semiState[tmp_semi] )
 	{
-		bool changed = !( (octave==last_octave) && (semi==last_semi));
-		gate = 10.0f;
-		quantized = 1.0f*octave + semi/12.0f;
-		if(changed) pulse.trigger(0.001);
-		last_octave = octave;
-		last_semi   = semi;
+		float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0, 0);
+		int semi_t = round( 12.0f*t );
+		
+		if( inputs[SET_INPUT].isConnected() ) {
+			if( setTrigger.process(inputs[SET_INPUT].getVoltage() ) ) {
 
-	} else {
+				float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
+				int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
+				if(semi_n<0) semi_n+=12;
 
-		if(mode==LAST) {
-			quantized = 1.0f*last_octave + last_semi/12.0f;
-		} else {
-
-			int i_up   = 0;
-			int i_down = 0;
-
-			while( !semiState[ modulo(tmp_semi+i_up,  12) ] && i_up   < 12 ) i_up++;
-		 	while( !semiState[ modulo(tmp_semi-i_down,12) ] && i_down < 12 ) i_down++;
-				
-			switch(mode) {	
-				case UP: 			if (i_up   < 12) semi += i_up;
-									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
-									break;
-
-				case DOWN: 			if (i_down < 12) semi -= i_down; 
-									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
-									break;
-
-				case CLOSEST_UP:   	if (i_up<12 && i_down<12) semi = (i_up > i_down) ? (semi - i_down) : (semi + i_up); 
-									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
-									break;
-
-				case CLOSEST_DOWN: 	if (i_up<12 && i_down<12) semi = (i_down > i_up) ? (semi + i_up) : (semi - i_down); 
-									else {semi = last_semi; octave = last_octave; gate = 0.0f;}
-									break;
-
-				case LAST:	
-				default:		break;
-			};
-				
-			if( semi > 11 ) {
-				semi   -= 12;
-				octave += 1;
+				semiState[semi_n] = !semiState[semi_n];
+				semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
 			}
-
-			if( semi < 0 ) {
-				semi   += 12;
-				octave -= 1;
-			}
-
-
-			bool changed = !( (octave==last_octave)&&(semi==last_semi));
-			quantized = 1.0f*octave + semi/12.0f;
-			if(changed) pulse.trigger(0.001f);
-			last_octave = octave;
-			last_semi   = semi;
 		};
 	};
 
-	float gSampleRate = args.sampleRate;
 
-	trigger = pulse.process(1.0/gSampleRate) ? 10.0f : 0.0f;
+	for(int c=0; c<channels; c++) {
+
+		float v=inputs[IN_INPUT].getVoltage(c);
+		float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0, c);
 
 
-	outputs[OUT_OUTPUT].setVoltage(quantized);
-	outputs[GATE_OUTPUT].setVoltage(gate - trigger);
-	outputs[TRIGGER_OUTPUT].setVoltage(trigger);
+		gate = mode==LAST? 0.0: 10.0;
 
+		int semi_full   = round( 12.0f*v );
+		int semi_t = round( 12.0f*t );
+
+		int octave   = semi_full/12;
+
+		int semi = semi_full % 12;
+
+		if (semi<0) {
+			semi+=12;
+			octave-=1;
+		}
+
+		// transpose to shifted scale:
+
+		int tmp_semi = modulo (semi-semi_t, 12) ;
+
+		if( semiState[tmp_semi] )
+		{
+			bool changed = !( (octave==last_octave[c]) && (semi==last_semi[c]));
+			gate = 10.0f;
+			quantized = 1.0f*octave + semi/12.0f;
+			if(changed) pulse[c].trigger(0.001);
+			last_octave[c] = octave;
+			last_semi[c]   = semi;
+
+		} else {
+
+			if(mode==LAST) {
+				quantized = 1.0f*last_octave[c] + last_semi[c]/12.0f;
+			} else {
+
+				int i_up   = 0;
+				int i_down = 0;
+
+				while( !semiState[ modulo(tmp_semi+i_up,  12) ] && i_up   < 12 ) i_up++;
+			 	while( !semiState[ modulo(tmp_semi-i_down,12) ] && i_down < 12 ) i_down++;
+				
+				switch(mode) {	
+					case UP: 			if (i_up   < 12) semi += i_up;
+										else {semi = last_semi[c]; octave = last_octave[c]; gate = 0.0f;}
+										break;
+
+					case DOWN: 			if (i_down < 12) semi -= i_down; 
+										else {semi = last_semi[c]; octave = last_octave[c]; gate = 0.0f;}
+										break;
+
+					case CLOSEST_UP:   	if (i_up<12 && i_down<12) semi = (i_up > i_down) ? (semi - i_down) : (semi + i_up); 
+										else {semi = last_semi[c]; octave = last_octave[c]; gate = 0.0f;}
+										break;
+
+					case CLOSEST_DOWN: 	if (i_up<12 && i_down<12) semi = (i_down > i_up) ? (semi + i_up) : (semi - i_down); 
+										else {semi = last_semi[c]; octave = last_octave[c]; gate = 0.0f;}
+										break;
+
+					case LAST:	
+					default:		break;
+				};
+				
+				if( semi > 11 ) {
+					semi   -= 12;
+					octave += 1;
+				}
+
+				if( semi < 0 ) {
+					semi   += 12;
+					octave -= 1;
+				}
+
+
+				bool changed = !( (octave==last_octave[c])&&(semi==last_semi[c]));
+				quantized = 1.0f*octave + semi/12.0f;
+				if(changed) pulse[c].trigger(0.001f);
+				last_octave[c] = octave;
+				last_semi[c]   = semi;
+			};
+	
+		}
+
+		trigger = pulse[c].process(args.sampleTime) ? 10.0f : 0.0f;
+
+
+		outputs[OUT_OUTPUT].setVoltage(quantized, c);
+		outputs[GATE_OUTPUT].setVoltage(gate - trigger, c);
+		outputs[TRIGGER_OUTPUT].setVoltage(trigger, c);
+	};
 }
 
 struct QuantumModeItem : MenuItem {
