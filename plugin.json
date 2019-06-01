@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "license": "BSD-3-Clause",
   "author": "Martin Lueders",
+  "brand": "ML_modules",
   "authorEmail": "mlmodules@gmail.com",
   "authorUrl": "",
   "pluginUrl": "https://github.com/martin-lueders/ML_modules/wiki",
@@ -144,16 +145,16 @@
       "tags": ["Switch", "Polyphonic"]
     },
     {
-      "slug": "TrigSwitch3 8->1",
-      "name": "TrigSwitch3",
+      "slug": "TrigSwitch3",
+      "name": "TrigSwitch3 8->1",
       "description": "",
-      "tags": ["Switch"]
+      "tags": ["Switch", "Polyphonic"]
     },
     {
       "slug": "TrigSwitch3_2",
       "name": "TrigSwitch3 1->8",
       "description": "",
-      "tags": []
+      "tags": ["Switch","Polyphonic"]
     },
     {
       "slug": "VoltMeter",

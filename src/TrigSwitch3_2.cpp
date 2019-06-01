@@ -47,18 +47,18 @@ struct TrigSwitch3_2 : Module {
 
 	dsp::SchmittTrigger stepTriggers[8];
 
-	float out1[8];
-	float out2[8];
-	float out3[8];
+	float out1[8*PORT_MAX_CHANNELS];
+	float out2[8*PORT_MAX_CHANNELS];
+	float out3[8*PORT_MAX_CHANNELS];
 
 	void onReset() override {
 
 		position = 0;
 		for(int i=0; i<8; i++) {
 			lights[i].value = 0.0;
-			out1[i] = 0.0f;
-			out2[i] = 0.0f;
-			out3[i] = 0.0f;
+			memset(out1, 0, 8*PORT_MAX_CHANNELS);
+			memset(out2, 0, 8*PORT_MAX_CHANNELS);
+			memset(out3, 0, 8*PORT_MAX_CHANNELS);
 		};
 	};
 
@@ -82,6 +82,7 @@ struct TrigSwitch3_2 : Module {
 
 	};
 
+
 };
 
 
@@ -89,9 +90,9 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 
 	if(outMode==ZERO) { 
 		for(int i=0; i<8; i++) {
-			out1[i] = 0.0f;
-			out2[i] = 0.0f;
-			out3[i] = 0.0f;
+			memset(out1, 0, 8*PORT_MAX_CHANNELS);
+			memset(out2, 0, 8*PORT_MAX_CHANNELS);
+			memset(out3, 0, 8*PORT_MAX_CHANNELS);
 		}
 	}
 
@@ -100,9 +101,21 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	out1[position] = inputs[CV1_INPUT].getNormalVoltage(0.0);
-	out2[position] = inputs[CV2_INPUT].getNormalVoltage(0.0);
-	out3[position] = inputs[CV3_INPUT].getNormalVoltage(0.0);
+	if( inputs[CV1_INPUT].isConnected() ) {
+		int channels = inputs[CV1_INPUT].getChannels();
+		outputs[OUT1_OUTPUT].setChannels(channels);
+		memcpy(out1 + position * PORT_MAX_CHANNELS, inputs[CV1_INPUT].getVoltages(), channels*sizeof(float));
+	}
+	if( inputs[CV2_INPUT].isConnected() ) {
+		int channels = inputs[CV2_INPUT].getChannels();
+		outputs[OUT2_OUTPUT].setChannels(channels);
+		memcpy(out2 + position * PORT_MAX_CHANNELS, inputs[CV2_INPUT].getVoltages(), channels*sizeof(float));
+	}
+	if( inputs[CV3_INPUT].isConnected() ) {
+		int channels = inputs[CV3_INPUT].getChannels();
+		outputs[OUT3_OUTPUT].setChannels(channels);
+		memcpy(out3 + position * PORT_MAX_CHANNELS, inputs[CV3_INPUT].getVoltages(), channels*sizeof(float));
+	}
 
 	for(int i=0; i<8; i++) {
 		outputs[OUT1_OUTPUT+i].setVoltage(out1[i]);

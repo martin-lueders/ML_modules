@@ -1,5 +1,6 @@
 #include "ML_modules.hpp"
 
+#define MAX(a,b) a>b?a:b
 
 struct ShiftRegister : Module {
 	enum ParamIds {
@@ -52,15 +53,17 @@ struct ShiftRegister : Module {
 	int position=0;
 
 
-	float values[8] = {};
+	float values[8 * PORT_MAX_CHANNELS] = {};
+	int channels[8];
 
-	dsp::SchmittTrigger upTrigger, downTrigger, setTrigger;
+	dsp::SchmittTrigger setTrigger[PORT_MAX_CHANNELS];
 
 	void onReset() override {
 		position=0;
+		memset(channels, 0, 8*sizeof(int));
+		memset(values, 0, 8 * PORT_MAX_CHANNELS);
 		for(int i=0; i<8; i++) {
 			lights[i].value = 0.0;
-			values[i] = 0.0;
 		};
 	};
 
@@ -74,19 +77,45 @@ void ShiftRegister::process(const ProcessArgs &args) {
 
 	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
-		if( setTrigger.process(inputs[TRIGGER_INPUT].getVoltage()) ) {
+		int trig_channels = inputs[TRIGGER_INPUT].getChannels();
 
-			for(int i=7; i>0; i--) values[i] = values[i-1];
-			values[0] = inputs[IN_INPUT].getVoltage();
+		if(trig_channels == 1) {
 
-			for(int i=0; i<8; i++) {
-				outputs[OUT1_OUTPUT+i].setVoltage(values[i]);
-				bool positive = values[i]>0;
-				float value = values[i]/10.0;
-				lights[STEP1_LIGHT+2*i].value   = positive?value:0.0;
-				lights[STEP1_LIGHT+2*i+1].value = -(positive?0.0:value);
+			if( setTrigger[0].process(inputs[TRIGGER_INPUT].getVoltage()) ) {
+
+				for(int i=7; i>0; i--) {
+					memcpy(values+i*PORT_MAX_CHANNELS, values+(i-1)*PORT_MAX_CHANNELS, channels[i-1]*sizeof(float));
+					channels[i] = channels[i-1];
+				}
+				channels[0] = inputs[IN_INPUT].getChannels();
+				memcpy(values, inputs[IN_INPUT].getVoltages(), channels[0]*sizeof(float));
 			}
-		};
+
+		} else {
+
+			for(int c=0; c < trig_channels; c++) {
+
+				if( setTrigger[c].process(inputs[TRIGGER_INPUT].getVoltage(c)) ) {
+
+					for(int i=7; i>0; i--) {
+						values[i*PORT_MAX_CHANNELS + c] = values[(i-1)*PORT_MAX_CHANNELS + c];
+						channels[i] = MAX(channels[i-1], channels[i]);
+					}
+					channels[0] = inputs[IN_INPUT].getChannels();
+					values[c] = inputs[IN_INPUT].getVoltage(c);
+				}
+			}
+			
+		}
+
+		for(int i=0; i<8; i++) {
+			outputs[OUT1_OUTPUT+i].setChannels(channels[i]);
+			outputs[OUT1_OUTPUT+i].writeVoltages(values+i*PORT_MAX_CHANNELS);
+			bool positive = values[i]>0;
+			float value = values[i]/10.0;
+			lights[STEP1_LIGHT+2*i].value   = positive?value:0.0;
+			lights[STEP1_LIGHT+2*i+1].value = -(positive?0.0:value);
+		}
 
 	};
 

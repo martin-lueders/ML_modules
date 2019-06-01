@@ -9,10 +9,10 @@ struct TrigSwitch3 : Module {
 
 	enum InputIds {
 		TRIG_INPUT,
-		CV_INPUT1 = TRIG_INPUT + 8,
-		CV_INPUT2 = CV_INPUT1 + 8,
-		CV_INPUT3 = CV_INPUT2 + 8,
-		NUM_INPUTS = CV_INPUT3 + 8
+		CV1_INPUT = TRIG_INPUT + 8,
+		CV2_INPUT = CV1_INPUT + 8,
+		CV3_INPUT = CV2_INPUT + 8,
+		NUM_INPUTS = CV3_INPUT + 8
 	};
 	enum OutputIds {
 		OUT1_OUTPUT,
@@ -79,9 +79,34 @@ void TrigSwitch3::process(const ProcessArgs &args) {
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	outputs[OUT1_OUTPUT].setVoltage(inputs[CV_INPUT1+position].getNormalVoltage(0.0));
-	outputs[OUT2_OUTPUT].setVoltage(inputs[CV_INPUT2+position].getNormalVoltage(0.0));
-	outputs[OUT3_OUTPUT].setVoltage(inputs[CV_INPUT3+position].getNormalVoltage(0.0));
+	if( inputs[CV1_INPUT+position].isConnected() ) {
+		int channels=inputs[CV1_INPUT+position].getChannels();
+		outputs[OUT1_OUTPUT].setChannels(channels);
+		memcpy(outputs[OUT1_OUTPUT].getVoltages(),inputs[CV1_INPUT+position].getVoltages(),channels*sizeof(float));  
+	} else {
+		outputs[OUT1_OUTPUT].setChannels(1);
+		outputs[OUT1_OUTPUT].setVoltage(0.0);
+	}
+
+
+	if( inputs[CV2_INPUT+position].isConnected() ) {
+		int channels=inputs[CV2_INPUT+position].getChannels();
+		outputs[OUT2_OUTPUT].setChannels(channels);
+		memcpy(outputs[OUT2_OUTPUT].getVoltages(),inputs[CV2_INPUT+position].getVoltages(),channels*sizeof(float));  
+	} else {
+		outputs[OUT2_OUTPUT].setChannels(1);
+		outputs[OUT2_OUTPUT].setVoltage(0.0);
+	}
+
+
+	if( inputs[CV3_INPUT+position].isConnected() ) {
+		int channels=inputs[CV3_INPUT+position].getChannels();
+		outputs[OUT3_OUTPUT].setChannels(channels);
+		memcpy(outputs[OUT3_OUTPUT].getVoltages(),inputs[CV3_INPUT+position].getVoltages(),channels*sizeof(float));  
+	} else {
+		outputs[OUT3_OUTPUT].setChannels(1);
+		outputs[OUT3_OUTPUT].setVoltage(0.0);
+	}
 
 };
 
@@ -117,9 +142,9 @@ TrigSwitch3Widget::TrigSwitch3Widget(TrigSwitch3 *module) {
 		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch3::STEP_PARAM + i));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3::STEP_LIGHT+i));
 
-		addInput(createInput<MLPort>(             Vec(row3, offset_y + i*delta_y), module, TrigSwitch3::CV_INPUT1 + i));
-		addInput(createInput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3::CV_INPUT2 + i));
-		addInput(createInput<MLPort>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3::CV_INPUT3 + i));
+		addInput(createInput<MLPort>(             Vec(row3, offset_y + i*delta_y), module, TrigSwitch3::CV1_INPUT + i));
+		addInput(createInput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3::CV2_INPUT + i));
+		addInput(createInput<MLPort>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3::CV3_INPUT + i));
 
 	}
 	addOutput(createOutput<MLPort>(Vec(row3,    320), module, TrigSwitch3::OUT1_OUTPUT));

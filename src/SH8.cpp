@@ -119,7 +119,6 @@ void SH8::process(const ProcessArgs &args) {
 			}
 		}
 		
-			
 		if(inputs[IN1_INPUT+i].isConnected() ) {
 			in_channels = inputs[IN1_INPUT+i].getChannels();
 			inputs[IN1_INPUT+i].readVoltages(in);
@@ -137,14 +136,13 @@ void SH8::process(const ProcessArgs &args) {
 };
 
 
-
 struct SH8Widget : ModuleWidget {
 	SH8Widget(SH8 *module);
 };
 
 SH8Widget::SH8Widget(SH8 *module) {
-		setModule(module);
 
+	setModule(module);
 	box.size = Vec(15*8, 380);
 
 	{
@@ -159,9 +157,6 @@ SH8Widget::SH8Widget(SH8 *module) {
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
-
-
-
 
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 

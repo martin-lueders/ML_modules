@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdlib>
 
+#define MAX(a,b) a>b?a:b
 
 struct ShiftRegister2 : Module {
 	enum ParamIds {
@@ -49,59 +50,122 @@ struct ShiftRegister2 : Module {
 	void process(const ProcessArgs &args) override;
 
 	int numSteps;
-	float values[32] = {};
+	float values[32 * PORT_MAX_CHANNELS] = {};
+	int channels[32] = {};
 
-	dsp::SchmittTrigger trigTrigger;
+	dsp::SchmittTrigger trigTrigger[PORT_MAX_CHANNELS];
 
 	inline float randf() {return rand()/(RAND_MAX-1.0);}
 
 	void onReset() override {
-
+		memset(channels, 0, 32*sizeof(int));
+		memset(values, 0, 32*PORT_MAX_CHANNELS*sizeof(float));
 	};
 
 };
 
 
 
-
 void ShiftRegister2::process(const ProcessArgs &args) {
+
 
 	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].getValue() * clamp(inputs[NUM_STEPS_INPUT].getNormalVoltage(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
 
 
 	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
-		if( trigTrigger.process(inputs[TRIGGER_INPUT].getVoltage()) ) {
+		int trig_channels = inputs[TRIGGER_INPUT].getChannels();
+	
 
-			float new_in1 = inputs[IN1_INPUT].getNormalVoltage( randf()*10.0-5.0 );
-			float new_in2 = inputs[IN2_INPUT].getNormalVoltage( new_in1 + 1.0 );
+		if(trig_channels==1) {
 
-			for(int i=32; i>0; i--) values[i] = values[i-1];
+			if( trigTrigger[0].process(inputs[TRIGGER_INPUT].getVoltage()) ) {
 
-			float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
-			float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
+				int in1_channels = inputs[IN1_INPUT].getChannels();
+				int in2_channels = inputs[IN2_INPUT].getChannels();
+				int in_channels = MAX(in1_channels, in2_channels);
+	
+				for(int i=32; i>0; i--) {
+					memcpy(values + i*PORT_MAX_CHANNELS, values + (i-1)*PORT_MAX_CHANNELS, PORT_MAX_CHANNELS * sizeof(float));
+					channels[i] = channels[i-1];
+				}
 
-			bool replace = ( randf() < p1 );
-			bool rnd2 = ( randf() < p2 );
+				channels[0] = in_channels;
 
-			float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalVoltage(0.0f),-10.0f,10.0f)/10.0f;
+				for(int c=0; c<in_channels; c++) {
+
+	 				float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0-5.0, c );
+					float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0,    c );
+	
+					float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+					float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+
+					bool replace = ( randf() < p1 );
+					bool rnd2 = ( randf() < p2 );
+
+					float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
 
-			if(replace) {
-				values[0] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps];
+					if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
+					else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
+				}
+
 			} else {
-				values[0] = values[numSteps];
-			};
+
+				for(int c=0; c<trig_channels; c++) {
+
+					bool any_trig = false;
+
+					if( trigTrigger[c].process(inputs[TRIGGER_INPUT].getPolyVoltage(c)) ) {
+
+						any_trig = true;
+
+						for(int i=32; i>0; i--) values[i*PORT_MAX_CHANNELS + c] = values[(i-1)*PORT_MAX_CHANNELS + c];
+
+		 				float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0-5.0, c );
+						float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0,    c );
+	
+						float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+						float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+
+						bool replace = ( randf() < p1 );
+						bool rnd2 = ( randf() < p2 );
+
+						float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+
+
+						if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
+						else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
+
+					}
+
+					if(any_trig) {
+
+						int in1_channels = inputs[IN1_INPUT].getChannels();
+						int in2_channels = inputs[IN2_INPUT].getChannels();
+						int in_channels = MAX(in1_channels, in2_channels);
+
+						for(int i=32; i>0; i--) {
+							channels[i] = channels[i-1];
+						}
+						channels[0] = in_channels;
+					}
+
+				}
+
+			}
 
 		};
 
 	};
 
-	outputs[OUT_OUTPUT].setVoltage(values[0]);
+	outputs[OUT_OUTPUT].setChannels(channels[0]);
+	outputs[OUT_OUTPUT].writeVoltages(values);
 
 	int offset = roundf(params[AUX_OFFSET_PARAM].getValue());
 
-	outputs[AUX_OUTPUT].setVoltage(values[offset]);
+	outputs[AUX_OUTPUT].setChannels(channels[offset]);
+	outputs[AUX_OUTPUT].writeVoltages(values + offset*PORT_MAX_CHANNELS);
 };
 
 struct IntDisplayWidget : TransparentWidget {
