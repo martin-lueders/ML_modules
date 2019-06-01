@@ -76,7 +76,6 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 
 		int trig_channels = inputs[TRIGGER_INPUT].getChannels();
 	
-
 		if(trig_channels==1) {
 
 			if( trigTrigger[0].process(inputs[TRIGGER_INPUT].getVoltage()) ) {
@@ -85,7 +84,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 				int in2_channels = inputs[IN2_INPUT].getChannels();
 				int in_channels = MAX(in1_channels, in2_channels);
 	
-				for(int i=32; i>0; i--) {
+				for(int i=31; i>0; i--) {
 					memcpy(values + i*PORT_MAX_CHANNELS, values + (i-1)*PORT_MAX_CHANNELS, PORT_MAX_CHANNELS * sizeof(float));
 					channels[i] = channels[i-1];
 				}
@@ -105,54 +104,51 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 
 					float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
-
 					if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
 					else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
 				}
 
-			} else {
+			}
 
-				for(int c=0; c<trig_channels; c++) {
+		} else {
 
-					bool any_trig = false;
+			bool any_trig = false;
 
-					if( trigTrigger[c].process(inputs[TRIGGER_INPUT].getPolyVoltage(c)) ) {
+			for(int c=0; c<trig_channels; c++) {
 
-						any_trig = true;
+				if( trigTrigger[c].process(inputs[TRIGGER_INPUT].getPolyVoltage(c)) ) {
 
-						for(int i=32; i>0; i--) values[i*PORT_MAX_CHANNELS + c] = values[(i-1)*PORT_MAX_CHANNELS + c];
+					any_trig = true;
 
-		 				float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0-5.0, c );
-						float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0,    c );
+					for(int i=31; i>0; i--) values[i*PORT_MAX_CHANNELS + c] = values[(i-1)*PORT_MAX_CHANNELS + c];
+
+		 			float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0-5.0, c );
+					float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0,    c );
 	
-						float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
-						float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+					float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+					float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
-						bool replace = ( randf() < p1 );
-						bool rnd2 = ( randf() < p2 );
+					bool replace = ( randf() < p1 );
+					bool rnd2 = ( randf() < p2 );
 
-						float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
+					float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
-
-						if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
-						else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
-
-					}
-
-					if(any_trig) {
-
-						int in1_channels = inputs[IN1_INPUT].getChannels();
-						int in2_channels = inputs[IN2_INPUT].getChannels();
-						int in_channels = MAX(in1_channels, in2_channels);
-
-						for(int i=32; i>0; i--) {
-							channels[i] = channels[i-1];
-						}
-						channels[0] = in_channels;
-					}
+					if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
+					else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
 
 				}
+			}
+			
+			if(any_trig) {
 
+				int in1_channels = inputs[IN1_INPUT].getChannels();
+				int in2_channels = inputs[IN2_INPUT].getChannels();
+				int in_channels = MAX(in1_channels, in2_channels);
+
+				for(int i=31; i>0; i--) {	
+					channels[i] = channels[i-1];	
+				}
+				channels[0] = in_channels;
 			}
 
 		};
