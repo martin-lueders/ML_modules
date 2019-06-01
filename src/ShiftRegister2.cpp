@@ -122,8 +122,8 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 
 					for(int i=31; i>0; i--) values[i*PORT_MAX_CHANNELS + c] = values[(i-1)*PORT_MAX_CHANNELS + c];
 
-		 			float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0-5.0, c );
-					float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0,    c );
+		 			float new_in1 = inputs[IN1_INPUT].getNormalPolyVoltage( randf()*10.0f-5.0f, c );
+					float new_in2 = inputs[IN2_INPUT].getNormalPolyVoltage( new_in1 + 1.0f,    c );
 	
 					float p1 = params[PROB1_PARAM].getValue() + clamp(inputs[PROB1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 					float p2 = params[PROB2_PARAM].getValue() + clamp(inputs[PROB2_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
@@ -144,6 +144,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 				int in1_channels = inputs[IN1_INPUT].getChannels();
 				int in2_channels = inputs[IN2_INPUT].getChannels();
 				int in_channels = MAX(in1_channels, in2_channels);
+				in_channels = MAX(in_channels, trig_channels);
 
 				for(int i=31; i>0; i--) {	
 					channels[i] = channels[i-1];	

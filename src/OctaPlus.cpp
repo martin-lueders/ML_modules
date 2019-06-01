@@ -6,53 +6,24 @@ struct OctaPlus : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
-		IN1_INPUT,
-		IN2_INPUT,
-		IN3_INPUT,
-		IN4_INPUT,
-		IN5_INPUT,
-		IN6_INPUT,
-		IN7_INPUT,
-		IN8_INPUT,
-		IN_B_1_INPUT,
-		IN_B_2_INPUT,
-		IN_B_3_INPUT,
-		IN_B_4_INPUT,
-		IN_B_5_INPUT,
-		IN_B_6_INPUT,
-		IN_B_7_INPUT,
-		IN_B_8_INPUT,
-		NUM_INPUTS
+		IN_A_INPUT,
+		IN_B_INPUT = IN_A_INPUT + 8,
+		NUM_INPUTS = IN_B_INPUT + 8
 	};
 	enum OutputIds {
-		OUT1_OUTPUT,
-		OUT2_OUTPUT,
-		OUT3_OUTPUT,
-		OUT4_OUTPUT,
-		OUT5_OUTPUT,
-		OUT6_OUTPUT,
-		OUT7_OUTPUT,
-		OUT8_OUTPUT,
-		NUM_OUTPUTS
+		OUT_OUTPUT,
+		NUM_OUTPUTS = OUT_OUTPUT + 8
 	};
 	enum LightIds {
 		NUM_LIGHTS
 	};
 
-	dsp::SchmittTrigger trigger[8];
-	float out[8];
-
 
 	OctaPlus() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
-		onReset(); 
 	};
 
 	void process(const ProcessArgs &args) override;
-
-	void onReset() override {
-		for(int i=0; i<8; i++) out[i] = 0.0;
-	};
 
 };
 
@@ -60,20 +31,31 @@ struct OctaPlus : Module {
 
 void OctaPlus::process(const ProcessArgs &args) {
 
-	float in_A[8], in_B[8];
+	float in_A[PORT_MAX_CHANNELS], in_B[PORT_MAX_CHANNELS], out[PORT_MAX_CHANNELS];
 
-	float random = 0;
+	int channels_A = 0, channels_B = 0, channels_OUT = 0;
 
+	memset(in_A, 0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(in_B, 0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(out,  0, PORT_MAX_CHANNELS*sizeof(float));
 
+	for(int i=0; i<8; i++) {
 
+		if( inputs[IN_A_INPUT+i].isConnected() ) {
+			channels_A = inputs[IN_A_INPUT+i].getChannels();
+			inputs[IN_A_INPUT+i].readVoltages(in_A);
+		}
+		if( inputs[IN_B_INPUT+i].isConnected() ) {
+			channels_B = inputs[IN_B_INPUT+i].getChannels();
+			inputs[IN_B_INPUT+i].readVoltages(in_B);
+		}
+		channels_OUT = MAX(channels_A, channels_B);
 
-	in_A[0] = inputs[IN1_INPUT].getNormalVoltage(random);
-	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].getNormalVoltage(in_A[i-1]);
-
-	in_B[0] = inputs[IN_B_1_INPUT].getNormalVoltage(random);
-	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].getNormalVoltage(in_B[i-1]);
-
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(in_A[i] + in_B[i]);
+		for(int c=0; c<channels_OUT; c++) out[c] = in_A[c] + in_B[c];
+		outputs[OUT_OUTPUT+i].setChannels(channels_OUT);
+		outputs[OUT_OUTPUT+i].writeVoltages(out);
+	
+	};
 
 };
 
@@ -107,9 +89,9 @@ OctaPlusWidget::OctaPlusWidget(OctaPlus *module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaPlus::IN1_INPUT+i));
-		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaPlus::IN_B_1_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaPlus::OUT1_OUTPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaPlus::IN_A_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaPlus::IN_B_INPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaPlus::OUT_OUTPUT+i));
 	};
 
 

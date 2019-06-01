@@ -4,6 +4,9 @@
 
 using namespace rack;
 
+#define MAX(a,b) a>b?a:b
+
+
 extern Plugin *pluginInstance;
 
 /*

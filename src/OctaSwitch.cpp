@@ -40,24 +40,32 @@ struct OctaSwitch : Module {
 
 void OctaSwitch::process(const ProcessArgs &args) {
 
-	bool gate[8];
+	float gate[PORT_MAX_CHANNELS];
+
+	memset(gate, 0, PORT_MAX_CHANNELS * sizeof(float));
 
 	threshold = inputs[THRESHOLD_INPUT].getNormalVoltage(params[THRESHOLD_PARAM].getValue());
 
-	gate[0] = inputs[GATE_INPUT].getNormalVoltage(0.0) > threshold;
 
-	for(int i=1; i<8; i++) {
+	for(int i=0; i<8; i++) {
 		
-		if( inputs[GATE_INPUT+i].isConnected() ) gate[i] = inputs[GATE_INPUT+i].getVoltage() > threshold;
-		else	                          gate[i] = gate[i-1];
+		int gate_channels = inputs[GATE_INPUT].getChannels();
+		int in_A_channels = inputs[A_INPUT+i].getChannels();
+		int in_B_channels = inputs[B_INPUT+i].getChannels();
+		
+		int in_channels = MAX(in_A_channels, in_B_channels);
+		int channels = MAX(gate_channels, in_channels);
 
+		if( inputs[GATE_INPUT+i].isConnected() ) inputs[GATE_INPUT+i].readVoltages(gate);
+
+		outputs[OUT_OUTPUT+i].setChannels(channels);
+		for(int c=0; c<channels; c++) {
+			outputs[OUT_OUTPUT+i].setVoltage( gate[c]>threshold ? inputs[B_INPUT+i].getNormalPolyVoltage(0.0f, c) : inputs[A_INPUT+i].getNormalPolyVoltage(0.0f, c), c);
+		}
 	}
 
 
 
-	for(int i=0; i<8; i++) { 
-		outputs[OUT_OUTPUT+i].value  = gate[i] ? inputs[B_INPUT+i].getNormalVoltage(0.0) : inputs[A_INPUT+i].getNormalVoltage(0.0);
-	}
 
 };
 
@@ -71,7 +79,7 @@ struct ThresholdDisplayWidget : TransparentWidget {
     font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
-  void draw(const DrawArgs &args) {
+  void draw(const DrawArgs &args) override {
     // Background
     NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
     NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);

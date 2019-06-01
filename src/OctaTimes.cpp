@@ -7,34 +7,13 @@ struct OctaTimes : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
-		IN1_INPUT,
-		IN2_INPUT,
-		IN3_INPUT,
-		IN4_INPUT,
-		IN5_INPUT,
-		IN6_INPUT,
-		IN7_INPUT,
-		IN8_INPUT,
-		IN_B_1_INPUT,
-		IN_B_2_INPUT,
-		IN_B_3_INPUT,
-		IN_B_4_INPUT,
-		IN_B_5_INPUT,
-		IN_B_6_INPUT,
-		IN_B_7_INPUT,
-		IN_B_8_INPUT,
-		NUM_INPUTS
+		IN_A_INPUT,
+		IN_B_INPUT = IN_A_INPUT + 8,
+		NUM_INPUTS = IN_B_INPUT + 8
 	};
 	enum OutputIds {
-		OUT1_OUTPUT,
-		OUT2_OUTPUT,
-		OUT3_OUTPUT,
-		OUT4_OUTPUT,
-		OUT5_OUTPUT,
-		OUT6_OUTPUT,
-		OUT7_OUTPUT,
-		OUT8_OUTPUT,
-		SUM_OUTPUT,
+		OUT_OUTPUT,
+		SUM_OUTPUT = OUT_OUTPUT + 8,
 		NUM_OUTPUTS
 	};
 	enum LightIds {
@@ -61,7 +40,7 @@ struct OctaTimes : Module {
 };
 
 
-
+/*
 void OctaTimes::process(const ProcessArgs &args) {
 
 	float in_A[8], in_B[8];
@@ -88,7 +67,49 @@ void OctaTimes::process(const ProcessArgs &args) {
 
 	outputs[SUM_OUTPUT].setVoltage(clamp(sum,-12.f,12.f));
 };
+*/
 
+void OctaTimes::process(const ProcessArgs &args) {
+
+	float in_A[PORT_MAX_CHANNELS], in_B[PORT_MAX_CHANNELS], out[PORT_MAX_CHANNELS], sum[PORT_MAX_CHANNELS];
+
+	int channels_A = 0, channels_B = 0, channels_OUT = 0;
+
+	float multiplier = params[MULT_PARAM].getValue()==1?1.f:0.1f;
+
+	memset(in_A, 0, PORT_MAX_CHANNELS*sizeof(float));
+	if(params[MULT_PARAM].getValue()==1) {
+		for(int c=0; c < PORT_MAX_CHANNELS; c++) in_B[c] = 1.0f;
+	} else {
+		for(int c=0; c < PORT_MAX_CHANNELS; c++) in_B[c] = 10.0f;
+	}
+	memset(out,  0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(sum,  0, PORT_MAX_CHANNELS*sizeof(float));
+
+	for(int i=0; i<8; i++) {
+
+		if( inputs[IN_A_INPUT+i].isConnected() ) {
+			channels_A = inputs[IN_A_INPUT+i].getChannels();
+			inputs[IN_A_INPUT+i].readVoltages(in_A);
+		}
+		if( inputs[IN_B_INPUT+i].isConnected() ) {
+			channels_B = inputs[IN_B_INPUT+i].getChannels();
+			inputs[IN_B_INPUT+i].readVoltages(in_B);
+		}
+		channels_OUT = MAX(channels_A, channels_B);
+
+		for(int c=0; c<channels_OUT; c++) {
+			float tmp = clamp(in_A[c] * in_B[c] * multiplier, -12.f, 12.f );
+			out[c] = tmp;
+			sum[c] += tmp;
+		}
+		outputs[OUT_OUTPUT+i].setChannels(channels_OUT);
+		outputs[OUT_OUTPUT+i].writeVoltages(out);
+		outputs[SUM_OUTPUT].writeVoltages(sum);
+	
+	};
+
+};
 
 
 struct OctaTimesWidget : ModuleWidget {
@@ -119,9 +140,9 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) {
 	const float offset_y = 60, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
 	for( int i=0; i<8; i++) {
-		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaTimes::IN1_INPUT+i));
-		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaTimes::IN_B_1_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTimes::OUT1_OUTPUT+i));
+		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaTimes::IN_A_INPUT+i));
+		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaTimes::IN_B_INPUT+i));
+		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTimes::OUT_OUTPUT+i));
 	};
 	
 	addOutput(createOutput<MLPort>(Vec(row3, 330 ), module, OctaTimes::SUM_OUTPUT));

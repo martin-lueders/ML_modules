@@ -114,19 +114,18 @@ struct SeqSwitch : Module {
 
 void SeqSwitch::process(const ProcessArgs &args) {
 
-	float out=0.0;
+	float out[PORT_MAX_CHANNELS];
+	int in_channels = 0;
+
+	memset(out, 0, PORT_MAX_CHANNELS*sizeof(float));
 
 	int numSteps = round(clamp(params[NUM_STEPS].getValue(),1.0f,8.0f));
 	if( inputs[NUMSTEPS_INPUT].isConnected() ) numSteps = round(clamp(inputs[NUMSTEPS_INPUT].getVoltage(),1.0f,8.0f));
 
 	if( inputs[POS_INPUT].isConnected() ) {
 
-//		position = round( clamp( inputs[POS_INPUT].getVoltage(),0.0f,8.0f))/8.0f * (numSteps-1) ;
-
-                float in_value = clamp( inputs[POS_INPUT].getVoltage(),in_min[inputRange],in_max[inputRange] );
-
-                position = round( rescale( in_value, in_min[inputRange], in_max[inputRange], 0.0f, 1.0f*(numSteps-1) ) );
-
+        float in_value = clamp( inputs[POS_INPUT].getVoltage(),in_min[inputRange],in_max[inputRange] );
+        position = round( rescale( in_value, in_min[inputRange], in_max[inputRange], 0.0f, 1.0f*(numSteps-1) ) );
 
 	} else {
 
@@ -153,12 +152,16 @@ void SeqSwitch::process(const ProcessArgs &args) {
 	while( position < 0 )         position += numSteps;
 	while( position >= numSteps ) position -= numSteps;
 
-	out = inputs[IN1_INPUT+position].getNormalVoltage(0.0);
+	if(inputs[IN1_INPUT+position].isConnected()) {
+		in_channels = inputs[IN1_INPUT+position].getChannels();
+		inputs[IN1_INPUT+position].readVoltages(out);
+	}
 
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
 
 
-	outputs[OUT1_OUTPUT].setVoltage(out);
+	outputs[OUT1_OUTPUT].setChannels(in_channels);
+	outputs[OUT1_OUTPUT].writeVoltages(out);
 };
 
 struct SeqSwitchRangeItem : MenuItem {

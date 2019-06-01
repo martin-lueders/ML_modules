@@ -65,7 +65,8 @@ struct SeqSwitch2 : Module {
 
 	int position=0;
 
-	float outs[8] = {};
+	float outs[8 * PORT_MAX_CHANNELS] = {};
+	int out_channels[8] = {};
 
 	const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
 	const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
@@ -74,7 +75,11 @@ struct SeqSwitch2 : Module {
 
 	void onReset() override {
 		position=0;
-		for(int i=0; i<8; i++) lights[i].value = 0.0;
+		for(int i=0; i<8; i++) {
+			lights[i].value = 0.0;
+			out_channels[i] = 0;
+		}
+		memset(outs, 0, 8 * PORT_MAX_CHANNELS * sizeof(float) );
 	};
 
 	enum OutMode {
@@ -123,17 +128,15 @@ struct SeqSwitch2 : Module {
 
 void SeqSwitch2::process(const ProcessArgs &args) {
 
-	if(outMode==ZERO) { for(int i=0; i<8; i++) outs[i]=0.0f; }
+	if(outMode==ZERO) memset(outs, 0, 8 * PORT_MAX_CHANNELS * sizeof(float) );
+
 
 	int numSteps = round(clamp(params[NUM_STEPS].getValue(),1.0f,8.0f));
 	if( inputs[NUMSTEPS_INPUT].isConnected() ) numSteps = round(clamp(inputs[NUMSTEPS_INPUT].getVoltage(),1.0f,8.0f));
 
 	if( inputs[POS_INPUT].isConnected() ) {
 
-//		position = round( clamp( inputs[POS_INPUT].getVoltage(),0.0,8.0))/8.0 * (numSteps-1) ;
-
 		float in_value = clamp( inputs[POS_INPUT].getVoltage(),in_min[inputRange],in_max[inputRange] );
-
 		position = round( rescale( in_value, in_min[inputRange], in_max[inputRange], 0.0f, 1.0f*(numSteps-1) ) );
 
 	} else {
@@ -160,12 +163,18 @@ void SeqSwitch2::process(const ProcessArgs &args) {
 	while( position < 0 )         position += numSteps;
 	while( position >= numSteps ) position -= numSteps;
 
-	outs[position] = inputs[IN_INPUT].getNormalVoltage(0.0);
-
-
 	for(int i=0; i<8; i++) lights[i].value = (i==position)?1.0:0.0;
 
-	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setVoltage(outs[i]);
+	if(inputs[IN_INPUT].isConnected()) {
+		inputs[IN_INPUT].readVoltages(outs + position * PORT_MAX_CHANNELS);
+		out_channels[position] = inputs[IN_INPUT].getChannels();
+	}
+
+
+	for(int i=0; i<8; i++) {
+		outputs[OUT1_OUTPUT+i].setChannels(out_channels[i]);
+		outputs[OUT1_OUTPUT+i].writeVoltages(outs + i*PORT_MAX_CHANNELS);
+	}
 };
 
 
