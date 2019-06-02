@@ -1,5 +1,31 @@
 #include "ML_modules.hpp"
 
+
+struct myTrigger {
+
+	bool high;
+	bool up, down;
+
+	myTrigger() {high = false; up = false; down = false;};
+	~myTrigger() {};
+
+	inline bool process(const float in) {
+
+		if(in > 1.0) {
+			if( !high ) { high = true; up = true;  down = false;}
+			else        { high = true; up = false; down = false;}
+		} else {
+			if(high) { high = false; up = false; down = true; }
+			else     { high = false; up = false; down = false;}
+		}
+		return up;
+	};
+
+	inline bool wentUp()   {return up;};
+	inline bool wentDown() {return down;};
+
+};
+
 struct Quantum : Module {
 	enum ParamIds {
 		SEMI_1_PARAM,
@@ -55,7 +81,6 @@ struct Quantum : Module {
 	};
 
 
-
 	Mode mode = CLOSEST_UP;
 
 	bool transpose_select = true;
@@ -68,18 +93,25 @@ struct Quantum : Module {
 		onReset(); 
 	};
 
+	~Quantum() {};
+
 	void process(const ProcessArgs &args) override;
 	dsp::PulseGenerator pulse[PORT_MAX_CHANNELS];
 
-	int last_octave[PORT_MAX_CHANNELS], last_semi[PORT_MAX_CHANNELS];
+	int last_octave[PORT_MAX_CHANNELS], last_semi[PORT_MAX_CHANNELS], note_memory[PORT_MAX_CHANNELS];
 
 	bool semiState[12] = {};
-	dsp::SchmittTrigger semiTriggers[12], setTrigger, resetTrigger;
+	int semiCount[12];
+	dsp::SchmittTrigger semiTriggers[12], resetTrigger;
+
+	myTrigger setTrigger[PORT_MAX_CHANNELS];
+
 	float semiLight[12] = {};
 
     void onReset() override {
         for (int i = 0; i < 12; i++) {
             semiState[i] = false;
+			semiCount[i] = 0;
 			semiLight[i] = 0.0;
         }
 		mode = CLOSEST_UP;
@@ -87,6 +119,7 @@ struct Quantum : Module {
 		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
 			last_octave[c] = 0;
 			last_semi[c]   = 0;
+			note_memory[c] = 0;
 		};
 	}
 
@@ -98,6 +131,7 @@ struct Quantum : Module {
 		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
 			last_octave[c] = 0;
 			last_semi[c]   = 0;
+			note_memory[c] = 0;
 		};
 
 	}
@@ -181,16 +215,45 @@ void Quantum::process(const ProcessArgs &args) {
 		int semi_t = round( 12.0f*t );
 		
 		if( inputs[SET_INPUT].isConnected() ) {
-			if( setTrigger.process(inputs[SET_INPUT].getVoltage() ) ) {
 
-				float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
-				int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
-				if(semi_n<0) semi_n+=12;
+			int set_channels = inputs[SET_INPUT].getChannels();
 
-				semiState[semi_n] = !semiState[semi_n];
-				semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
+			if(set_channels == 1) {
+
+				if( setTrigger[0].process( inputs[SET_INPUT].getVoltage() ) ) {
+
+					float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
+					int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
+					if(semi_n<0) semi_n+=12;
+
+					semiState[semi_n] = !semiState[semi_n];
+					semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
+				}
+			} else {
+
+				for(int c=0; c < set_channels; c++) {
+	
+					setTrigger[c].process(inputs[SET_INPUT].getVoltage(c));
+					if (setTrigger[c].wentUp() ){
+
+						float n=inputs[NOTE_INPUT].getNormalPolyVoltage(0.0, c);
+						int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
+						if(semi_n<0) semi_n+=12;
+						note_memory[c] = semi_n;
+						semiCount[semi_n]++;
+					}
+					if(setTrigger[c].wentDown()) {
+						semiCount[note_memory[c]]--;
+					}
+
+				}
 			}
-		};
+
+			for(int i=0; i<12; i++) {
+				if (semiCount[i]<0 ) semiCount[i]=0;
+				semiState[i] = semiCount[i]>0;
+			}
+		}
 	};
 
 

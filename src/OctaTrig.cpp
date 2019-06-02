@@ -49,24 +49,16 @@ struct OctaTrig : Module {
 		NUM_LIGHTS
 	};
 
-	dsp::PulseGenerator upPulse[8], dnPulse[8];
+	dsp::PulseGenerator upPulse[8 * PORT_MAX_CHANNELS], dnPulse[8 * PORT_MAX_CHANNELS];
 
-	bool state[8] = {};
-
-	float out_up[8] = {};
-	float out_dn[8] = {};
-
-	// float delta;
+	bool state[8 * PORT_MAX_CHANNELS] = {};
 
 
 	OctaTrig() {
 
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
-		for(int i=0; i<8; i++) state[i]=false; 
-		// onSampleRateChange();
+		for(int i=0; i<8 * PORT_MAX_CHANNELS; i++) state[i]=false; 
 	};
-
-	// void onSampleRateChange() override { delta = 1.0/args.sampleRate; }
 
 	void process(const ProcessArgs &args) override;
 
@@ -76,32 +68,46 @@ struct OctaTrig : Module {
 
 void OctaTrig::process(const ProcessArgs &args) {
 
-	bool gate[8];
+	bool gate[PORT_MAX_CHANNELS];
+
+	float out_up[PORT_MAX_CHANNELS] = {};
+	float out_dn[PORT_MAX_CHANNELS] = {};
+	float out_sum[PORT_MAX_CHANNELS] = {};
+
 
 	float delta = args.sampleTime;
 
 	for(int i=0; i<8; i++) {
+		int channels = inputs[IN1_INPUT+i].getChannels();
 		
-		gate[i] = inputs[IN1_INPUT+i].getNormalVoltage(0.0) > 1.0;
+		for(int c=0; c < channels; c++) {
 
-		if (gate[i]^state[i]) {
+			gate[c] = inputs[IN1_INPUT+i].getNormalPolyVoltage(0.0, c) > 1.0;
 
-			if(gate[i]) upPulse[i].trigger(0.01);
-			else	    dnPulse[i].trigger(0.01);
+			if (gate[c]^state[i*PORT_MAX_CHANNELS + c]) {
+
+				if(gate[c]) upPulse[i*PORT_MAX_CHANNELS + c].trigger(0.01);
+				else	    dnPulse[i*PORT_MAX_CHANNELS + c].trigger(0.01);
+			}
+
+			out_up[c] = upPulse[i*PORT_MAX_CHANNELS + c].process(delta)?10.0:0.0;
+			out_dn[c] = dnPulse[i*PORT_MAX_CHANNELS + c].process(delta)?10.0:0.0;
+
+			out_sum[c] = out_up[i*PORT_MAX_CHANNELS + c] + out_dn[i*PORT_MAX_CHANNELS + c];
+
+			state[i*PORT_MAX_CHANNELS + c] = gate[i];
+
 		}
 
-		out_up[i] = upPulse[i].process(delta)?10.0:0.0;
-		out_dn[i] = dnPulse[i].process(delta)?10.0:0.0;
-
-		state[i] = gate[i];
-	}
+		outputs[UP1_OUTPUT+i ].setChannels(channels);
+		outputs[DN1_OUTPUT+i ].setChannels(channels);
+		outputs[SUM1_OUTPUT+i].setChannels(channels);
 
 
 
-	for(int i=0; i<8; i++) { 
-		outputs[UP1_OUTPUT+i].value  = out_up[i];
-		outputs[DN1_OUTPUT+i].value  = out_dn[i];
-		outputs[SUM1_OUTPUT+i].setVoltage(out_up[i] + out_dn[i]);
+		outputs[UP1_OUTPUT+i].writeVoltages(out_up);
+		outputs[DN1_OUTPUT+i].writeVoltages(out_dn);
+		outputs[SUM1_OUTPUT+i].writeVoltages(out_sum);
 	}
 
 };

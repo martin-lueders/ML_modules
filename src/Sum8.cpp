@@ -39,7 +39,7 @@ struct Sum8 : Module {
 void Sum8::process(const ProcessArgs &args) {
 
 	float out[PORT_MAX_CHANNELS];
-	float in[PORT_MAX_CHANNELS];
+	float in[PORT_MAX_CHANNELS] = {};
 
 	int channels[8];
 	int max_channels = 0;

@@ -46,25 +46,25 @@
       "slug": "OctaPlus",
       "name": "OctaPlus",
       "description": "",
-      "tags": ["Utility", "Mixer"]
+      "tags": ["Utility", "Mixer", "Polyphonic"]
     },
     {
       "slug": "OctaSwitch",
       "name": "OctaSwitch",
       "description": "",
-      "tags": ["Switch"]
+      "tags": ["Switch", "Polyphonic"]
     },
     {
       "slug": "OctaTimes",
       "name": "OctaTimes",
       "description": "",
-      "tags": ["Utility","Ring modulator"]
+      "tags": ["Utility","Ring modulator", "Polyphonic"]
     },
     {
       "slug": "OctaTrig",
       "name": "OctaTrig",
       "description": "",
-      "tags": ["Clock modulator"]
+      "tags": ["Clock modulator", "Polyphonic"]
     },
     {
       "slug": "Quantizer",
@@ -88,25 +88,25 @@
       "slug": "SeqSwitch",
       "name": "Sequential Switch 8->1",
       "description": "",
-      "tags": ["Switch", "Sequencer"]
+      "tags": ["Switch", "Sequencer", "Polyphonic"]
     },
     {
       "slug": "SeqSwitch2",
       "name": "Sequential Switch 1->8",
       "description": "",
-      "tags": ["Switch"]
+      "tags": ["Switch","Polyphonic"]
     },
     {
       "slug": "ShiftRegister",
       "name": "Shift Register",
       "description": "",
-      "tags": ["Sample and hold"]
+      "tags": ["Sample and hold", "Polyphonic"]
     },
     {
       "slug": "Evolution",
       "name": "Evolution",
       "description": "",
-      "tags": ["Serquencer","Sample and hold"]
+      "tags": ["Serquencer","Sample and hold", "Polyphonic"]
     },
     {
       "slug": "Sum8mk2",

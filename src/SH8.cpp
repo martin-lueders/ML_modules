@@ -113,7 +113,7 @@ void SH8::process(const ProcessArgs &args) {
 		if( inputs[TRIG1_INPUT+i].isConnected() ) {
 			if ( inputs[TRIG1_INPUT+i].getChannels()==1 ) {
 				float val = inputs[TRIG1_INPUT+i].getVoltage();
-				for(int c=0; c<in_channels; c++) trig[c] = val;
+				for(int c=0; c < PORT_MAX_CHANNELS; c++) trig[c] = val;
 			} else {
 				inputs[TRIG1_INPUT+i].readVoltages(trig);
 			}
