@@ -37,119 +37,138 @@ struct TrigBuf : Module {
 
 	void process(const ProcessArgs &args) override;
 
-	float arm1=0.0, arm2=0.0;
-	float out1=0.0, out2=0.0;
+	float arm1[PORT_MAX_CHANNELS], arm2[PORT_MAX_CHANNELS];
+	float out1[PORT_MAX_CHANNELS], out2[PORT_MAX_CHANNELS];
 
-	bool gate1=false, gate2=false;
-	bool delayed1=false, delayed2=false;
 
-	dsp::SchmittTrigger armTrigger1, armTrigger2;
-	dsp::SchmittTrigger gateTrigger1, gateTrigger2;
+
+	bool gate1[PORT_MAX_CHANNELS],    gate2[PORT_MAX_CHANNELS];
+	bool delayed1[PORT_MAX_CHANNELS], delayed2[PORT_MAX_CHANNELS];
+
+	dsp::SchmittTrigger armTrigger1[PORT_MAX_CHANNELS],  armTrigger2[PORT_MAX_CHANNELS];
+	dsp::SchmittTrigger gateTrigger1[PORT_MAX_CHANNELS], gateTrigger2[PORT_MAX_CHANNELS];
 
 	void onReset() override {
 
-		arm1=0.0;
-		arm2=0.0;
-		out1=0.0;
-		out2=0.0;
-		gate1=false;
-		gate2=false;
-		delayed1=false;
-		delayed2=false;
+		memset(arm1, 0, PORT_MAX_CHANNELS*sizeof(float));
+		memset(arm2, 0, PORT_MAX_CHANNELS*sizeof(float));
+		memset(out1, 0, PORT_MAX_CHANNELS*sizeof(float));
+		memset(out2, 0, PORT_MAX_CHANNELS*sizeof(float));
+
+		memset(gate1, 0, PORT_MAX_CHANNELS*sizeof(bool));
+		memset(gate2, 0, PORT_MAX_CHANNELS*sizeof(bool));
+		memset(delayed1, 0, PORT_MAX_CHANNELS*sizeof(bool));
+		memset(delayed2, 0, PORT_MAX_CHANNELS*sizeof(bool));	
+	
 	};
 
 private:
 
 	bool neg_slope(bool gate, bool last_gate) { return (gate!=last_gate) && last_gate; }
 
-
 };
-
 
 
 
 void TrigBuf::process(const ProcessArgs &args) {
 
+	bool last_gate1[PORT_MAX_CHANNELS];
+	bool last_gate2[PORT_MAX_CHANNELS];
 
-	bool last_gate1 = gate1;
-	bool last_gate2 = gate2;
-       
+	memcpy(last_gate1, gate1, PORT_MAX_CHANNELS * sizeof(bool));
+	memcpy(last_gate2, gate2, PORT_MAX_CHANNELS * sizeof(bool));
 
-	gateTrigger1.process(inputs[GATE1_INPUT].getNormalVoltage(0.0f));
-	gate1 = (gateTrigger1.isHigh());
+	float gate1_in[PORT_MAX_CHANNELS], gate2_in[PORT_MAX_CHANNELS];
 
-	gateTrigger2.process(inputs[GATE2_INPUT].getNormalVoltage(inputs[GATE1_INPUT].getNormalVoltage(0.0f)));
-	gate2 = gateTrigger2.isHigh();
-	
+	memset(gate1_in, 0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(gate2_in, 0, PORT_MAX_CHANNELS*sizeof(float));
 
-	
-	if( armTrigger1.process(inputs[ARM1_INPUT].getNormalVoltage(0.0f) + params[ARM1_PARAM].getValue() ) ) { 
-		if (!gate1) {arm1 = 10.0;}
-		else { 
-				// arm1 = 0.0;
-			delayed1 = true;
-		};
-	}
-	
+	int arm1_channels = inputs[ARM1_INPUT].getChannels(); arm1_channels = MAX(1, arm1_channels);
+	int arm2_channels = inputs[ARM2_INPUT].getChannels(); arm2_channels = MAX(1, arm2_channels);
 
-    if(gate1) {
-		if(arm1 > 5.0) {
-			out1 = 10.0;
-		} else {
-			out1 = 0.0;
-		};
-	}
-	else {
-		if(out1 > 5.0) {
-			arm1 = 0.0;
-			out1 = 0.0;
-		};
-	};
+	int gate1_channels = inputs[GATE1_INPUT].getChannels();
+	int gate2_channels = inputs[GATE2_INPUT].getChannels();
 
-	if( delayed1 && neg_slope(gate1, last_gate1) ) {
+	int channels_1 = arm1_channels==1?gate1_channels:MIN(arm1_channels, gate1_channels);
+	int channels_2 = arm2_channels==1?gate2_channels:MIN(arm2_channels, gate2_channels);
 
-		arm1 = 10.0;
-		delayed1 = false;
-
-	};
-
-
-
-	if( armTrigger2.process(inputs[ARM2_INPUT].getNormalVoltage(inputs[ARM1_INPUT].getNormalVoltage(0.0f)) + params[ARM2_PARAM].getValue() ) ) { 
-		if (!gate2) {arm2 = 10.0;}
-		else { 
-			// arm2 = 0.0;
-			delayed2 = true;
-		};
-	};
-	
-
-	if (gate2) {
-
-		if(arm2 > 5.0) out2 = 10.0;
-		else {
-			out2 = 0.0;
-		};
+	memcpy(gate1_in, inputs[GATE1_INPUT].getVoltages(), gate1_channels*sizeof(float) );
+	if(inputs[GATE2_INPUT].isConnected()) {
+		memcpy(gate2_in, inputs[GATE2_INPUT].getVoltages(), gate2_channels*sizeof(float) );
 	} else {
-		if(out2 > 5.0) {
-			arm2 = 0.0;
-			out2 = 0.0;
+		gate2_channels = gate1_channels;
+		memcpy(gate2_in, gate1_in, gate2_channels*sizeof(float) );
+	}
+
+
+	// if gateX_channel == 1: use same gate (clock) for all channels
+	// if armX_channels == 1: use same arm for all channels
+	// if both > 1 channels_X = MIN(gateX_channels, armX_Channels) (other channels will never be triggered)
+
+	for(int c=0; c < channels_1; c++) {
+
+		gateTrigger1[c].process(gate1_in[c]);
+		gate1[c] = gateTrigger1[c].isHigh();
+
+		if( armTrigger1[c].process(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c) + params[ARM1_PARAM].getValue() ) ) { 
+			if (!gate1[c]) {arm1[c] = 10.0;}
+			else { delayed1[c] = true;}
+		}
+
+	  if(gate1[c]) {
+			out1[c] = (arm1[c] > 5.0f) ? 10.0f : 0.0f;
+		} 
+		else {
+			if(out1[c] > 5.0f) {
+				arm1[c] = 0.0f;
+				out1[c] = 0.0f;
+			};
 		};
-	};
 
-	if( delayed2 && neg_slope(gate2, last_gate2) ) {
+		if( delayed1[c] && neg_slope(gate1[c], last_gate1[c]) ) {
+			arm1[c] = 10.0;
+			delayed1[c] = false;
+		};
 
-		arm2 = 10.0;
-		delayed2 = false;
-
-	};
+	}
 
 
-	outputs[OUT1_OUTPUT].setVoltage(out1);
-	outputs[OUT2_OUTPUT].setVoltage(out2);
 
-	lights[ARM1_LIGHT].value = arm1;
-	lights[ARM2_LIGHT].value = arm2;
+	for(int c=0; c < channels_2; c++) {
+
+		gateTrigger2[c].process(gate2_in[c]);
+		gate2[c] = gateTrigger2[c].isHigh();
+	
+		if( armTrigger2[c].process(inputs[ARM2_INPUT].getNormalPolyVoltage(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c), c) + params[ARM2_PARAM].getValue() ) ) { 
+			if (!gate2) {arm2[c] = 10.0f;}
+			else {delayed2[c] = true;};
+		};
+	
+		if (gate2[c]) {
+			out2[c] = (arm2[c] > 5.0f)? 10.0f : 0.0f;
+		} else {
+			if(out2[c] > 5.0) {
+				arm2[c] = 0.0;
+				out2[c] = 0.0;
+			};
+		};
+
+		if( delayed2[c] && neg_slope(gate2[c], last_gate2[c]) ) {
+			arm2[c] = 10.0f;
+			delayed2[c] = false;
+		};
+
+	}
+
+
+	outputs[OUT1_OUTPUT].setChannels(channels_1);
+	outputs[OUT2_OUTPUT].setChannels(channels_2);
+
+	outputs[OUT1_OUTPUT].writeVoltages(out1);
+	outputs[OUT2_OUTPUT].writeVoltages(out2);
+
+	lights[ARM1_LIGHT].setBrightness(arm1[0]);
+	lights[ARM2_LIGHT].setBrightness(arm2[0]);
 };
 
 

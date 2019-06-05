@@ -1,10 +1,10 @@
 {
   "slug": "ML_modules",
-  "name": "ML_modules",
+  "name": "ML modules",
   "version": "1.0.0",
   "license": "BSD-3-Clause",
   "author": "Martin Lueders",
-  "brand": "ML_modules",
+  "brand": "ML modules",
   "authorEmail": "mlmodules@gmail.com",
   "authorUrl": "",
   "pluginUrl": "https://github.com/martin-lueders/ML_modules/wiki",
@@ -124,7 +124,7 @@
       "slug": "TrigBuf",
       "name": "Trigger Buffer",
       "description": "",
-      "tags": ["Utility", "Logic", "Dual"]
+      "tags": ["Utility", "Logic", "Dual", "Polyphonic"]
     },
     {
       "slug": "TrigDelay",
