@@ -1,5 +1,6 @@
 #include "ML_modules.hpp"
 
+using simd::float_4;
 
 struct OctaSwitch : Module {
 	enum ParamIds {
@@ -24,13 +25,11 @@ struct OctaSwitch : Module {
 
 	float threshold = 0.0;
 
-
 	OctaSwitch() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
 		configParam(OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0);
  
 	};
-
 
 	void process(const ProcessArgs &args) override;
 
@@ -40,12 +39,8 @@ struct OctaSwitch : Module {
 
 void OctaSwitch::process(const ProcessArgs &args) {
 
-	float gate[PORT_MAX_CHANNELS];
-
-	memset(gate, 0, PORT_MAX_CHANNELS * sizeof(float));
-
 	threshold = inputs[THRESHOLD_INPUT].getNormalVoltage(params[THRESHOLD_PARAM].getValue());
-
+	float_4 threshold_4 = float_4(threshold);
 
 	for(int i=0; i<8; i++) {
 		
@@ -56,17 +51,26 @@ void OctaSwitch::process(const ProcessArgs &args) {
 		int in_channels = MAX(in_A_channels, in_B_channels);
 		int channels = MAX(gate_channels, in_channels);
 
+		for(int c=0; c<channels; c+=4) {
+
+			simd::float_4 gates = inputs[GATE_INPUT+i].getPolyVoltageSimd<float_4>(c);
+			simd::float_4 in_A  = inputs[A_INPUT+i].getPolyVoltageSimd<float_4>(c);
+			simd::float_4 in_B  = inputs[B_INPUT+i].getPolyVoltageSimd<float_4>(c);
+
+			simd::float_4 out = ifelse( gates > threshold_4, in_B, in_A);
+
+			out.store(outputs[OUT_OUTPUT+i].getVoltages(c));
+
+		}
+		/* 
 		if( inputs[GATE_INPUT+i].isConnected() ) inputs[GATE_INPUT+i].readVoltages(gate);
 
 		outputs[OUT_OUTPUT+i].setChannels(channels);
 		for(int c=0; c<channels; c++) {
 			outputs[OUT_OUTPUT+i].setVoltage( gate[c]>threshold ? inputs[B_INPUT+i].getNormalPolyVoltage(0.0f, c) : inputs[A_INPUT+i].getNormalPolyVoltage(0.0f, c), c);
 		}
+		*/
 	}
-
-
-
-
 };
 
 struct ThresholdDisplayWidget : TransparentWidget {

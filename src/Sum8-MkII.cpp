@@ -1,4 +1,8 @@
 #include "ML_modules.hpp"
+#include "simd_mask.hpp"
+
+
+using simd::float_4;
 
 
 struct Sum8mk2 : Module {
@@ -18,7 +22,8 @@ struct Sum8mk2 : Module {
 		NUM_LIGHTS
 	};
 
-
+	ChannelMask channelMask;
+	
 	Sum8mk2() { 
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
 		for(int i=0; i<8; i++) {
@@ -35,8 +40,8 @@ struct Sum8mk2 : Module {
 
 void Sum8mk2::process(const ProcessArgs &args) {
 
-	float out[PORT_MAX_CHANNELS];
-	float in[PORT_MAX_CHANNELS] = {};
+	float_4 out[4];
+	float_4 in[4];
 
 	int channels[8];
 	int max_channels = 0;
@@ -46,16 +51,17 @@ void Sum8mk2::process(const ProcessArgs &args) {
 		max_channels = c>max_channels?c:max_channels;
 	}
 
-	outputs[OUT_OUTPUT].setChannels(max_channels);
+	outputs[OUT_OUTPUT].setChannels(std::max(1,max_channels));
 
 	for(int i=0; i<8; i++) {
 		if(inputs[IN_INPUT+i].isConnected()) {
-			float sign = (2*params[POLARITY_PARAM+i].getValue() - 1.0);
-			inputs[IN_INPUT+i].readVoltages(in);
-			for(int c=0; c<channels[i]; c++) out[c]+=in[c]  * sign;
+			float_4 sign = float_4(2*params[POLARITY_PARAM+i].getValue() - 1.0f);
+			load_input(inputs[IN_INPUT+i], in, channels[i]);
+			channelMask.apply(in, channels[i]);
+			for(int c=0; c<channels[i]; c+=4) out[c]+=in[c] * sign;
 		}
 	}
-	outputs[OUT_OUTPUT].writeVoltages(out);
+	for(int c=0; c<max_channels; c+=4) out[c/4].store(outputs[OUT_OUTPUT].getVoltages(c));
 
 };
 

@@ -1,5 +1,7 @@
 #include "ML_modules.hpp"
+#include "simd_mask.hpp"
 
+using simd::float_4;
 
 struct OctaTimes : Module {
 	enum ParamIds {
@@ -20,22 +22,16 @@ struct OctaTimes : Module {
 		NUM_LIGHTS
 	};
 
-	dsp::SchmittTrigger trigger[8];
 	float out[8];
 
-
+	ChannelMask channelMask;
 
 	OctaTimes() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
 	    configParam(OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0);
-		onReset();
 	};
 
 	void process(const ProcessArgs &args) override;
-
-	void onReset() override {
-		for(int i=0; i<8; i++) out[i] = 0.0; 
-	};
 
 };
 
@@ -46,8 +42,6 @@ void OctaTimes::process(const ProcessArgs &args) {
 	float in_A[8], in_B[8];
 
 	float normal = params[MULT_PARAM].getValue()==1?1.0f:10.f;
-
-
 	float multiplier = params[MULT_PARAM].getValue()==1?1.f:0.1f;
 
 	in_A[0] = inputs[IN1_INPUT].getNormalVoltage(0.f);
@@ -71,45 +65,47 @@ void OctaTimes::process(const ProcessArgs &args) {
 
 void OctaTimes::process(const ProcessArgs &args) {
 
-	float in_A[PORT_MAX_CHANNELS], in_B[PORT_MAX_CHANNELS], out[PORT_MAX_CHANNELS], sum[PORT_MAX_CHANNELS];
+	float_4 in_A[4], in_B[4], out[4], sum[4];
 
-	int channels_A = 0, channels_B = 0, channels_OUT = 0;
+	float_4 normal     = float_4(params[MULT_PARAM].getValue()==1?1.0f:10.f);
+	float_4 multiplier = float_4(params[MULT_PARAM].getValue()==1?1.f:0.1f);
 
-	float multiplier = params[MULT_PARAM].getValue()==1?1.f:0.1f;
+	int channels_A = 0, channels_B = 0, channels_OUT = 0, channels_SUM = 0;
 
-	memset(in_A, 0, PORT_MAX_CHANNELS*sizeof(float));
-	if(params[MULT_PARAM].getValue()==1) {
-		for(int c=0; c < PORT_MAX_CHANNELS; c++) in_B[c] = 1.0f;
-	} else {
-		for(int c=0; c < PORT_MAX_CHANNELS; c++) in_B[c] = 10.0f;
-	}
-	memset(out,  0, PORT_MAX_CHANNELS*sizeof(float));
-	memset(sum,  0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(in_A, 0, sizeof(in_A));
+	memset(out,  0, sizeof(out));
+	memset(sum,  0, sizeof(sum));
+
+	for(int c=0; c<4; c++) in_B[c] = normal;
 
 	for(int i=0; i<8; i++) {
 
-		if( inputs[IN_A_INPUT+i].isConnected() ) {
-			channels_A = inputs[IN_A_INPUT+i].getChannels();
-			inputs[IN_A_INPUT+i].readVoltages(in_A);
-		}
-		if( inputs[IN_B_INPUT+i].isConnected() ) {
-			channels_B = inputs[IN_B_INPUT+i].getChannels();
-			inputs[IN_B_INPUT+i].readVoltages(in_B);
-		}
-		channels_OUT = MAX(channels_A, channels_B);
+		int tmp_A = inputs[IN_A_INPUT+i].getChannels();
+		int tmp_B = inputs[IN_B_INPUT+i].getChannels();
 
-		for(int c=0; c<channels_OUT; c++) {
-			float tmp = clamp(in_A[c] * in_B[c] * multiplier, -12.f, 12.f );
-			out[c] = tmp;
-			sum[c] += tmp;
+		channels_A = tmp_A>0 ? tmp_A : channels_A; 
+		channels_B = tmp_B>0 ? tmp_B : channels_B; 
+
+		load_input(inputs[IN_A_INPUT+i], in_A, tmp_A);
+		if(tmp_A>1) channelMask.apply_all(in_A, tmp_A);
+
+		load_input(inputs[IN_B_INPUT+i], in_B, tmp_B);
+		if(tmp_B>1) channelMask.apply_all(in_B, tmp_B);
+
+		channels_OUT = MAX(channels_A, channels_B);
+		channels_SUM = MAX(channels_OUT, channels_SUM);
+
+		for(int c=0; c<channels_OUT; c+=4) {
+			out[c/4] = clamp( in_A[c/4] * in_B[c/4] * multiplier, float_4(-12.0f), float_4(12.f) );
+			sum[c/4] += out[c/4];
 		}
 		outputs[OUT_OUTPUT+i].setChannels(channels_OUT);
-		outputs[OUT_OUTPUT+i].writeVoltages(out);
-		outputs[SUM_OUTPUT].writeVoltages(sum);
-	
+		for(int c=0; c<channels_OUT; c+=4) out[c/4].store(outputs[OUT_OUTPUT+i].getVoltages(c));	
 	};
-
+	outputs[SUM_OUTPUT].setChannels(channels_SUM);
+	for(int c=0; c<channels_SUM; c+=4) sum[c/4].store(outputs[SUM_OUTPUT].getVoltages(c));	
 };
+
 
 
 struct OctaTimesWidget : ModuleWidget {

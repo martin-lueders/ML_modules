@@ -1,4 +1,9 @@
 #include "ML_modules.hpp"
+#include "simd_mask.hpp"
+#include "PulseGenerator_4.hpp"
+
+
+using simd::float_4;
 
 
 struct myTrigger {

@@ -1,4 +1,7 @@
 #include "ML_modules.hpp"
+#include "simd_mask.hpp"
+
+using simd::float_4;
 
 
 struct Quant : Module {
@@ -31,40 +34,59 @@ struct Quant : Module {
 };
 
 
-static void stepPart(Input &in, Param &p_amount, Output &out) {
+inline float_4 semi_quant_4(const float_4 &v, float amount) {
 
 	using namespace simd;
 
-	int channels = in.getChannels();
-	int channels_padded = channels + (4-channels%4);
+	float_4 octave = round(v);
+	float_4 rest = v - 1.0*octave;
+	float_4 semi   = round( rest*12.0 );
+	float_4 quantized = 1.0*octave + semi/12.0;
+	float_4 result = quantized + amount*(v-quantized);
 
-	float in_values[channels_padded];
-	float out_values[channels_padded];
-
-	out.setChannels(channels);
-
-	float amount = p_amount.value;
-	
-	if (in.isConnected()) 	in.readVoltages(in_values);
-	else                    memset(in_values, 0, channels_padded*sizeof(float));
-
-	for(int batch=0; batch<channels_padded/4; batch++) {
-
-		float_4 v=float_4::load(&in_values[4*batch]);
-		float_4 octave = round(v);
-		float_4 rest = v - 1.0*octave;
-		float_4 semi   = round( rest*12.0 );
-		float_4 quantized = 1.0*octave + semi/12.0;
-		float_4 result = quantized + amount*(v-quantized);
-		result.store(&out_values[4*batch]);
-	}
-
-	out.writeVoltages(out_values);
+	return result;
 }
 
 void Quant::process(const ProcessArgs &args) {
-	if (outputs[OUT1_OUTPUT].isConnected()) stepPart(inputs[IN1_INPUT], params[AMOUNT1_PARAM], outputs[OUT1_OUTPUT]);
-	if (outputs[OUT2_OUTPUT].isConnected()) stepPart(inputs[IN2_INPUT], params[AMOUNT2_PARAM], outputs[OUT2_OUTPUT]);
+	
+	if (outputs[OUT1_OUTPUT].isConnected()) {
+		float_4 in[4];
+		float amount = params[AMOUNT1_PARAM].getValue();
+
+		int channels = inputs[IN1_INPUT].getChannels();
+		if(channels>0) {
+			load_input(inputs[IN1_INPUT], in, channels);
+			outputs[OUT1_OUTPUT].setChannels(channels);
+
+			for(int c=0; c<channels; c+=4) {
+				float_4 out = semi_quant_4(in[c/4], amount);
+				out.store(outputs[OUT1_OUTPUT].getVoltages(c));
+			}
+		} else {
+			outputs[OUT1_OUTPUT].setChannels(1);
+			outputs[OUT1_OUTPUT].setVoltage(0.0f);
+		};
+	}
+	
+	if (outputs[OUT2_OUTPUT].isConnected()) {
+		float_4 in[4];
+		float amount = params[AMOUNT2_PARAM].getValue();
+
+		int channels = inputs[IN2_INPUT].getChannels();
+		if(channels>0) {
+			load_input(inputs[IN2_INPUT], in, channels);
+			outputs[OUT2_OUTPUT].setChannels(channels);
+
+			for(int c=0; c<channels; c+=4) {
+				float_4 out = semi_quant_4(in[c/4], amount);
+				out.store(outputs[OUT2_OUTPUT].getVoltages(c));
+			}
+		} else {
+			outputs[OUT2_OUTPUT].setChannels(1);
+			outputs[OUT2_OUTPUT].setVoltage(0.0f);
+		};
+	}
+	
 }
 
 

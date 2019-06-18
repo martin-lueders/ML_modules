@@ -1,4 +1,7 @@
 #include "ML_modules.hpp"
+#include "simd_mask.hpp"
+
+using simd::float_4;
 
 
 struct OctaPlus : Module {
@@ -18,6 +21,7 @@ struct OctaPlus : Module {
 		NUM_LIGHTS
 	};
 
+	ChannelMask channelMask;
 
 	OctaPlus() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
@@ -31,30 +35,34 @@ struct OctaPlus : Module {
 
 void OctaPlus::process(const ProcessArgs &args) {
 
-	float in_A[PORT_MAX_CHANNELS], in_B[PORT_MAX_CHANNELS], out[PORT_MAX_CHANNELS];
+	float_4 in_A[4], in_B[4], out[4];
 
 	int channels_A = 0, channels_B = 0, channels_OUT = 0;
 
-	memset(in_A, 0, PORT_MAX_CHANNELS*sizeof(float));
-	memset(in_B, 0, PORT_MAX_CHANNELS*sizeof(float));
-	memset(out,  0, PORT_MAX_CHANNELS*sizeof(float));
+	memset(in_A, 0, sizeof(in_A));
+	memset(in_B, 0, sizeof(in_B));
+	memset(out,  0, sizeof(out));
 
 	for(int i=0; i<8; i++) {
 
-		if( inputs[IN_A_INPUT+i].isConnected() ) {
-			channels_A = inputs[IN_A_INPUT+i].getChannels();
-			inputs[IN_A_INPUT+i].readVoltages(in_A);
-		}
-		if( inputs[IN_B_INPUT+i].isConnected() ) {
-			channels_B = inputs[IN_B_INPUT+i].getChannels();
-			inputs[IN_B_INPUT+i].readVoltages(in_B);
-		}
+		int tmp_A = inputs[IN_A_INPUT+i].getChannels();
+		int tmp_B = inputs[IN_B_INPUT+i].getChannels();
+
+		channels_A = tmp_A>0 ? tmp_A : channels_A; 
+		channels_B = tmp_B>0 ? tmp_B : channels_B; 
+
+		load_input(inputs[IN_A_INPUT+i], in_A, tmp_A);
+		if(tmp_A>1) channelMask.apply_all(in_A, tmp_A);
+
+		load_input(inputs[IN_B_INPUT+i], in_B, tmp_B);
+		if(tmp_B>1) channelMask.apply_all(in_B, tmp_B);
+
 		channels_OUT = MAX(channels_A, channels_B);
 
-		for(int c=0; c<channels_OUT; c++) out[c] = in_A[c] + in_B[c];
+		for(int c=0; c<channels_OUT; c+=4) out[c/4] = in_A[c/4] + in_B[c/4];
+
 		outputs[OUT_OUTPUT+i].setChannels(channels_OUT);
-		outputs[OUT_OUTPUT+i].writeVoltages(out);
-	
+		for(int c=0; c<channels_OUT; c+=4) out[c/4].store(outputs[OUT_OUTPUT+i].getVoltages(c));	
 	};
 
 };
