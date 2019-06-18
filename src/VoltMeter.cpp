@@ -76,7 +76,7 @@ struct VoltDisplayWidget : TransparentWidget {
 
     char display_string[10];
 
-    if(value) sprintf(display_string,"%6.2f",*value);
+    if(value) sprintf(display_string,"%7.3f",*value);
 
     Vec textPos = Vec(6.0f, 17.0f);
 
@@ -86,7 +86,7 @@ struct VoltDisplayWidget : TransparentWidget {
 
     textColor = nvgRGB(0xda, 0xe9, 0x29);
     nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\\\", NULL);
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\\\\\", NULL);
 
 	if(on && *on) {
 	    textColor = nvgRGB(0xf0, 0x00, 0x00);
