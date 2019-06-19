@@ -15,73 +15,73 @@
     {
       "slug": "BPMdetect",
       "name": "BPM Tools",
-      "description": "",
+      "description": "detect incoming clock and output voltages for Fundamental LFO and Delay",
       "tags": ["Clock generator", "Clock modulator"]
     },
     {
       "slug": "Constants",
       "name": "Constants",
-      "description": "",
+      "description": "Output constant voltages corresponding to common intervals",
       "tags": ["Utility"]
     },
     {
       "slug": "Counter",
       "name": "Counter",
-      "description": "",
+      "description": "Create Trigger pulses after a certain number of clock ticks",
       "tags": ["Clock modulator"]
     },
     {
       "slug": "FreeVerb",
       "name": "FreeVerb",
-      "description": "",
+      "description": "VCV Rack implementation of the good old Freeverb",
       "tags": ["Effect","Reverb"]
     },
     {
       "slug": "OctaFlop",
       "name": "OctaFlop",
-      "description": "",
+      "description": "8 Flip Flops, pre-wired as binary counter",
       "tags": ["Utility","Clock modulator"]
     },
     {
       "slug": "OctaPlus",
       "name": "OctaPlus",
-      "description": "",
+      "description": "8 fold Adder.",
       "tags": ["Utility", "Mixer", "Polyphonic"]
     },
     {
       "slug": "OctaSwitch",
       "name": "OctaSwitch",
-      "description": "",
+      "description": "8 fold switch with CV controllable switching point",
       "tags": ["Switch", "Polyphonic"]
     },
     {
       "slug": "OctaTimes",
       "name": "OctaTimes",
-      "description": "",
+      "description": "8 fold multiplier",
       "tags": ["Utility","Ring modulator", "Polyphonic"]
     },
     {
       "slug": "OctaTrig",
       "name": "OctaTrig",
-      "description": "",
+      "description": "Gate tp Trigger converter",
       "tags": ["Clock modulator", "Polyphonic"]
     },
     {
       "slug": "Quantizer",
       "name": "Quantizer (h-bar)",
-      "description": "",
+      "description": "Semitone quantizer",
       "tags": ["Quantizer", "Polyphonic"]
     },
     {
       "slug": "Quantum",
       "name": "Quantum",
-      "description": "",
+      "description": "Quantizer with selectable notes",
       "tags": ["Quantizer", "Polyphonic"]
     },
     {
       "slug": "SH8",
       "name": "S&H 8",
-      "description": "",
+      "description": "8 fold Sample and Hold",
       "tags": ["Sample and hold", "Polyphonic"]
     },
     {
@@ -99,37 +99,37 @@
     {
       "slug": "ShiftRegister",
       "name": "Shift Register",
-      "description": "",
+      "description": "Analogue shift register",
       "tags": ["Sample and hold", "Polyphonic"]
     },
     {
       "slug": "Evolution",
       "name": "Evolution",
-      "description": "",
-      "tags": ["Serquencer","Sample and hold", "Polyphonic"]
+      "description": "Shift register based random sequencer",
+      "tags": ["Sequencer","Sample and hold", "Polyphonic"]
     },
     {
       "slug": "Sum8mk2",
       "name": "Sum8 MkII",
-      "description": "",
+      "description": "Summer with selectable sign",
       "tags": ["Mixer", "Polyphonic"]
     },
     {
       "slug": "Sum8",
       "name": "Sum8",
-      "description": "",
+      "description": "simple summer",
       "tags": ["Mixer", "Polyphonic"]
     },
     {
       "slug": "TrigBuf",
       "name": "Trigger Buffer",
-      "description": "",
+      "description": "A trigger can be buffered, so that the next incoming clock will create an pulse.",
       "tags": ["Utility", "Logic", "Dual", "Polyphonic"]
     },
     {
       "slug": "TrigDelay",
       "name": "Trigger Delay",
-      "description": "",
+      "description": "Trigger delay and gate length modulator",
       "tags": ["Utility","Delay", "Dual"]
     },
     {
