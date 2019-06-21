@@ -51,6 +51,8 @@ void Sum8mk2::process(const ProcessArgs &args) {
 		max_channels = c>max_channels?c:max_channels;
 	}
 
+	memset(out, 0, sizeof(out));
+
 	outputs[OUT_OUTPUT].setChannels(std::max(1,max_channels));
 
 	for(int i=0; i<8; i++) {

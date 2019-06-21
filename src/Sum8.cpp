@@ -56,6 +56,8 @@ void Sum8::process(const ProcessArgs &args) {
 
 	outputs[OUT_OUTPUT].setChannels(std::max(1,max_channels));
 
+	memset(out, 0, sizeof(out));
+
 	for(int i=0; i<8; i++) {
 		if(inputs[IN1_INPUT+i].isConnected()) {
 			load_input(inputs[IN1_INPUT+i], in, channels[i]);

@@ -36,20 +36,22 @@ struct Constants : Module {
 
 	double semi = 1.0/12.0;
 
-	outputs[P_1_OUTPUT].value  = semi;
-	outputs[P_2_OUTPUT].value  = 2*semi;
-	outputs[P_3_OUTPUT].value  = 3*semi;
-	outputs[P_4_OUTPUT].value  = 4*semi;
-	outputs[P_5_OUTPUT].value  = 5*semi;
-	outputs[P_7_OUTPUT].value  = 7*semi;
+	for(int i=0; i<NUM_OUTPUTS; i++) outputs[i].setChannels(1);
+
+	outputs[P_1_OUTPUT].setVoltage(semi);
+	outputs[P_2_OUTPUT].setVoltage(2*semi);
+	outputs[P_3_OUTPUT].setVoltage(3*semi);
+	outputs[P_4_OUTPUT].setVoltage(4*semi);
+	outputs[P_5_OUTPUT].setVoltage(5*semi);
+	outputs[P_7_OUTPUT].setVoltage(7*semi);
 	outputs[P_12_OUTPUT].setVoltage(1.0);
 
-	outputs[M_1_OUTPUT].value  = - semi;
-	outputs[M_2_OUTPUT].value  = - 2*semi;
-	outputs[M_3_OUTPUT].value  = - 3*semi;
-	outputs[M_4_OUTPUT].value  = - 4*semi;
-	outputs[M_5_OUTPUT].value  = - 5*semi;
-	outputs[M_7_OUTPUT].value  = - 7*semi;
+	outputs[M_1_OUTPUT].setVoltage(- semi  );
+	outputs[M_2_OUTPUT].setVoltage(- 2*semi);
+	outputs[M_3_OUTPUT].setVoltage(- 3*semi);
+	outputs[M_4_OUTPUT].setVoltage(- 4*semi);
+	outputs[M_5_OUTPUT].setVoltage(- 5*semi);
+	outputs[M_7_OUTPUT].setVoltage(- 7*semi);
 	outputs[M_12_OUTPUT].setVoltage(- 1.0);
 
 	};
@@ -62,6 +64,27 @@ struct Constants : Module {
 
 void Constants::process(const ProcessArgs &args) {
 
+
+	double semi = 1.0/12.0;
+
+	for(int i=0; i<NUM_OUTPUTS; i++) outputs[i].setChannels(1);
+
+	outputs[P_1_OUTPUT].setVoltage(semi);
+	outputs[P_2_OUTPUT].setVoltage(2*semi);
+	outputs[P_3_OUTPUT].setVoltage(3*semi);
+	outputs[P_4_OUTPUT].setVoltage(4*semi);
+	outputs[P_5_OUTPUT].setVoltage(5*semi);
+	outputs[P_7_OUTPUT].setVoltage(7*semi);
+	outputs[P_12_OUTPUT].setVoltage(1.0);
+
+	outputs[M_1_OUTPUT].setVoltage(- semi  );
+	outputs[M_2_OUTPUT].setVoltage(- 2*semi);
+	outputs[M_3_OUTPUT].setVoltage(- 3*semi);
+	outputs[M_4_OUTPUT].setVoltage(- 4*semi);
+	outputs[M_5_OUTPUT].setVoltage(- 5*semi);
+	outputs[M_7_OUTPUT].setVoltage(- 7*semi);
+	outputs[M_12_OUTPUT].setVoltage(- 1.0);
+	
 
 };
 
