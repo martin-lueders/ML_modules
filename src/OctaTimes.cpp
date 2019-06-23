@@ -36,32 +36,6 @@ struct OctaTimes : Module {
 };
 
 
-/*
-void OctaTimes::process(const ProcessArgs &args) {
-
-	float in_A[8], in_B[8];
-
-	float normal = params[MULT_PARAM].getValue()==1?1.0f:10.f;
-	float multiplier = params[MULT_PARAM].getValue()==1?1.f:0.1f;
-
-	in_A[0] = inputs[IN1_INPUT].getNormalVoltage(0.f);
-//	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].normalize(in_A[i-1]);
-	for(int i=1; i<8; i++) in_A[i] = inputs[IN1_INPUT+i].getNormalVoltage(0.f);
-
-	in_B[0] = inputs[IN_B_1_INPUT].getNormalVoltage(normal);
-	for(int i=1; i<8; i++) in_B[i] = inputs[IN_B_1_INPUT+i].getNormalVoltage(in_B[i-1]);
-
-	float tmp;
-	float sum = 0.0f;
-	for(int i=0; i<8; i++) {
-		tmp = clamp(in_A[i] * in_B[i] * multiplier , -12.f, 12.f);
-		outputs[OUT1_OUTPUT+i].setVoltage(tmp);
-		sum += tmp;
-	};
-
-	outputs[SUM_OUTPUT].setVoltage(clamp(sum,-12.f,12.f));
-};
-*/
 
 void OctaTimes::process(const ProcessArgs &args) {
 
@@ -87,10 +61,7 @@ void OctaTimes::process(const ProcessArgs &args) {
 		channels_B = tmp_B>0 ? tmp_B : channels_B; 
 
 		load_input(inputs[IN_A_INPUT+i], in_A, tmp_A);
-		if(tmp_A>1) channelMask.apply_all(in_A, tmp_A);
-
 		load_input(inputs[IN_B_INPUT+i], in_B, tmp_B);
-		if(tmp_B>1) channelMask.apply_all(in_B, tmp_B);
 
 		channels_OUT = MAX(channels_A, channels_B);
 		channels_SUM = MAX(channels_OUT, channels_SUM);

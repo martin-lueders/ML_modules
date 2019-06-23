@@ -18,6 +18,26 @@ struct SH_channel {
 
 };
 
+struct Random_Generator {
+
+	__m128i x1, x2;
+	simd::float_4 fscale;
+
+	Random_Generator() {
+		fscale = float_4(10.0f/0xffffffffu);
+		x1 = _mm_set1_epi32(0x67452301);
+		x2 = _mm_setr_epi32(0xefcdab89, 0xefcdcb89, 0xefcdab29, 0xefcdab81);
+	};
+
+	~Random_Generator() {};
+
+	inline float_4 get() {
+		x1 = _mm_xor_si128(x1, x2);
+		x2 = _mm_add_epi32(x1, x2);
+		return simd::int32_4(x2) * fscale;
+	}
+};
+
 struct SH8 : Module {
 	enum ParamIds {
 		NUM_PARAMS
@@ -38,7 +58,9 @@ struct SH8 : Module {
 	SH_channel sh_channel[8];
 
 	float_4 out[8][4];
-	ChannelMask channelMask;
+	// ChannelMask channelMask;
+
+	Random_Generator rand_gen;
 
 	SH8() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
@@ -66,6 +88,8 @@ void SH8::process(const ProcessArgs &args) {
 	int in_channels = 0;
 	int trig_channels = 0;
 
+	for(int c=0; c<PORT_MAX_CHANNELS; c+=4) in[c/4] = rand_gen.get();
+
 	for(int i=0; i<8; i++) {
 
 		int new_trig_channels = inputs[TRIG_INPUT+i].getChannels();
@@ -74,14 +98,16 @@ void SH8::process(const ProcessArgs &args) {
 		if( inputs[TRIG_INPUT+i].isConnected() ) {
 			trig_channels = new_trig_channels;
 			load_input(inputs[TRIG_INPUT+i], trig, trig_channels);
-			channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
+			// channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
 		}
 		
 		if(inputs[IN_INPUT+i].isConnected() ) {
 			in_channels = new_in_channels;
 			load_input(inputs[IN_INPUT+i], in, in_channels);
-			channelMask.apply(in, in_channels==1?trig_channels:in_channels);
+			// channelMask.apply(in, in_channels==1?trig_channels:in_channels);
 		}
+
+		if(in_channels==0) in_channels = trig_channels;
 
 		sh_channel[i].step(in_channels, in, trig, out[i] );
 

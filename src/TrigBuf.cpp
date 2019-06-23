@@ -28,8 +28,8 @@ struct TrigBuf : Module {
 
 	TrigBuf() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-    configParam(TrigBuf::ARM1_PARAM, 0, 10, 0);
-    configParam(TrigBuf::ARM2_PARAM, 0, 10, 0);
+    	configParam(TrigBuf::ARM1_PARAM, 0, 10, 0);
+    	configParam(TrigBuf::ARM2_PARAM, 0, 10, 0);
 
 		onReset(); 
 	};
@@ -39,8 +39,6 @@ struct TrigBuf : Module {
 
 	float arm1[PORT_MAX_CHANNELS], arm2[PORT_MAX_CHANNELS];
 	float out1[PORT_MAX_CHANNELS], out2[PORT_MAX_CHANNELS];
-
-
 
 	bool gate1[PORT_MAX_CHANNELS],    gate2[PORT_MAX_CHANNELS];
 	bool delayed1[PORT_MAX_CHANNELS], delayed2[PORT_MAX_CHANNELS];
@@ -140,7 +138,7 @@ void TrigBuf::process(const ProcessArgs &args) {
 		gate2[c] = gateTrigger2[c].isHigh();
 	
 		if( armTrigger2[c].process(inputs[ARM2_INPUT].getNormalPolyVoltage(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c), c) + params[ARM2_PARAM].getValue() ) ) { 
-			if (!gate2) {arm2[c] = 10.0f;}
+			if (!gate2[c]) {arm2[c] = 10.0f;}
 			else {delayed2[c] = true;};
 		};
 	

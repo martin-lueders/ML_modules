@@ -89,6 +89,7 @@ struct Quantum : Module {
 	Mode mode = CLOSEST_UP;
 
 	bool transpose_select = true;
+	bool toggle_mode = false; // true means gate mode with polyphonic cables
 
 	Quantum() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); 
@@ -152,6 +153,7 @@ struct Quantum : Module {
             json_object_set_new(rootJ, "scale", scaleJ);
             json_object_set_new(rootJ, "mode", json_integer(mode));
             json_object_set_new(rootJ, "transpose_select", json_integer(transpose_select));
+			json_object_set_new(rootJ, "toggle_mode", json_integer(toggle_mode));
 
         return rootJ;
     }
@@ -168,6 +170,9 @@ struct Quantum : Module {
 
         json_t *transJ = json_object_get(rootJ, "transpose_select");
         if(transJ) transpose_select = (bool) json_integer_value(transJ);
+
+        json_t *toggleJ = json_object_get(rootJ, "toggle_mode");
+        if(toggleJ) toggle_mode = (bool) json_integer_value(toggleJ);
 
     }
 
@@ -245,10 +250,14 @@ void Quantum::process(const ProcessArgs &args) {
 						int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
 						if(semi_n<0) semi_n+=12;
 						note_memory[c] = semi_n;
-						semiCount[semi_n]++;
+						if(toggle_mode) {
+							semiCount[semi_n]++;
+						} else {
+							semiState[semi_n] = !semiState[semi_n];
+						}
 					}
 					if(setTrigger[c].wentDown()) {
-						semiCount[note_memory[c]]--;
+						if(toggle_mode) semiCount[note_memory[c]]--;
 					}
 
 				}
@@ -256,16 +265,16 @@ void Quantum::process(const ProcessArgs &args) {
 
 			for(int i=0; i<12; i++) {
 				if (semiCount[i]<0 ) semiCount[i]=0;
-				semiState[i] = semiCount[i]>0;
+				if(toggle_mode) semiState[i] = semiCount[i]>0;
 			}
 		}
 	};
 
+	float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0, 0);
 
 	for(int c=0; c<channels; c++) {
 
 		float v=inputs[IN_INPUT].getVoltage(c);
-		float t=inputs[TRANSPOSE_INPUT].getNormalVoltage(0.0, c);
 
 
 		gate = mode==LAST? 0.0: 10.0;
@@ -388,6 +397,22 @@ struct QuantumTranposeModeItem : MenuItem {
 
 };
 
+struct QuantumToggleModeItem : MenuItem {
+
+	Quantum *quantum;
+	bool toggle_mode;
+
+    void onAction(const event::Action &e) override {
+            quantum->toggle_mode = toggle_mode;
+  	};
+
+    void step() override {
+            rightText = (quantum->toggle_mode == toggle_mode)? "✔" : "";
+    };
+
+};
+
+
 struct QuantumWidget : ModuleWidget {
 	QuantumWidget(Quantum *module);
 	json_t *dataToJsonData() ;
@@ -452,6 +477,22 @@ void QuantumWidget::appendContextMenu(Menu *menu) {
 		trans_select_off_Item->transpose_select = false;
 		menu->addChild(trans_select_off_Item);
 
+
+		MenuLabel *toggleLabel = new MenuLabel();
+        selectLabel->text = "Poly Toggle Select";
+        menu->addChild(toggleLabel);
+
+		QuantumToggleModeItem *toggle_mode_on_Item = new QuantumToggleModeItem();
+		toggle_mode_on_Item->text = "Poly Gate Mode";
+		toggle_mode_on_Item->quantum = quantum;
+		toggle_mode_on_Item->toggle_mode = true;
+		menu->addChild(toggle_mode_on_Item);
+
+		QuantumToggleModeItem *toggle_mode_off_Item = new QuantumToggleModeItem();
+		toggle_mode_off_Item->text = "Legacy Mode";
+		toggle_mode_off_Item->quantum = quantum;
+		toggle_mode_off_Item->toggle_mode = false;
+		menu->addChild(toggle_mode_off_Item);
 
 };
 
