@@ -78,7 +78,7 @@ struct TrigSwitch2 : Module {
 
 		position = 0;
 		for(int i=0; i<8; i++) lights[i].value = 0.0;
-		memset(outs, 0, 8*PORT_MAX_CHANNELS);
+		memset(outs, 0, sizeof(outs));
 	};
 
 };
@@ -87,7 +87,7 @@ struct TrigSwitch2 : Module {
 void TrigSwitch2::process(const ProcessArgs &args) {
 
 
-	if(outMode==ZERO) memset(outs, 0, 8*PORT_MAX_CHANNELS);
+	if(outMode==ZERO) memset(outs, 0, sizeof(outs));
 
 	int channels = inputs[CV_INPUT].getChannels();
 

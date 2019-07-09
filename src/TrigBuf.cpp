@@ -140,7 +140,7 @@ void TrigBuf::process(const ProcessArgs &args) {
 		gate2[c] = gateTrigger2[c].isHigh();
 	
 		if( armTrigger2[c].process(inputs[ARM2_INPUT].getNormalPolyVoltage(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c), c) + params[ARM2_PARAM].getValue() ) ) { 
-			if (!gate2) {arm2[c] = 10.0f;}
+			if (!gate2[c]) {arm2[c] = 10.0f;}
 			else {delayed2[c] = true;};
 		};
 	

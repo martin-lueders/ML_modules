@@ -37,11 +37,11 @@ struct ShiftRegister2 : Module {
 
 	ShiftRegister2() { 
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-	  configParam(ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0);
+		configParam(ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0);
 		configParam(ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0);
 		configParam(ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0);
-	  configParam(ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0);
-	  configParam(ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0);
+		configParam(ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0);
+		configParam(ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0);
 		onReset(); 
 	};
 
@@ -55,7 +55,7 @@ struct ShiftRegister2 : Module {
 
 	dsp::SchmittTrigger trigTrigger[PORT_MAX_CHANNELS];
 
-	inline float randf() {return rand()/(RAND_MAX-1.0);}
+	inline float randf() {return rand()/(RAND_MAX-1.0f);}
 
 	void onReset() override {
 		memset(channels, 0, 32*sizeof(int));
@@ -83,6 +83,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 				int in1_channels = inputs[IN1_INPUT].getChannels();
 				int in2_channels = inputs[IN2_INPUT].getChannels();
 				int in_channels = MAX(in1_channels, in2_channels);
+				in_channels = MAX(1, in_channels);
 	
 				for(int i=31; i>0; i--) {
 					memcpy(values + i*PORT_MAX_CHANNELS, values + (i-1)*PORT_MAX_CHANNELS, PORT_MAX_CHANNELS * sizeof(float));

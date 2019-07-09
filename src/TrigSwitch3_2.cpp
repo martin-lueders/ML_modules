@@ -56,9 +56,9 @@ struct TrigSwitch3_2 : Module {
 		position = 0;
 		for(int i=0; i<8; i++) {
 			lights[i].value = 0.0;
-			memset(out1, 0, 8*PORT_MAX_CHANNELS);
-			memset(out2, 0, 8*PORT_MAX_CHANNELS);
-			memset(out3, 0, 8*PORT_MAX_CHANNELS);
+			memset(out1, 0, sizeof(out1));
+			memset(out2, 0, sizeof(out2));
+			memset(out3, 0, sizeof(out3));
 		};
 	};
 
@@ -90,9 +90,9 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 
 	if(outMode==ZERO) { 
 		for(int i=0; i<8; i++) {
-			memset(out1, 0, 8*PORT_MAX_CHANNELS);
-			memset(out2, 0, 8*PORT_MAX_CHANNELS);
-			memset(out3, 0, 8*PORT_MAX_CHANNELS);
+			memset(out1, 0, sizeof(out1));
+			memset(out2, 0, sizeof(out2));
+			memset(out3, 0, sizeof(out3));
 		}
 	}
 

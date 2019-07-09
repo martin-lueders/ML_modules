@@ -29,13 +29,6 @@ struct ShiftRegister : Module {
 	};
         enum LightIds {
                 STEP1_LIGHT,
-                STEP2_LIGHT,
-                STEP3_LIGHT,
-                STEP4_LIGHT,
-                STEP5_LIGHT,
-                STEP6_LIGHT,
-                STEP7_LIGHT,
-                STEP8_LIGHT,
                 NUM_LIGHTS = STEP1_LIGHT+16
         };
 
@@ -111,13 +104,14 @@ void ShiftRegister::process(const ProcessArgs &args) {
 		for(int i=0; i<8; i++) {
 			outputs[OUT1_OUTPUT+i].setChannels(channels[i]);
 			outputs[OUT1_OUTPUT+i].writeVoltages(values+i*PORT_MAX_CHANNELS);
-			bool positive = values[i]>0;
-			float value = values[i]/10.0;
-			lights[STEP1_LIGHT+2*i].value   = positive?value:0.0;
-			lights[STEP1_LIGHT+2*i+1].value = -(positive?0.0:value);
-		}
 
-	};
+			float value = outputs[OUT1_OUTPUT+i].getVoltageSum();
+			bool positive = value>0;
+			lights[STEP1_LIGHT+2*i].setBrightness(positive?value:0.0);
+			lights[STEP1_LIGHT+2*i+1].setBrightness( -(positive?0.0:value) );
+		} // i
+
+	}; // if trigger connected
 
 
 };
