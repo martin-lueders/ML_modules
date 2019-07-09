@@ -62,14 +62,6 @@ void OctaSwitch::process(const ProcessArgs &args) {
 			out.store(outputs[OUT_OUTPUT+i].getVoltages(c));
 
 		}
-		/* 
-		if( inputs[GATE_INPUT+i].isConnected() ) inputs[GATE_INPUT+i].readVoltages(gate);
-
-		outputs[OUT_OUTPUT+i].setChannels(channels);
-		for(int c=0; c<channels; c++) {
-			outputs[OUT_OUTPUT+i].setVoltage( gate[c]>threshold ? inputs[B_INPUT+i].getNormalPolyVoltage(0.0f, c) : inputs[A_INPUT+i].getNormalPolyVoltage(0.0f, c), c);
-		}
-		*/
 	}
 };
 

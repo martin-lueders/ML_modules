@@ -54,7 +54,6 @@ void OctaTrig::process(const ProcessArgs &args) {
 		if(channels>0) {
 
 			load_input(inputs[IN_INPUT+i], gate, channels);
-			channelMask.apply_all(gate, channels);
 
 			outputs[UP_OUTPUT +i].setChannels(channels);
 			outputs[DN_OUTPUT +i].setChannels(channels);

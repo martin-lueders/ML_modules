@@ -28,8 +28,8 @@ struct TrigBuf : Module {
 
 	TrigBuf() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-    configParam(TrigBuf::ARM1_PARAM, 0, 10, 0);
-    configParam(TrigBuf::ARM2_PARAM, 0, 10, 0);
+    	configParam(TrigBuf::ARM1_PARAM, 0, 10, 0);
+    	configParam(TrigBuf::ARM2_PARAM, 0, 10, 0);
 
 		onReset(); 
 	};
@@ -39,8 +39,6 @@ struct TrigBuf : Module {
 
 	float arm1[PORT_MAX_CHANNELS], arm2[PORT_MAX_CHANNELS];
 	float out1[PORT_MAX_CHANNELS], out2[PORT_MAX_CHANNELS];
-
-
 
 	bool gate1[PORT_MAX_CHANNELS],    gate2[PORT_MAX_CHANNELS];
 	bool delayed1[PORT_MAX_CHANNELS], delayed2[PORT_MAX_CHANNELS];
