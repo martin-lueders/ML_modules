@@ -47,8 +47,8 @@ struct MLSmallLight : BASE {
 	}
 };
 
-struct WhiteLight : ModuleLightWidget {
-	WhiteLight();
+struct MLWhiteLight : ModuleLightWidget {
+	MLWhiteLight();
 };
 
 

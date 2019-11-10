@@ -46,7 +46,7 @@ void MLSVGSwitch::onChange(const event::Change &e) {
 */
 
 
-WhiteLight::WhiteLight() {
+MLWhiteLight::MLWhiteLight() {
 	addBaseColor(color::WHITE);
 }
 
