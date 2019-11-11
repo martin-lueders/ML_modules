@@ -68,7 +68,7 @@ struct TrigSwitch2 : Module {
 	int position=0;
 
 
-	float outs[8*PORT_MAX_CHANNELS] = {};
+	simd::float_4 outs[8*PORT_MAX_CHANNELS/4] = {};
 
 
 	dsp::SchmittTrigger stepTriggers[8];
@@ -98,20 +98,22 @@ void TrigSwitch2::process(const ProcessArgs &args) {
 
 	for(int i=0; i<8; i++) {
 		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
-
 	};
 
 	// outs[position] = inputs[CV_INPUT].getNormalVoltage(0.0);
 
 	if( inputs[CV_INPUT].isConnected()) {
-		inputs[CV_INPUT].readVoltages(outs + PORT_MAX_CHANNELS*position);
+		for(int c=0; c<channels; c+=4) 
+			outs[position * PORT_MAX_CHANNELS/4 + c/4 ] = inputs[CV_INPUT].getPolyVoltageSimd<simd::float_4>(c);
 	} else {
-		memset(outs+PORT_MAX_CHANNELS*position, 0, PORT_MAX_CHANNELS*sizeof(float));
+		memset(outs + position * PORT_MAX_CHANNELS/4, 0, (PORT_MAX_CHANNELS/4)*sizeof(simd::float_4));
 	}
 
 	for(int i=0; i<8; i++) {
 		lights[i].value = (i==position)?1.0:0.0;
-		outputs[OUT_OUTPUT+i].writeVoltages(outs+PORT_MAX_CHANNELS*i);
+		for(int c=0; c<channels; c+=4) {
+			outputs[OUT_OUTPUT+i].setVoltageSimd(outs[i * PORT_MAX_CHANNELS/4 + c/4], c);
+		}
 	}
 	
 };

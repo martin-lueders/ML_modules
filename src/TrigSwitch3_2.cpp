@@ -1,3 +1,5 @@
+// TrigSwitch3 1->8
+
 #include "ML_modules.hpp"
 
 
@@ -43,13 +45,16 @@ struct TrigSwitch3_2 : Module {
 
 	OutMode outMode = ZERO;
 
+	int channels1_last;
+	int channels2_last;
+	int channels3_last;
 
 
 	dsp::SchmittTrigger stepTriggers[8];
 
-	float out1[8*PORT_MAX_CHANNELS];
-	float out2[8*PORT_MAX_CHANNELS];
-	float out3[8*PORT_MAX_CHANNELS];
+	simd::float_4 out1[8*PORT_MAX_CHANNELS/4];
+	simd::float_4 out2[8*PORT_MAX_CHANNELS/4];
+	simd::float_4 out3[8*PORT_MAX_CHANNELS/4];
 
 	void onReset() override {
 
@@ -60,6 +65,10 @@ struct TrigSwitch3_2 : Module {
 			memset(out2, 0, sizeof(out2));
 			memset(out3, 0, sizeof(out3));
 		};
+
+		channels1_last = 0;
+		channels2_last = 0;
+		channels3_last = 0;
 	};
 
 	json_t *dataToJson() override {
@@ -88,6 +97,25 @@ struct TrigSwitch3_2 : Module {
 
 void TrigSwitch3_2::process(const ProcessArgs &args) {
 
+	int channels1 = inputs[CV1_INPUT].getChannels();
+	int channels2 = inputs[CV2_INPUT].getChannels();
+	int channels3 = inputs[CV3_INPUT].getChannels();
+
+	if(channels1!=channels1_last) {
+		for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setChannels(channels1);
+		channels1_last = channels1;
+	}
+
+	if(channels2!=channels2_last) {
+		for(int i=0; i<8; i++) outputs[OUT2_OUTPUT+i].setChannels(channels2);
+		channels2_last = channels2;
+	}
+
+	if(channels3!=channels3_last) {
+		for(int i=0; i<8; i++) outputs[OUT3_OUTPUT+i].setChannels(channels3);
+		channels3_last = channels3;
+	}
+
 	if(outMode==ZERO) { 
 		for(int i=0; i<8; i++) {
 			memset(out1, 0, sizeof(out1));
@@ -101,27 +129,41 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 		lights[i].value = (i==position)?1.0:0.0;
 	};
 
-	if( inputs[CV1_INPUT].isConnected() ) {
-		int channels = inputs[CV1_INPUT].getChannels();
-		outputs[OUT1_OUTPUT].setChannels(channels);
-		memcpy(out1 + position * PORT_MAX_CHANNELS*sizeof(float), inputs[CV1_INPUT].getVoltages(), channels*sizeof(float));
-	}
-	if( inputs[CV2_INPUT].isConnected() ) {
-		int channels = inputs[CV2_INPUT].getChannels();
-		outputs[OUT2_OUTPUT].setChannels(channels);
-		memcpy(out2 + position * PORT_MAX_CHANNELS*sizeof(float), inputs[CV2_INPUT].getVoltages(), channels*sizeof(float));
-	}
-	if( inputs[CV3_INPUT].isConnected() ) {
-		int channels = inputs[CV3_INPUT].getChannels();
-		outputs[OUT3_OUTPUT].setChannels(channels);
-		memcpy(out3 + position * PORT_MAX_CHANNELS*sizeof(float), inputs[CV3_INPUT].getVoltages(), channels*sizeof(float));
+
+	if( inputs[CV1_INPUT].isConnected()) {
+		for(int c=0; c<channels1; c+=4) 
+			out1[position * PORT_MAX_CHANNELS/4 + c/4 ] = inputs[CV1_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+	} else {
+		memset(out1 + position * PORT_MAX_CHANNELS/4, 0, (PORT_MAX_CHANNELS/4)*sizeof(simd::float_4));
 	}
 
-	for(int i=0; i<8; i++) {
-		outputs[OUT1_OUTPUT+i].setVoltage(out1[i]);
-		outputs[OUT2_OUTPUT+i].setVoltage(out2[i]);
-		outputs[OUT3_OUTPUT+i].setVoltage(out3[i]);
+	if( inputs[CV2_INPUT].isConnected()) {
+		for(int c=0; c<channels2; c+=4) 
+			out2[position * PORT_MAX_CHANNELS/4 + c/4 ] = inputs[CV2_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+	} else {
+		memset(out2 + position * PORT_MAX_CHANNELS/4, 0, (PORT_MAX_CHANNELS/4)*sizeof(simd::float_4));
 	}
+
+	if( inputs[CV3_INPUT].isConnected()) {
+		for(int c=0; c<channels3; c+=4) 
+			out3[position * PORT_MAX_CHANNELS/4 + c/4 ] = inputs[CV3_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+	} else {
+		memset(out3 + position * PORT_MAX_CHANNELS/4, 0, (PORT_MAX_CHANNELS/4)*sizeof(simd::float_4));
+	}
+
+
+
+	for(int i=0; i<8; i++) {
+		for(int c=0; c<channels1; c+=4) 
+			outputs[OUT1_OUTPUT+i].setVoltageSimd(out1[i * PORT_MAX_CHANNELS/4 + c/4], c);
+		for(int c=0; c<channels2; c+=4) 
+			outputs[OUT2_OUTPUT+i].setVoltageSimd(out2[i * PORT_MAX_CHANNELS/4 + c/4], c);
+		for(int c=0; c<channels3; c+=4) 
+			outputs[OUT3_OUTPUT+i].setVoltageSimd(out3[i * PORT_MAX_CHANNELS/4 + c/4], c);
+		
+	}
+
+
 
 };
 
