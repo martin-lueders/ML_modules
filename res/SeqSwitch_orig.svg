@@ -109,7 +109,8 @@
        x1="3.1750004"
        y1="280.06665"
        x2="13.758334"
-       y2="291.17926" />
+       y2="291.17926"
+       gradientTransform="matrix(0.89999997,0,0,1,-1.7991671,3.3827084e-6)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient965"
@@ -118,7 +119,8 @@
        y1="280.06665"
        x2="28.575003"
        y2="291.17923"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.90000034,0,0,1,4.9741575,0)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#Transport"
@@ -203,6 +205,16 @@
        x2="29.633333"
        y2="27.516666"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       gradientTransform="translate(-2.445614e-7,12.170845)"
+       inkscape:collect="always"
+       xlink:href="#linearGradient918-5"
+       id="linearGradient936-3"
+       x1="11.112497"
+       y1="267.89587"
+       x2="20.637499"
+       y2="279.00833"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -211,9 +223,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="-65.25"
-     inkscape:cy="178.22183"
+     inkscape:zoom="11.313708"
+     inkscape:cx="66.481869"
+     inkscape:cy="69.60149"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -225,8 +237,8 @@
      showguides="true"
      inkscape:snap-to-guides="false"
      objecttolerance="20"
-     inkscape:window-width="1459"
-     inkscape:window-height="1127"
+     inkscape:window-width="1781"
+     inkscape:window-height="1333"
      inkscape:window-x="61"
      inkscape:window-y="4"
      inkscape:window-maximized="0"
@@ -492,19 +504,21 @@
     <rect
        style="fill:url(#linearGradient954);fill-opacity:1;stroke:#000000;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4778"
-       width="10.583334"
+       width="9.5250006"
        height="11.112597"
-       x="3.1750004"
+       x="1.0583333"
        y="280.06665"
-       ry="1.3096442" />
+       ry="1.3096442"
+       rx="1.3096442" />
     <rect
        style="fill:url(#linearGradient973);fill-opacity:1;stroke:#000000;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4778-2"
-       width="10.583334"
+       width="9.5250044"
        height="11.112566"
-       x="17.991669"
+       x="21.166668"
        y="280.06665"
-       ry="1.3096406" />
+       ry="1.3096406"
+       rx="1.3096406" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
@@ -600,14 +614,14 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="12.170835"
+       x="12.428081"
        y="277.94998"
        id="text947"><tspan
          sodipodi:role="line"
          id="tspan945"
-         x="12.170835"
+         x="12.428081"
          y="277.94998"
-         style="fill:#ffffff;stroke-width:0.26458335">Reset</tspan></text>
+         style="fill:#ffffff;stroke-width:0.26458335">Rand</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
@@ -622,23 +636,23 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="5.291667"
+       x="2.6458335"
        y="290.12082"
        id="text955"><tspan
          sodipodi:role="line"
          id="tspan953"
-         x="5.291667"
+         x="2.6458335"
          y="290.12082"
          style="fill:#ffffff;stroke-width:0.26458335">Step</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       x="21.199741"
+       x="23.31641"
        y="290.12082"
        id="text959"><tspan
          sodipodi:role="line"
          id="tspan957"
-         x="21.199741"
+         x="23.31641"
          y="290.12082"
          style="fill:#ffffff;stroke-width:0.26458335">Out</tspan></text>
     <path
@@ -731,5 +745,25 @@
            x="13.525336"
            y="219.32956">7</tspan></text>
     </g>
+    <rect
+       rx="0.92603695"
+       id="rect26-7-3-4-6-26-4-2"
+       width="9.5250015"
+       height="11.112449"
+       x="11.112495"
+       y="280.06683"
+       style="display:inline;fill:url(#linearGradient936-3);fill-opacity:1;stroke:#000000;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       ry="0.92603695" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       x="12.170834"
+       y="290.121"
+       id="text947-1"><tspan
+         sodipodi:role="line"
+         id="tspan945-0"
+         x="12.170834"
+         y="290.121"
+         style="fill:#ffffff;stroke-width:0.26458335">Reset</tspan></text>
   </g>
 </svg>

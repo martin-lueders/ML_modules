@@ -21,6 +21,7 @@ struct SeqSwitch2 : Module {
 		RESET_INPUT,
 		NUMSTEPS_INPUT,
 		POS_INPUT,
+		TRIGRND_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -34,17 +35,18 @@ struct SeqSwitch2 : Module {
 		OUT8_OUTPUT,
 		NUM_OUTPUTS
 	};
-        enum LightIds {
-                STEP1_LIGHT,
-                STEP2_LIGHT,
-                STEP3_LIGHT,
-                STEP4_LIGHT,
-                STEP5_LIGHT,
-                STEP6_LIGHT,
-                STEP7_LIGHT,
-                STEP8_LIGHT,
-                NUM_LIGHTS
-        };
+
+    enum LightIds {
+        STEP1_LIGHT,
+        STEP2_LIGHT,
+        STEP3_LIGHT,
+        STEP4_LIGHT,
+        STEP5_LIGHT,
+        STEP6_LIGHT,
+        STEP7_LIGHT,
+        STEP8_LIGHT,
+        NUM_LIGHTS
+    };
 
 	SeqSwitch2() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
@@ -71,7 +73,7 @@ struct SeqSwitch2 : Module {
 	const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
 	const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
 
-	dsp::SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
+	dsp::SchmittTrigger upTrigger, downTrigger, resetTrigger, rndTrigger, stepTriggers[8];
 
 	void onReset() override {
 		position=0;
@@ -121,6 +123,7 @@ struct SeqSwitch2 : Module {
 		if(inputRangeJ) inputRange = (InputRange) json_integer_value(inputRangeJ);
 	};
 
+	inline int rand_range(int min, int max) {float rnd=rand()/(RAND_MAX-1.0); return min + roundf(rnd*(max-min)); }
 
 };
 
@@ -147,6 +150,10 @@ void SeqSwitch2::process(const ProcessArgs &args) {
 
 		if( inputs[TRIGDN_INPUT].isConnected() ) {
 			if (downTrigger.process(inputs[TRIGDN_INPUT].getVoltage()) ) position--;
+		}
+
+		if( inputs[TRIGRND_INPUT].isConnected() ) {
+			if (rndTrigger.process(inputs[TRIGRND_INPUT].getVoltage()) ) position=rand_range(0, numSteps-1);
 		}
 
 		if( inputs[RESET_INPUT].isConnected() ) {
@@ -209,7 +216,7 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
 	addInput(createInput<MLPort>(Vec(81, 64), module, SeqSwitch2::NUMSTEPS_INPUT));
 
 	addInput(createInput<MLPort>(Vec(9, 272), module, SeqSwitch2::TRIGUP_INPUT));
-	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch2::RESET_INPUT));
+	addInput(createInput<MLPort>(Vec(47, 318), module, SeqSwitch2::RESET_INPUT));
 	addInput(createInput<MLPort>(Vec(85, 272), module, SeqSwitch2::TRIGDN_INPUT));
 
 	const float offset_y = 118, delta_y=38;
@@ -244,8 +251,11 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
     addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 2*delta_y), module, SeqSwitch2::STEP7_LIGHT));
     addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 3*delta_y), module, SeqSwitch2::STEP8_LIGHT));
 
-	addInput(createInput<MLPort>(Vec(19, 318), module, SeqSwitch2::POS_INPUT));
-	addInput(createInput<MLPort>(Vec(75, 318), module, SeqSwitch2::IN_INPUT));
+	addInput(createInput<MLPort>(Vec(9,  318), module, SeqSwitch2::POS_INPUT));
+	addInput(createInput<MLPort>(Vec(85, 318), module, SeqSwitch2::IN_INPUT));
+
+	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch2::TRIGRND_INPUT));
+
 
 };
 

@@ -28,6 +28,7 @@ struct SeqSwitch : Module {
 		TRIGDN_INPUT,
 		RESET_INPUT,
 		NUMSTEPS_INPUT,
+		TRIGRND_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -63,45 +64,41 @@ struct SeqSwitch : Module {
 
 	void process(const ProcessArgs &args) override;
 
+	inline int rand_range(int min, int max) {float rnd=rand()/(RAND_MAX-1.0); return min + roundf(rnd*(max-min)); }
+
 	int position=0;
 
+    const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
+    const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
 
-
-        const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
-        const float in_max[4] = {8.0, 6.0, 10.0, 5.0};
-
-
-	dsp::SchmittTrigger upTrigger, downTrigger, resetTrigger, stepTriggers[8];
+	dsp::SchmittTrigger upTrigger, downTrigger, rndTrigger, resetTrigger, stepTriggers[8];
 
 	enum InputRange {
-                Zero_Eight,
+        Zero_Eight,
 		Zero_Six,
-                Zero_Ten,
-                MinusFive_Five
-        };
+        Zero_Ten,
+        MinusFive_Five
+    };
 
 
-        json_t *dataToJson() override {
+    json_t *dataToJson() override {
 
-                json_t *rootJ = json_object();
+        json_t *rootJ = json_object();
 
-                // outMode:
+        // outMode:
 
-                json_object_set_new(rootJ, "inputRange", json_integer(inputRange));
+        json_object_set_new(rootJ, "inputRange", json_integer(inputRange));
+        return rootJ;
+    };
 
-                return rootJ;
-        };
-
-        void dataFromJson(json_t *rootJ) override {
-
-                // outMode:
-
-                json_t *inputRangeJ = json_object_get(rootJ, "inputRange");
-                if(inputRangeJ) inputRange = (InputRange) json_integer_value(inputRangeJ);
-        };
+    void dataFromJson(json_t *rootJ) override {
+        // outMode:
+        json_t *inputRangeJ = json_object_get(rootJ, "inputRange");
+        if(inputRangeJ) inputRange = (InputRange) json_integer_value(inputRangeJ);
+    };
 
 
-        InputRange inputRange = Zero_Eight;
+    InputRange inputRange = Zero_Eight;
 
 	void onReset() override {
 
@@ -135,6 +132,10 @@ void SeqSwitch::process(const ProcessArgs &args) {
 
 		if( inputs[TRIGDN_INPUT].isConnected() ) {
 			if (downTrigger.process(inputs[TRIGDN_INPUT].getVoltage()) ) position--;
+		}
+
+		if( inputs[TRIGRND_INPUT].isConnected() ) {
+			if (rndTrigger.process(inputs[TRIGRND_INPUT].getVoltage()) ) position=rand_range(0, numSteps-1);
 		}
 
 		if( inputs[RESET_INPUT].isConnected() ) {
@@ -245,7 +246,7 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addInput(createInput<MLPort>(Vec(81, 64), module, SeqSwitch::NUMSTEPS_INPUT));
 
 	addInput(createInput<MLPort>(Vec(9, 272),  module, SeqSwitch::TRIGUP_INPUT));
-	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch::RESET_INPUT));
+	addInput(createInput<MLPort>(Vec(47, 318), module, SeqSwitch::RESET_INPUT));
 	addInput(createInput<MLPort>(Vec(85, 272), module, SeqSwitch::TRIGDN_INPUT));
 
 	const float offset_y = 118, delta_y=38;
@@ -280,8 +281,11 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 2*delta_y), module, SeqSwitch::STEP7_LIGHT));
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
 
-	addInput(createInput<MLPort>( Vec(19, 318),  module, SeqSwitch::POS_INPUT));
-	addOutput(createOutput<MLPort>(Vec(75, 318), module, SeqSwitch::OUT1_OUTPUT));
+	addInput( createInput<MLPort>( Vec(9,  318), module, SeqSwitch::POS_INPUT));
+	addOutput(createOutput<MLPort>(Vec(85, 318), module, SeqSwitch::OUT1_OUTPUT));
+
+	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch::TRIGRND_INPUT));
+
 
 }
 

@@ -51,6 +51,8 @@ void OctaSwitch::process(const ProcessArgs &args) {
 		int in_channels = MAX(in_A_channels, in_B_channels);
 		int channels = MAX(gate_channels, in_channels);
 
+		outputs[OUT_OUTPUT+i].setChannels(channels);
+
 		for(int c=0; c<channels; c+=4) {
 
 			simd::float_4 gates = inputs[GATE_INPUT+i].getPolyVoltageSimd<float_4>(c);
