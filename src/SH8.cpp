@@ -9,7 +9,7 @@ struct SH_channel {
 	
 	dsp::TSchmittTrigger<float_4> trigger[4];
 
-	inline void step(int channels, float_4 *in, float_4 *trig, float_4 *out) {
+	inline void step(int channels, const float_4 *in, const float_4 *trig, float_4 *out) {
 
 		for(int c=0; c<channels; c+=4) {
 			out[c/4] = ifelse(trigger[c/4].process(trig[c/4]), in[c/4], out[c/4]);
@@ -58,7 +58,7 @@ struct SH8 : Module {
 	SH_channel sh_channel[8];
 
 	float_4 out[8][4];
-	// ChannelMask channelMask;
+	ChannelMask channelMask;
 
 	Random_Generator rand_gen;
 
@@ -75,6 +75,22 @@ struct SH8 : Module {
 
 };
 
+// Behavious depending on number of input channels:
+//
+//             input      1        N
+//  trigger
+//
+//  1                     1        N
+//  M                     M        N
+//
+//  monophonic input:
+//  for M polyphonic trigger channels, we expect M output channels, where each represents the input at the given trigger time
+//
+//  polyphonic input (N channels)
+//  for monophonic trigger, the output has N channels, triggered at the same time (given by mono trigger)
+//  for polyphonic trigger (M channels): we have N output channels
+//      N > M:  first M channels as expected, channels  N<i<M output of input channel i at last trigger of that channel
+//      M > N:  first N channels as expected, triggers for i>N are ignored
 
 
 void SH8::process(const ProcessArgs &args) {
@@ -95,23 +111,26 @@ void SH8::process(const ProcessArgs &args) {
 		int new_trig_channels = inputs[TRIG_INPUT+i].getChannels();
 		int new_in_channels   = inputs[IN_INPUT  +i].getChannels();
 
+		new_trig_channels = new_trig_channels==0?trig_channels:new_trig_channels;
+		new_in_channels = new_in_channels==0?in_channels:new_in_channels;
+
 		if( inputs[TRIG_INPUT+i].isConnected() ) {
-			trig_channels = new_trig_channels;
+			trig_channels = new_trig_channels==1?new_in_channels:new_trig_channels;
 			for(int c=0; c<trig_channels; c+=4) {
 				trig[c/4] = inputs[TRIG_INPUT].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			// channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
+			channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
 		}
 		
 		if(inputs[IN_INPUT+i].isConnected() ) {
-			in_channels = new_in_channels;
+			in_channels = new_in_channels==1?new_trig_channels:new_in_channels;
 			for(int c=0; c<in_channels; c+=4) {
 				in[c/4] = inputs[IN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			// channelMask.apply(in, in_channels==1?trig_channels:in_channels);
+			channelMask.apply(in, in_channels==1?trig_channels:in_channels);
 		}
 
-		if(in_channels==0) in_channels = trig_channels;
+		if(in_channels==1) in_channels = trig_channels;
 
 		sh_channel[i].step(in_channels, in, trig, out[i] );
 
