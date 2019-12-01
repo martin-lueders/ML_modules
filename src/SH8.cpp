@@ -101,8 +101,12 @@ void SH8::process(const ProcessArgs &args) {
 	memset(in,   0, sizeof(in));
 	memset(trig, 0, sizeof(trig));
 
-	int in_channels = 0;
-	int trig_channels = 0;
+	int in_channels = 1;    // default for first channel, if not connected 
+	                        // this will set the polyphony to the number of trigger channels
+	int trig_channels = 0;  // default polyphony for the first trigger input:
+	                        // don't use, if not connected. We can't make up trigger signals.
+
+	// initialize all channels of the firs input to random.
 
 	for(int c=0; c<PORT_MAX_CHANNELS; c+=4) in[c/4] = rand_gen.get();
 
@@ -111,21 +115,23 @@ void SH8::process(const ProcessArgs &args) {
 		int new_trig_channels = inputs[TRIG_INPUT+i].getChannels();
 		int new_in_channels   = inputs[IN_INPUT  +i].getChannels();
 
-		new_trig_channels = new_trig_channels==0?trig_channels:new_trig_channels;
-		new_in_channels = new_in_channels==0?in_channels:new_in_channels;
+		new_trig_channels = new_trig_channels==0 ? trig_channels : new_trig_channels;
+		new_in_channels   = new_in_channels==0 ? in_channels : new_in_channels;
 
 		if( inputs[TRIG_INPUT+i].isConnected() ) {
-			trig_channels = new_trig_channels==1?new_in_channels:new_trig_channels;
+			// if the trigger input is monophonic, process as many channels, as present in CV input.
+			trig_channels = new_trig_channels==1 ? new_in_channels : new_trig_channels;
 			for(int c=0; c<trig_channels; c+=4) {
-				trig[c/4] = inputs[TRIG_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+				trig[c/4] = inputs[TRIG_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
 			channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
 		}
 		
 		if(inputs[IN_INPUT+i].isConnected() ) {
-			in_channels = new_in_channels==1?new_trig_channels:new_in_channels;
+			// if the CV input is monophonic, process as many channels as present in trigger input.
+			in_channels = new_in_channels==1 ? new_trig_channels : new_in_channels;
 			for(int c=0; c<in_channels; c+=4) {
-				in[c/4] = inputs[IN_INPUT].getPolyVoltageSimd<simd::float_4>(c);
+				in[c/4] = inputs[IN_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
 			channelMask.apply(in, in_channels==1?trig_channels:in_channels);
 		}
