@@ -124,7 +124,7 @@ void SH8::process(const ProcessArgs &args) {
 			for(int c=0; c<trig_channels; c+=4) {
 				trig[c/4] = inputs[TRIG_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			channelMask.apply(trig, trig_channels==1?in_channels:trig_channels);
+			channelMask.apply_all(trig, trig_channels==1?in_channels:trig_channels);
 		}
 		
 		if(inputs[IN_INPUT+i].isConnected() ) {
@@ -133,10 +133,10 @@ void SH8::process(const ProcessArgs &args) {
 			for(int c=0; c<in_channels; c+=4) {
 				in[c/4] = inputs[IN_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			channelMask.apply(in, in_channels==1?trig_channels:in_channels);
+			channelMask.apply_all(in, in_channels==1?trig_channels:in_channels);
 		}
 
-		if(in_channels==1) in_channels = trig_channels;
+		if(in_channels==1) in_channels = MAX(1,trig_channels);
 
 		sh_channel[i].step(in_channels, in, trig, out[i] );
 
