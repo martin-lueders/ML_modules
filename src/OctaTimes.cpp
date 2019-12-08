@@ -68,7 +68,7 @@ void OctaTimes::process(const ProcessArgs &args) {
 
 		for(int c=0; c<channels_OUT; c+=4) {
 			out[c/4] = clamp( in_A[c/4] * in_B[c/4] * multiplier, float_4(-12.0f), float_4(12.f) );
-			sum[c/4] += out[c/4];
+			if(tmp_A+tmp_B>0) sum[c/4] += out[c/4];
 		}
 		outputs[OUT_OUTPUT+i].setChannels(channels_OUT);
 		for(int c=0; c<channels_OUT; c+=4) out[c/4].store(outputs[OUT_OUTPUT+i].getVoltages(c));	

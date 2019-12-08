@@ -77,3 +77,4 @@ extern Model *modelTrigSwitch3;
 extern Model *modelTrigSwitch3_2;
 extern Model *modelOctaPlus;
 extern Model *modelOctaTimes;
+extern Model *modelCloner;

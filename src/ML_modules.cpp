@@ -34,6 +34,7 @@ void init(rack::Plugin *p) {
  	pluginInstance->addModel(modelTrigSwitch3_2);
 	pluginInstance->addModel(modelOctaPlus);
 	pluginInstance->addModel(modelOctaTimes);
+	pluginInstance->addModel(modelCloner);
 }
 
 
