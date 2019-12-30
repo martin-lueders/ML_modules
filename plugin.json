@@ -161,6 +161,12 @@
       "name": "Volt Meter",
       "description": "",
       "tags": ["Utility"]
+    },
+    {
+      "slug": "Cloner",
+      "name": "Cloner",
+      "description": "Clone a signal to polyphonic channels",
+      "tags": ["Utility, Polyphonic"]
     }
   ]
 }

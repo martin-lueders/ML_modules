@@ -7,11 +7,13 @@ using simd::float_4;
 struct Cloner : Module {
 	enum ParamIds {
 		CHANNELS_PARAM,
+		SPREAD_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
 		CV_INPUT,
 		CHANNELS_INPUT,
+		SPREAD_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -25,6 +27,7 @@ struct Cloner : Module {
 	Cloner() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(Cloner::CHANNELS_PARAM, 1.0, 16.0, 1.0);
+		configParam(Cloner::SPREAD_PARAM, 0.0, 2.0, 0.0);
 		channels = 1;
 	};
 
@@ -37,6 +40,7 @@ struct Cloner : Module {
 void Cloner::process(const ProcessArgs &args) {
 
 	int channels_in = inputs[CHANNELS_INPUT].getChannels();
+	float spread = params[SPREAD_PARAM].getValue();
 
 	switch(channels_in) {
 		case 0:  channels = params[CHANNELS_PARAM].getValue(); break;
@@ -46,14 +50,10 @@ void Cloner::process(const ProcessArgs &args) {
 
 	if (outputs[CV_OUTPUT].isConnected()) {
 
-		if(inputs[CV_INPUT].isConnected()) {
+		float cv = inputs[CV_INPUT].getVoltageSum();
+		outputs[CV_OUTPUT].setChannels(channels);
+		for(int c=0; c<channels; c++) outputs[CV_OUTPUT].setVoltage(cv+c*spread, c);
 
-			float cv = inputs[CV_INPUT].getVoltageSum();
-
-
-			outputs[CV_OUTPUT].setChannels(channels);
-			for(int c=0; c<channels; c++) outputs[CV_OUTPUT].setVoltage(cv, c);
-		}
 	}
 }
 
@@ -125,14 +125,17 @@ ClonerWidget::ClonerWidget(Cloner *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
 	ChannelDisplayWidget *display = new ChannelDisplayWidget();
-	display->box.pos = Vec(4,64);
+	display->box.pos = Vec(4,40);
 	display->box.size = Vec(37, 20);
 	if(module) display->value = &(module->channels);
 	addChild(display);
 
 
-	addParam(createParam<SmallBlueSnapMLKnob>(Vec(9, 110), module, Cloner::CHANNELS_PARAM));
-	addInput(createInput<MLPort>(Vec(9, 145), module, Cloner::CHANNELS_INPUT));
+	addParam(createParam<SmallBlueSnapMLKnob>(Vec(9, 85), module, Cloner::CHANNELS_PARAM));
+	addInput(createInput<MLPort>(Vec(9, 120), module, Cloner::CHANNELS_INPUT));
+
+	addParam(createParam<SmallBlueMLKnob>(Vec(9, 175), module, Cloner::SPREAD_PARAM));
+	addInput(createInput<MLPort>(Vec(9, 210), module, Cloner::SPREAD_INPUT));
 
 	addInput(createInput<MLPort>(Vec(9, 246), module, Cloner::CV_INPUT));
 	addOutput(createOutput<MLPort>(Vec(9, 292), module, Cloner::CV_OUTPUT));
