@@ -45,17 +45,19 @@ struct TrigDelay : Module {
 
 	void process(const ProcessArgs &args) override;
 
-	bool gate1=false, gate2=false;
+	bool gate1[PORT_MAX_CHANNELS], gate2[PORT_MAX_CHANNELS];
 
-	dsp::SchmittTrigger gateTrigger1, gateTrigger2;
-	dsp::PulseGenerator delay1,  delay2;
-	dsp::PulseGenerator on1, on2;
+	dsp::SchmittTrigger gateTrigger1[PORT_MAX_CHANNELS], gateTrigger2[PORT_MAX_CHANNELS];
+	dsp::PulseGenerator delay1[PORT_MAX_CHANNELS],  delay2[PORT_MAX_CHANNELS];
+	dsp::PulseGenerator on1[PORT_MAX_CHANNELS], on2[PORT_MAX_CHANNELS];
 
 
 	void onReset() override {
 
-		gate1=false;
-		gate2=false;
+		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
+			gate1[c]=false;
+			gate2[c]=false;
+		}
 	};
 
 };
@@ -67,6 +69,7 @@ void TrigDelay::process(const ProcessArgs &args) {
 
 	float gSampleTime = args.sampleTime;
 
+	// channel-independent parts:
 
 	float delayTime1 = params[DELAY1_PARAM].getValue();
 	float delayTime2 = params[DELAY2_PARAM].getValue();
@@ -81,43 +84,45 @@ void TrigDelay::process(const ProcessArgs &args) {
 	if( inputs[LENGTH2_INPUT].isConnected() ) { length2    *= clamp( inputs[LENGTH2_INPUT].getVoltage() / 10.0f, minLength, 1.0f );};
 
 
+	int channels_1 = inputs[GATE1_INPUT].getChannels();
+	int channels_2 = inputs[GATE2_INPUT].getChannels();
 
+	outputs[OUT1_OUTPUT].setChannels(channels_1);
+	outputs[OUT2_OUTPUT].setChannels(channels_2);
 
-	if( inputs[GATE1_INPUT].isConnected() ) {
-	       
-		if(gateTrigger1.process( inputs[GATE1_INPUT].getVoltage() ) ) {
-			delay1.trigger(delayTime1);
-			gate1 = true;
+	for(int c=0; c<channels_1; c++) {
+
+		if(gateTrigger1[c].process( inputs[GATE1_INPUT].getNormalPolyVoltage(0.0f, c) ) ) {
+			delay1[c].trigger(delayTime1);
+			gate1[c] = true;
+		};
+	
+		if(  gate1[c] && !delay1[c].process(gSampleTime) ) {
+			on1[c].trigger(length1);
+			gate1[c] = false;
 		};
 
+		outputs[OUT1_OUTPUT].setVoltage(on1[c].process(gSampleTime) ? 10.0 : 0.0, c);
+
 	};
 
-	if( inputs[GATE2_INPUT].isConnected() ) {
+	for(int c=0; c<channels_2; c++) {
 	       
-		if(gateTrigger2.process(inputs[GATE2_INPUT].getVoltage())) {
-			delay2.trigger(delayTime2);
-			gate2 = true;
+		if(gateTrigger2[c].process(inputs[GATE2_INPUT].getNormalPolyVoltage(0.0f, c))) {
+			delay2[c].trigger(delayTime2);
+			gate2[c] = true;
+		};
+	
+		if(  gate2[c] && !delay2[c].process(gSampleTime) ) {
+			on2[c].trigger(length2);
+			gate2[c] = false;
 		};
 
+	outputs[OUT2_OUTPUT].setVoltage(on2[c].process(gSampleTime) ? 10.0 : 0.0, c);
 	};
 
 
-	if(  gate1 && !delay1.process(gSampleTime) ) {
-			
-		on1.trigger(length1);
-		gate1 = false;
 
-	};
-
-	if(  gate2 && !delay2.process(gSampleTime) ) {
-			
-		on2.trigger(length2);
-		gate2 = false;
-
-	};
-
-	outputs[OUT1_OUTPUT].setVoltage(on1.process(gSampleTime) ? 10.0 : 0.0);
-	outputs[OUT2_OUTPUT].setVoltage(on2.process(gSampleTime) ? 10.0 : 0.0);
 
 };
 

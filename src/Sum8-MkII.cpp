@@ -58,9 +58,12 @@ void Sum8mk2::process(const ProcessArgs &args) {
 	for(int i=0; i<8; i++) {
 		if(inputs[IN_INPUT+i].isConnected()) {
 			float_4 sign = float_4(2*params[POLARITY_PARAM+i].getValue() - 1.0f);
-			load_input(inputs[IN_INPUT+i], in, channels[i]);
+//			load_input(inputs[IN_INPUT+i], in, channels[i]);
+			for(int c=0; c<channels[i]; c+=4) {
+				in[c/4] = inputs[IN_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
+			}
 			channelMask.apply(in, channels[i]);
-			for(int c=0; c<channels[i]; c+=4) out[c]+=in[c] * sign;
+			for(int c=0; c<channels[i]; c+=4) out[c/4]+=in[c/4] * sign;
 		}
 	}
 	for(int c=0; c<max_channels; c+=4) out[c/4].store(outputs[OUT_OUTPUT].getVoltages(c));
