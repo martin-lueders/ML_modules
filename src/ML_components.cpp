@@ -218,3 +218,112 @@ BlueMLSwitch::BlueMLSwitch() {
 	shadow->box.pos = Vec(0, sw->box.size.y * 0.1);
 
 };
+
+MLScrew::MLScrew()	 {
+
+    tw = new TransformWidget();
+    addChild(tw);
+
+    sw = new SvgWidget();
+    tw->addChild(sw);
+    sw->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MLScrew.svg")));
+	tw->box.size = sw->box.size;	
+
+    float angle = 1.71f * (rand() / (static_cast<double>(RAND_MAX) + 1.0)); 
+    Vec transl = tw->box.getCenter();
+    tw->translate( transl );
+    tw->rotate(angle);
+    tw->translate( transl.neg() );
+
+}
+
+
+NumberDisplayWidget::NumberDisplayWidget() {
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
+};
+
+
+void NumberDisplayWidget::draw(const DrawArgs &args)  {
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
+    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
+
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
+
+    std::string to_display = "";
+
+		if(value) {to_display = std::to_string(*value);}
+
+
+    while(to_display.length()<3) to_display = ' ' + to_display;
+
+    Vec textPos = Vec(6.0f, 17.0f);
+
+    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~~", NULL);
+
+    textColor = nvgRGB(0xda, 0xe9, 0x29);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\", NULL);
+
+    textColor = nvgRGB(0xf0, 0x00, 0x00);
+    nvgFillColor(args.vg, textColor);
+    nvgText(args.vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+  
+};
+
+
+SmallNumberDisplayWidget::SmallNumberDisplayWidget() {
+    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
+};
+
+
+void SmallNumberDisplayWidget::draw(const DrawArgs &args)  {
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
+    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
+    nvgBeginPath(args.vg);
+    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(args.vg, backgroundColor);
+    nvgFill(args.vg);
+    nvgStrokeWidth(args.vg, 1.0);
+    nvgStrokeColor(args.vg, borderColor);
+    nvgStroke(args.vg);
+
+    nvgFontSize(args.vg, 18);
+    nvgFontFaceId(args.vg, font->handle);
+    nvgTextLetterSpacing(args.vg, 2.5);
+
+    std::string to_display = "";
+
+		if(value) {to_display = std::to_string(*value);}
+
+
+    while(to_display.length()<2) to_display = ' ' + to_display;
+
+    Vec textPos = Vec(3.0f, 17.0f);
+
+    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "~~", NULL);
+
+    textColor = nvgRGB(0xda, 0xe9, 0x29);
+    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
+    nvgText(args.vg, textPos.x, textPos.y, "\\\\", NULL);
+
+    textColor = nvgRGB(0xf0, 0x00, 0x00);
+    nvgFillColor(args.vg, textColor);
+    nvgText(args.vg, textPos.x, textPos.y, to_display.c_str(), NULL);
+  
+};
+

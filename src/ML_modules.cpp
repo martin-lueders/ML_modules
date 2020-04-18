@@ -35,6 +35,7 @@ void init(rack::Plugin *p) {
 	pluginInstance->addModel(modelOctaPlus);
 	pluginInstance->addModel(modelOctaTimes);
 	pluginInstance->addModel(modelCloner);
+	pluginInstance->addModel(modelPolySplitter);
 }
 
 
