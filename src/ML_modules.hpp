@@ -79,3 +79,4 @@ extern Model *modelOctaPlus;
 extern Model *modelOctaTimes;
 extern Model *modelCloner;
 extern Model *modelPolySplitter;
+extern Model *modelArpeggiator;

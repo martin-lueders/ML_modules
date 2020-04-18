@@ -173,6 +173,12 @@
       "name": "Poly Splitter",
       "description": "split polyphonic inputs into two outputs",
       "tags": ["Utility, Polyphonic"]
+    },
+    {
+      "slug": "Arpeggiator",
+      "name": "Arpeggiator",
+      "description": "",
+      "tags": ["Sequencer"]
     }
   ]
 }

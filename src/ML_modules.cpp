@@ -36,6 +36,7 @@ void init(rack::Plugin *p) {
 	pluginInstance->addModel(modelOctaTimes);
 	pluginInstance->addModel(modelCloner);
 	pluginInstance->addModel(modelPolySplitter);
+	pluginInstance->addModel(modelArpeggiator);
 }
 
 

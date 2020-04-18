@@ -183,3 +183,17 @@ struct SmallNumberDisplayWidget : TransparentWidget {
   void draw(const DrawArgs &args) override;
 
 };
+
+struct MLSliderHoriz3 : SvgSwitch {
+
+	MLSliderHoriz3();
+
+};
+
+struct MLSmallButtonUp : SvgSwitch {
+	MLSmallButtonUp();
+};
+
+struct MLSmallButtonDn : SvgSwitch {
+	MLSmallButtonDn();
+};

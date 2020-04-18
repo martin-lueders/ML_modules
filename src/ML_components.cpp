@@ -327,3 +327,26 @@ void SmallNumberDisplayWidget::draw(const DrawArgs &args)  {
   
 };
 
+MLSliderHoriz3::MLSliderHoriz3() {
+
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Slider_3_Horiz_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Slider_3_Horiz_1.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Slider_3_Horiz_2.svg")));
+
+}
+
+MLSmallButtonDn::MLSmallButtonDn() {
+	momentary=true;
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_Dn_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_Dn_1.svg")));
+	sw->wrap();
+	box.size = sw->box.size;
+};
+
+MLSmallButtonUp::MLSmallButtonUp() {
+	momentary=true;
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_Up_0.svg")));
+	addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SmallButton_Up_1.svg")));
+	sw->wrap();
+	box.size = sw->box.size;
+};
