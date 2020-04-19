@@ -444,27 +444,6 @@ void Arpeggiator::step() {
 
 	bool hold = inputs[HOLD_INPUT].getNormalVoltage(0.0f) > 0.5;
 
-//	if(channels < channels_last) {
-//
-//		for(int c=channels; c<channels_last; c++) {
-//			playOrderList.remove(c);
-//			pitchOrderList.remove(c);
-//			channelList[c].reset();
-//			number_of_notes--;
-//
-//			upTrigger[c].process(0.0f);
-//			dnTrigger[c].process(0.0f);
-//		}
-//		calculateLookup();
-//	}
-//
-//	if(channels > channels_last) {
-//		for(int c=channels_last; c<channels; c++) {
-//			upTrigger[c].process(0.0f);
-//			dnTrigger[c].process(0.0f);
-//		}
-//	}
-
 	if(channels != channels_last) onReset();
 
 	channels_last = channels;
@@ -539,7 +518,7 @@ void Arpeggiator::step() {
 	if( orderTrigger.process(params[ORDER_PARAM].getValue()) ) order_global = 1 - order_global;
 
 	if( rangeUpTrigger.process(params[RANGE_UP_PARAM].getValue()) ) range_global = range_global==3?0:range_global+1;
-	if( rangeDnTrigger.process(params[RANGE_DN_PARAM].getValue()) ) range_global = range_global==0?4:range_global-1;
+	if( rangeDnTrigger.process(params[RANGE_DN_PARAM].getValue()) ) range_global = range_global==0?3:range_global-1;
 
 	if( modeUpTrigger.process(params[MODE_UP_PARAM].getValue()) ) mode_global = mode_global==NUM_MODES-1?0:mode_global+1;
 	if( modeDnTrigger.process(params[MODE_DN_PARAM].getValue()) ) mode_global = mode_global==0?NUM_MODES-1:mode_global-1;

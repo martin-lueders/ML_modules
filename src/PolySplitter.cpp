@@ -50,7 +50,7 @@ void PolySplitter::process(const ProcessArgs &args) {
 	int split_channel = round(params[SPLIT_PARAM].getValue());
 	// float in[PORT_MAX_CHANNELS];
 
-
+	channels = 0;
 	for(int i=0; i<4; i++) channels = MAX(channels, inputs[IN_INPUT+i].getChannels());
 
 	channels_A = MIN(channels, split_channel);

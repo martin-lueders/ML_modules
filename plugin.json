@@ -166,19 +166,19 @@
       "slug": "Cloner",
       "name": "Cloner",
       "description": "Clone a signal to polyphonic channels",
-      "tags": ["Utility, Polyphonic"]
+      "tags": ["Utility", "Polyphonic"]
     },
     {
       "slug": "PolySplitter",
       "name": "Poly Splitter",
       "description": "split polyphonic inputs into two outputs",
-      "tags": ["Utility, Polyphonic"]
+      "tags": ["Utility", "Polyphonic"]
     },
     {
       "slug": "Arpeggiator",
       "name": "Arpeggiator",
-      "description": "",
-      "tags": ["Sequencer"]
+      "description": "multi-channel arpeggiator",
+      "tags": ["Sequencer", "Polyphonic"]
     }
   ]
 }
