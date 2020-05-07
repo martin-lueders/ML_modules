@@ -252,6 +252,7 @@ struct Arpeggiator : Module {
 		MODE_DN_PARAM,
 		RANGE_UP_PARAM,
 		RANGE_DN_PARAM,
+		HOLD_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -266,6 +267,7 @@ struct Arpeggiator : Module {
 		NUM_OUTPUTS 
 	};
 	enum LightIds {
+		HOLD_LIGHT,
 		NUM_LIGHTS
 	};
 
@@ -273,6 +275,7 @@ struct Arpeggiator : Module {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
 
 		configParam(ORDER_PARAM, 0.0, 1.0, 0.0, "Note Order");
+		configParam(HOLD_PARAM,  0.0, 1.0, 0.0, "Hold reversal");
 
 
 		configParam(CV1_MODE_PARAM, -1.0, 1.0, 0.0, "CV1 Mode"); // -1 = S&H in, 0 = continuous, 1 = S&H out
@@ -281,6 +284,8 @@ struct Arpeggiator : Module {
 		order_global = 0;
 		mode_global = 0;
 		range_global = 0;
+
+		hold_button =  false;
 
 		onReset();
 
@@ -328,6 +333,8 @@ struct Arpeggiator : Module {
 		number_of_notes = 0;
 		channels_trigger = 1;
 
+		mono_channel = 0;
+
 		channels_last = 0;
 		hold_last = false;
 
@@ -371,6 +378,7 @@ struct Arpeggiator : Module {
 	dsp::SchmittTrigger rangeDnTrigger;
 	dsp::SchmittTrigger modeUpTrigger;
 	dsp::SchmittTrigger modeDnTrigger;
+	dsp::SchmittTrigger holdTrigger;
 
 	std::list<int> playOrderList;
 	std::list<int> pitchOrderList;
@@ -378,7 +386,10 @@ struct Arpeggiator : Module {
 	int number_of_notes;
 	int channels_last;
 
+	int mono_channel;
+
 	bool hold_last;
+	bool hold_button;
 
 	int order_global;
 	int mode_global;
@@ -442,7 +453,10 @@ void Arpeggiator::step() {
 	// if hold goes down:
 	// - held notes notes with low gate will be released. 
 
-	bool hold = inputs[HOLD_INPUT].getNormalVoltage(0.0f) > 0.5;
+	if(holdTrigger.process(params[HOLD_PARAM].getValue()>0.5)) hold_button = !hold_button;
+	lights[HOLD_LIGHT].value = hold_button? 1.0 : 0.0;
+
+	bool hold = (inputs[HOLD_INPUT].getNormalVoltage(0.0f) > 0.5) ? !hold_button : hold_button;
 
 	if(channels != channels_last) onReset();
 
@@ -451,63 +465,109 @@ void Arpeggiator::step() {
 	float cv1_s_h = params[CV1_MODE_PARAM].getValue();
 	float cv2_s_h = params[CV2_MODE_PARAM].getValue();
 
-	for(int c=0; c<channels; c++) {
+	if(channels==1) {
 
-		float gate  = inputs[GATE_INPUT].getNormalPolyVoltage(0.0f, c);
+			float gate  = inputs[GATE_INPUT].getNormalPolyVoltage(0.0f, 1);
 
-		if( upTrigger[c].process(gate) ) {
+			if( upTrigger[0].process(gate) ) {
 
-			float pitch = inputs[PITCH_INPUT].getNormalPolyVoltage(0.0f, c);
-			float cv1   = inputs[CV1_INPUT].getNormalPolyVoltage(0.0f, c);
-			float cv2   = inputs[CV2_INPUT].getNormalPolyVoltage(0.0f, c);
+				mono_channel = (mono_channel+1)%PORT_MAX_CHANNELS;
 
+				float pitch = inputs[PITCH_INPUT].getNormalPolyVoltage(0.0f, 0);
+				float cv1   = inputs[CV1_INPUT].getNormalPolyVoltage(0.0f, 0);
+				float cv2   = inputs[CV2_INPUT].getNormalPolyVoltage(0.0f, 0);
 
-			if(!channelList[c].valid) {
-				channelList[c].set(pitch, cv1, cv2);
-				playOrderList.push_back(c);
+				if(!channelList[mono_channel].valid) {
+					channelList[mono_channel].set(pitch, cv1, cv2);
+					playOrderList.push_back(mono_channel);
 
-				std::list<int>::iterator it = pitchOrderList.begin(); 
-				while(it != pitchOrderList.end() && channelList[*it].pitch < pitch) it++;
-				pitchOrderList.insert(it, c);
+					std::list<int>::iterator it = pitchOrderList.begin(); 
+					while(it != pitchOrderList.end() && channelList[*it].pitch < pitch) it++;
+					pitchOrderList.insert(it, mono_channel);
 
-				number_of_notes++;
+					number_of_notes++;
 
-				calculateLookup();
-			}
-
-		}
-
-		if(!hold && dnTrigger[c].process(5.f-gate) ) {
-
-			if(number_of_notes>0) {
-				if(channelList[c].valid) {
-					playOrderList.remove(c);
-					pitchOrderList.remove(c);
-					channelList[c].reset();
-					number_of_notes--;
 					calculateLookup();
 				}
 			}
-		}; 
+			if(!hold && dnTrigger[1].process(5.f-gate) ) {
 
-		if(!hold && hold!=hold_last) {
-			if(channelList[c].valid && !upTrigger[c].isHigh() ) {
-					playOrderList.remove(c);
-					pitchOrderList.remove(c);
-					channelList[c].reset();
-					number_of_notes--;
-					calculateLookup();
-			}
-		}
+				if(number_of_notes>0) {
+					if(channelList[mono_channel].valid) {
+						playOrderList.remove(mono_channel);
+						pitchOrderList.remove(mono_channel);
+						channelList[mono_channel].reset();
+						number_of_notes--;
+						calculateLookup();
+					}
+				}
+			}; 
 
 	}
+	else
+	{
+	
+		for(int c=0; c<channels; c++) {
+
+			float gate  = inputs[GATE_INPUT].getNormalPolyVoltage(0.0f, c);
+
+			if( upTrigger[c].process(gate) ) {
+
+				float pitch = inputs[PITCH_INPUT].getNormalPolyVoltage(0.0f, c);
+				float cv1   = inputs[CV1_INPUT].getNormalPolyVoltage(0.0f, c);
+				float cv2   = inputs[CV2_INPUT].getNormalPolyVoltage(0.0f, c);
+
+				if(!channelList[c].valid) {
+					channelList[c].set(pitch, cv1, cv2);
+					playOrderList.push_back(c);
+
+					std::list<int>::iterator it = pitchOrderList.begin(); 
+					while(it != pitchOrderList.end() && channelList[*it].pitch < pitch) it++;
+					pitchOrderList.insert(it, c);
+
+					number_of_notes++;
+
+					calculateLookup();
+				}
+
+			}
+
+			if(!hold && dnTrigger[c].process(5.f-gate) ) {
+
+				if(number_of_notes>0) {
+					if(channelList[c].valid) {
+						playOrderList.remove(c);
+						pitchOrderList.remove(c);
+						channelList[c].reset();
+						number_of_notes--;
+						calculateLookup();
+					}
+				}
+			}; 
+
+
+		}
+	}
+
+	if(!hold && (hold!=hold_last)) {
+		for(int c=0; c<PORT_MAX_CHANNELS; c++) {
+			if(channelList[c].valid && !upTrigger[c].isHigh() ) {
+				playOrderList.remove(c);
+				pitchOrderList.remove(c);
+				channelList[c].reset();
+				number_of_notes--;
+				calculateLookup();
+			}
+		}
+	}
+
 
 	hold_last = hold;
 
 	// handle arpeggiator
 	// ------------------
 
-	channels_trigger = inputs[TRIG_INPUT].getChannels();
+	channels_trigger = MAX(1,inputs[TRIG_INPUT].getChannels());
 
 	outputs[PITCH_OUTPUT].setChannels(channels_trigger);
 	outputs[GATE_OUTPUT ].setChannels(channels_trigger);
@@ -551,7 +611,7 @@ void Arpeggiator::step() {
 	
 			float octave = driver[c].getOctave();
 			// pitch_cv[c] = octave + (channelList[index[c]].valid?channelList[index[c]].pitch:-10.0f);
-			pitch_cv[c] = octave + (channelList[index[c]].valid?channelList[index[c]].pitch:pitch_cv[c]);
+			pitch_cv[c] = (channelList[index[c]].valid?channelList[index[c]].pitch+octave:pitch_cv[c]);
 
 			cv1_sh_o[c] = inputs[CV1_INPUT].getNormalPolyVoltage(0.0f, index[c]);
 			cv2_sh_o[c] = inputs[CV2_INPUT].getNormalPolyVoltage(0.0f, index[c]);
@@ -732,7 +792,13 @@ ArpeggiatorWidget::ArpeggiatorWidget(Arpeggiator* module) {
     addParam(createParam<MLSliderHoriz3>(   Vec(35, 300),       module, Arpeggiator::CV1_MODE_PARAM));
     addParam(createParam<MLSliderHoriz3>(   Vec(35, 335),       module, Arpeggiator::CV2_MODE_PARAM));
 
-	addInput(createInput<MLPort>( Vec(25, 175),       module, Arpeggiator::HOLD_INPUT));
+	addInput(createInput<MLPort>( Vec(35, 175),       module, Arpeggiator::HOLD_INPUT));
+
+	addParam(createParam<ML_SmallLEDButton>(Vec(7, 178), module, Arpeggiator::HOLD_PARAM));
+	addChild(createLight<MLSmallLight<RedLight>>(Vec(7+4, 178+4), module, Arpeggiator::HOLD_LIGHT));
+
+
+
 	addInput(createInput<MLPort>( Vec(75, 175),       module, Arpeggiator::RESET_INPUT));
 	addInput(createInput<MLPort>( Vec(115, 175),      module, Arpeggiator::TRIG_INPUT));
 

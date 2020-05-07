@@ -49,7 +49,8 @@
        y1="261.01657"
        x2="9.5249996"
        y2="271.59991"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,4.7625001)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient885"
@@ -58,7 +59,8 @@
        y1="273.18723"
        x2="9.5250034"
        y2="283.77057"
-       gradientUnits="userSpaceOnUse" />
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,3.9687501)" />
     <linearGradient
        gradientTransform="translate(-2.3554386e-6,196.45831)"
        inkscape:collect="always"
@@ -123,7 +125,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="4.0000004"
      inkscape:cx="-182.96077"
-     inkscape:cy="243.97536"
+     inkscape:cy="193.97537"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -298,18 +300,19 @@
        width="7.9375005"
        height="10.583334"
        x="1.5874996"
-       y="261.01657"
-       ry="1.2472694" />
+       y="265.77905"
+       ry="1.2472694"
+       rx="1.2472694" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="4.5213437"
-       y="270.54163"
+       y="275.30411"
        id="text4847-35"><tspan
          sodipodi:role="line"
          id="tspan4845-7"
          x="4.5213437"
-         y="270.54163"
+         y="275.30411"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke-width:0.26458335">In</tspan></text>
     <rect
        style="fill:url(#linearGradient911);fill-opacity:1;stroke:#000000;stroke-width:0.079375;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -317,37 +320,58 @@
        width="7.9375"
        height="10.583334"
        x="1.5875039"
-       y="273.18723"
-       ry="1.2472694" />
+       y="277.15594"
+       ry="1.2472694"
+       rx="1.2472694" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="2.7571104"
-       y="282.66943"
+       y="286.63815"
        id="text4847-3-6"><tspan
          sodipodi:role="line"
          id="tspan4867-8"
          x="2.7571104"
-         y="282.66943">Out</tspan></text>
+         y="286.63815">Out</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11666679px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="1.058333"
-       y="217.62495"
+       y="214.97911"
        id="text4926"><tspan
          sodipodi:role="line"
          id="tspan879"
          x="1.058333"
-         y="217.62495">Channels</tspan></text>
+         y="214.97911">Channels</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11666679px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
        x="2.1166663"
-       y="240.37881"
+       y="236.41005"
        id="text4926-5"><tspan
          sodipodi:role="line"
          id="tspan871"
          x="2.1166663"
-         y="240.37881">Spread</tspan></text>
+         y="236.41005">Spread</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11666679px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       x="7.4083333"
+       y="258.10565"
+       id="text4926-5-4"><tspan
+         sodipodi:role="line"
+         id="tspan881"
+         x="7.4083333"
+         y="258.10565">Bi</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11666679px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       x="7.4083333"
+       y="261.28067"
+       id="text4926-5-4-9"><tspan
+         sodipodi:role="line"
+         id="tspan901"
+         x="7.4083333"
+         y="261.28067">Uni</tspan></text>
   </g>
 </svg>
