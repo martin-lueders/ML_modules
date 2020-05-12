@@ -197,7 +197,8 @@ ClonerWidget::ClonerWidget(Cloner *module) {
 void ClonerWidget::appendContextMenu(Menu *menu) {
 
     Cloner *cloner = dynamic_cast<Cloner*>(module);
-
+	assert(cloner);
+	
     MenuLabel *modeLabel = new MenuLabel();
     modeLabel->text = "Cloner Mode";
     menu->addChild(modeLabel);

@@ -347,6 +347,7 @@ struct Arpeggiator : Module {
 		json_object_set_new(rootJ, "order", json_integer(order_global));
 		json_object_set_new(rootJ, "range", json_integer(range_global));
 		json_object_set_new(rootJ, "mode",  json_integer(mode_global));
+		json_object_set_new(rootJ, "hold",  json_integer(hold_button));
 		
 		return rootJ;
 
@@ -362,6 +363,9 @@ struct Arpeggiator : Module {
 
 		json_t *modeJ = json_object_get(rootJ, "mode");
 		if(modeJ) mode_global = json_integer_value(modeJ);
+
+		json_t *holdJ = json_object_get(rootJ, "hold");
+		if(holdJ) hold_button = (bool) json_integer_value(holdJ);
 
 	};
 
