@@ -45,10 +45,6 @@ struct TrigSwitch3_2 : Module {
 
 	OutMode outMode = ZERO;
 
-	int channels1_last;
-	int channels2_last;
-	int channels3_last;
-
 
 	dsp::SchmittTrigger stepTriggers[8];
 
@@ -66,9 +62,6 @@ struct TrigSwitch3_2 : Module {
 			memset(out3, 0, sizeof(out3));
 		};
 
-		channels1_last = 0;
-		channels2_last = 0;
-		channels3_last = 0;
 	};
 
 	json_t *dataToJson() override {
@@ -101,20 +94,9 @@ void TrigSwitch3_2::process(const ProcessArgs &args) {
 	int channels2 = inputs[CV2_INPUT].getChannels();
 	int channels3 = inputs[CV3_INPUT].getChannels();
 
-	if(channels1!=channels1_last) {
-		for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setChannels(channels1);
-		channels1_last = channels1;
-	}
-
-	if(channels2!=channels2_last) {
-		for(int i=0; i<8; i++) outputs[OUT2_OUTPUT+i].setChannels(channels2);
-		channels2_last = channels2;
-	}
-
-	if(channels3!=channels3_last) {
-		for(int i=0; i<8; i++) outputs[OUT3_OUTPUT+i].setChannels(channels3);
-		channels3_last = channels3;
-	}
+	for(int i=0; i<8; i++) outputs[OUT1_OUTPUT+i].setChannels(channels1);
+	for(int i=0; i<8; i++) outputs[OUT2_OUTPUT+i].setChannels(channels2);
+	for(int i=0; i<8; i++) outputs[OUT3_OUTPUT+i].setChannels(channels3);
 
 	if(outMode==ZERO) { 
 		for(int i=0; i<8; i++) {

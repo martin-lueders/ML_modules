@@ -24,7 +24,6 @@ struct TrigSwitch2 : Module {
 	TrigSwitch2() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
 		for(int i=0; i<8l; i++) configParam(TrigSwitch2::STEP_PARAM + i, 0.0, 1.0, 0.0);
-		channels_last = 0;
 		onReset(); 
 	};
 
@@ -36,8 +35,6 @@ struct TrigSwitch2 : Module {
 	};
 
 	OutMode outMode = ZERO;
-
-	int channels_last;
 
 	json_t *dataToJson() override {
 
@@ -91,10 +88,7 @@ void TrigSwitch2::process(const ProcessArgs &args) {
 
 	int channels = inputs[CV_INPUT].getChannels();
 
-	if(channels!=channels_last) {
-		for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].setChannels(channels);
-		channels_last = channels;
-	}
+	for(int i=0; i<8; i++) outputs[OUT_OUTPUT+i].setChannels(channels);
 
 	for(int i=0; i<8; i++) {
 		if( stepTriggers[i].process( inputs[TRIG_INPUT+i].getNormalVoltage(0.0)) + params[STEP_PARAM+i].getValue() ) position = i;
