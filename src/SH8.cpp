@@ -106,7 +106,7 @@ void SH8::process(const ProcessArgs &args) {
 	int trig_channels = 0;  // default polyphony for the first trigger input:
 	                        // don't use, if not connected. We can't make up trigger signals.
 
-	// initialize all channels of the firs input to random.
+	// initialize all channels of the first input to random.
 
 	for(int c=0; c<PORT_MAX_CHANNELS; c+=4) in[c/4] = rand_gen.get();
 
@@ -118,22 +118,26 @@ void SH8::process(const ProcessArgs &args) {
 		new_trig_channels = new_trig_channels==0 ? trig_channels : new_trig_channels;
 		new_in_channels   = new_in_channels==0 ? in_channels : new_in_channels;
 
+		// if the trigger input is monophonic, process as many channels, as present in CV input.
+		trig_channels = new_trig_channels==1 ? new_in_channels : new_trig_channels;
+
 		if( inputs[TRIG_INPUT+i].isConnected() ) {
-			// if the trigger input is monophonic, process as many channels, as present in CV input.
-			trig_channels = new_trig_channels==1 ? new_in_channels : new_trig_channels;
 			for(int c=0; c<trig_channels; c+=4) {
 				trig[c/4] = inputs[TRIG_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			channelMask.apply_all(trig, trig_channels==1?in_channels:trig_channels);
+			// channelMask.apply_all(trig, trig_channels==1?in_channels:trig_channels);
+			channelMask.apply_all(trig, trig_channels==1?MAX(1,in_channels):trig_channels);
 		}
+
+		// if the CV input is monophonic, process as many channels as present in trigger input.
+		in_channels = new_in_channels==1 ? MAX(1,new_trig_channels) : new_in_channels;
 		
 		if(inputs[IN_INPUT+i].isConnected() ) {
-			// if the CV input is monophonic, process as many channels as present in trigger input.
-			in_channels = new_in_channels==1 ? new_trig_channels : new_in_channels;
 			for(int c=0; c<in_channels; c+=4) {
 				in[c/4] = inputs[IN_INPUT+i].getPolyVoltageSimd<simd::float_4>(c);
 			}
-			channelMask.apply_all(in, in_channels==1?trig_channels:in_channels);
+			// channelMask.apply_all(in, in_channels==1?trig_channels:in_channels);
+			channelMask.apply_all(in, in_channels==1?MAX(1,trig_channels):in_channels);
 		}
 
 		if(in_channels==1) in_channels = MAX(1,trig_channels);
