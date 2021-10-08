@@ -58,9 +58,15 @@ struct OctaFlop : Module {
 
 	OctaFlop() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
+        configButton(OctaFlop::RESET_PARAM, "Reset"); 
+		configInput(RESET_INPUT, "Reset");
+
 		for(int i=0; i<8; i++) {
-	        configParam(OctaFlop::RESET_PARAM, 0.0, 10.0, 0.0); 
 			state[i]=false; 
+			configInput(TRIG1_INPUT+i, "Trigger #"+std::to_string(i+1));
+			configOutput(OUT1_OUTPUT+i, "State #"+std::to_string(i+1));
+
 		}
 	};
 

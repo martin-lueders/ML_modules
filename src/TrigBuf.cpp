@@ -28,8 +28,16 @@ struct TrigBuf : Module {
 
 	TrigBuf() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-    	configParam(TrigBuf::ARM1_PARAM, 0, 10, 0);
-    	configParam(TrigBuf::ARM2_PARAM, 0, 10, 0);
+
+		configInput(ARM1_INPUT, "Arm" );
+		configInput(ARM2_INPUT, "Arm" );
+		configInput(GATE1_INPUT, "Trigger" );
+		configInput(GATE2_INPUT, "Trigger" );
+		configOutput(OUT1_OUTPUT, "Out");
+		configOutput(OUT2_OUTPUT, "Out");
+
+    	configButton(TrigBuf::ARM1_PARAM, "Arm");
+    	configButton(TrigBuf::ARM2_PARAM, "Arm");
 
 		onReset(); 
 	};

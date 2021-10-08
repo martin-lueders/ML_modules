@@ -32,6 +32,12 @@ struct Sum8 : Module {
 
 	Sum8() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
+		for(int i=0; i<8; i++) {
+			configInput(IN1_INPUT+i, "CV");
+		};
+		configOutput(OUT_OUTPUT, "CV Sum");
+
 	};
 
 

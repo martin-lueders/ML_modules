@@ -27,9 +27,17 @@ struct Cloner : Module {
 
 	Cloner() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Cloner::CHANNELS_PARAM, 1.0, 16.0, 1.0);
-		configParam(Cloner::SPREAD_PARAM, 0.0, 1.0, 0.0);
-		configParam(Cloner::CENTER_PARAM, 0.0, 2.0, 0.0);
+        configParam(Cloner::CHANNELS_PARAM, 1.0, 16.0, 1.0, "number of channels");
+		configParam(Cloner::SPREAD_PARAM, 0.0, 1.0, 0.0, "spread");
+		configSwitch(Cloner::CENTER_PARAM, 0.0, 2.0, 0.0, "Center", {"Uni", "Bi"});
+
+		configInput(CV_INPUT, "CV");
+		configInput(CHANNELS_INPUT, "Channels");
+		configInput(SPREAD_INPUT, "Spread");
+
+		configOutput(CV_OUTPUT, "CV");
+
+
 		channels = 1;
 		legacy = true;
 	};

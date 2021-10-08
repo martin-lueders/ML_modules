@@ -32,7 +32,15 @@ struct OctaTrig : Module {
 	float_4 state[8][4];
 
 	OctaTrig() {
-		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
+		for(int i=0; i<8; i++) {
+			configInput(IN_INPUT+i, "Gate #"+std::to_string(i+1));
+			configOutput(UP_OUTPUT+i, "Trigger up #"+std::to_string(i+1));
+			configOutput(DN_OUTPUT+i, "Trigger down #"+std::to_string(i+1));
+			configOutput(SUM_OUTPUT+i, "Trigger both #"+std::to_string(i+1));
+		}
+
 		memset(state, 0, sizeof(state));
 	};
 

@@ -37,13 +37,22 @@ struct BPMdetect : Module {
 	BPMdetect() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); misses = 0; 
 	
-	    configParam(BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5);
-        configParam(BPMdetect::MULT2_PARAM, 1.0, 8.0, 2.0);
-        configParam(BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0);
-        configParam(BPMdetect::MULT3_PARAM, 1.0, 8.0, 3.0);
-        configParam(BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0);
-        configParam(BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0);
-        configParam(BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0);
+		configInput(GATE_INPUT, "Trigger");
+
+		configOutput(LFO_OUTPUT, "LFO rate");
+		configOutput(SEQ_OUTPUT, "SEQ3 rate");
+		configOutput(DELAY_OUTPUT, "Delay CV" );
+		configOutput(TRIG1_OUTPUT, "Clock 1" );
+		configOutput(TRIG2_OUTPUT, "Clock 2" );
+		configOutput(TRIG3_OUTPUT, "Clock 3" );
+
+	    configParam(BPMdetect::SMOOTH_PARAM, 0.0, 1.0, 0.5, "Smooth");
+        configParam(BPMdetect::MULT2_PARAM,  1.0, 8.0, 2.0, "Mult");
+        configParam(BPMdetect::SWING2_PARAM, 0.0, 2.0, 1.0, "Swing");
+        configParam(BPMdetect::MULT3_PARAM,  1.0, 8.0, 3.0, "Mult");
+        configParam(BPMdetect::SWING3_PARAM, 0.0, 2.0, 1.0, "Swing");
+        configParam(BPMdetect::DELAY1_PARAM, 1.0, 8.0, 1.0, "Mult");
+        configParam(BPMdetect::DELAY2_PARAM, 1.0, 8.0, 1.0, "Div");
 
 	};
 

@@ -28,7 +28,13 @@ struct OctaTimes : Module {
 
 	OctaTimes() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
-	    configParam(OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0);
+	    configSwitch(OctaTimes::MULT_PARAM , 0.0, 1.0, 0.0, "Scale", {"x1", "/10"});
+		for(int i=0; i<8; i++) {
+			configInput(IN_A_INPUT+i, "A #"+std::to_string(i+1));
+			configInput(IN_B_INPUT+i, "B #"+std::to_string(i+1));
+			configOutput(OUT_OUTPUT+i, "#"+std::to_string(i+1));
+		}
+		configOutput(SUM_OUTPUT, "Sum");
 	};
 
 	void process(const ProcessArgs &args) override;

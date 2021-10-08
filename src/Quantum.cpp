@@ -93,8 +93,19 @@ struct Quantum : Module {
 
 	Quantum() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); 
+
+		configInput(IN_INPUT, "Pitch" );
+		configInput(TRANSPOSE_INPUT, "Transpose" );
+		configInput(NOTE_INPUT, "Note pitch" );
+		configInput(SET_INPUT, "Note toggle" );
+		configInput(RESET_INPUT, "Reset" );
+
+		configOutput(OUT_OUTPUT, "Quantized pitch" );
+		configOutput(TRIGGER_OUTPUT, "Trigger" );
+		configOutput(GATE_OUTPUT, "Gate" );
+
 		for(int i=0; i<12; i++) {
-		    configParam(Quantum::SEMI_1_PARAM + i, 0.0, 1.0, 0.0);
+		    configButton(Quantum::SEMI_1_PARAM + i);
 		}
 		onReset(); 
 	};

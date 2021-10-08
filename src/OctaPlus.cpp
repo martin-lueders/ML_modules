@@ -25,6 +25,12 @@ struct OctaPlus : Module {
 
 	OctaPlus() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
+		for(int i=0; i<8; i++) {
+			configInput(IN_A_INPUT+i, "A #"+std::to_string(i+1));
+			configInput(IN_B_INPUT+i, "B #"+std::to_string(i+1));
+			configOutput(OUT_OUTPUT+i, "#"+std::to_string(i+1));
+		}
 	};
 
 	void process(const ProcessArgs &args) override;

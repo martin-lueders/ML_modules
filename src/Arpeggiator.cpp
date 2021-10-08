@@ -274,13 +274,36 @@ struct Arpeggiator : Module {
 	Arpeggiator() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
 
-		configParam(ORDER_PARAM, 0.0, 1.0, 0.0, "Note Order");
-		configParam(HOLD_PARAM,  0.0, 1.0, 0.0, "Hold reversal");
+		configButton(ORDER_PARAM, "Note Order");
+		configButton(HOLD_PARAM,  "Hold reversal");
+
+		configButton(MODE_UP_PARAM, "Arp mode +");
+		configButton(MODE_DN_PARAM, "Arp mode -");
+
+		configButton(RANGE_UP_PARAM, "Arp range +");
+		configButton(RANGE_DN_PARAM, "Arp range -");
+
+		configSwitch(CV1_MODE_PARAM, -1.0, 1.0, 0.0, "CV1 Mode", {"Input", "Cont.", "Output"}); // -1 = S&H in, 0 = continuous, 1 = S&H out
+		configSwitch(CV2_MODE_PARAM, -1.0, 1.0, 0.0, "CV2 Mode", {"Input", "Cont.", "Output"}); // -1 = S&H in, 0 = continuous, 1 = S&H out
 
 
-		configParam(CV1_MODE_PARAM, -1.0, 1.0, 0.0, "CV1 Mode"); // -1 = S&H in, 0 = continuous, 1 = S&H out
-		configParam(CV2_MODE_PARAM, -1.0, 1.0, 0.0, "CV2 Mode"); // -1 = S&H in, 0 = continuous, 1 = S&H out
+		configInput(GATE_INPUT, "Gate"); 
+		configInput(PITCH_INPUT, "Pitch");
+		configInput(CV1_INPUT, "CV 1");
+		configInput(CV2_INPUT, "CV 2");
+		configInput(CV3_INPUT, "CV 3");
+		configInput(TRIG_INPUT, "Trigger");
+		configInput(MODE_INPUT,  "Mode" );
+		configInput(RANGE_INPUT,  "Range" );
+		configInput(ORDER_INPUT, "Order" );
+		configInput(RESET_INPUT, "Reset" );
+		configInput(HOLD_INPUT, "Hold revert" );
 
+		configOutput(GATE_OUTPUT, "Gate" );
+		configOutput(PITCH_OUTPUT, "Pitch" );
+		configOutput(CV1_OUTPUT, "CV 1" );
+		configOutput(CV2_OUTPUT, "CV 2" );
+		
 		order_global = 0;
 		mode_global = 0;
 		range_global = 0;

@@ -30,9 +30,25 @@ struct Constants : Module {
 	};
 
 
+
 	Constants() {
 
 	config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
+	configOutput(P_1_OUTPUT,  "+  1");
+	configOutput(P_2_OUTPUT,  "+  2");
+	configOutput(P_3_OUTPUT,  "+  3");
+	configOutput(P_4_OUTPUT,  "+  4");
+	configOutput(P_5_OUTPUT,  "+  5");
+	configOutput(P_7_OUTPUT,  "+  7");
+	configOutput(P_12_OUTPUT, "+ 12");
+	configOutput(M_1_OUTPUT,  "-  1");
+	configOutput(M_2_OUTPUT,  "-  2");
+	configOutput(M_3_OUTPUT,  "-  3");
+	configOutput(M_4_OUTPUT,  "-  4");
+	configOutput(M_5_OUTPUT,  "-  5");
+	configOutput(M_7_OUTPUT,  "-  7");
+	configOutput(M_12_OUTPUT, "- 12");
 
 	double semi = 1.0/12.0;
 

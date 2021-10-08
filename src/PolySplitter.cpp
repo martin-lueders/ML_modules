@@ -29,7 +29,12 @@ struct PolySplitter : Module {
 
 	PolySplitter() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-		configParam(PolySplitter::SPLIT_PARAM, 0.0, 16.0, 8.0);
+		configParam(PolySplitter::SPLIT_PARAM, 0.0, 16.0, 8.0, "Split channel");
+		for(int i=0; i<4; i++) {
+			configInput(IN_INPUT+i, "A #"+std::to_string(i+1));
+			configOutput(OUT_A_OUTPUT+i, "A #"+std::to_string(i+1));
+			configOutput(OUT_B_OUTPUT+i, "B #"+std::to_string(i+1));
+		}
 		onReset(); 
 	};
 

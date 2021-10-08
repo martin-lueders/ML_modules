@@ -49,15 +49,19 @@ struct SeqSwitch : Module {
 
 	SeqSwitch() { 
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;  
-        configParam(SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0);
-        configParam(SeqSwitch::STEP1_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP2_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP3_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP4_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP5_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP6_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP7_PARAM, 0.0, 1.0, 0.0);
-        configParam(SeqSwitch::STEP8_PARAM, 0.0, 1.0, 0.0);
+        configParam(SeqSwitch::NUM_STEPS, 1.0, 8.0, 8.0, "Number of steps");
+		configInput(SeqSwitch::NUMSTEPS_INPUT, "Number of steps");
+		for(int i=0; i<8; i++) {
+	        configButton(SeqSwitch::STEP1_PARAM+i, "Step "+std::to_string(i+1));
+	        configInput(SeqSwitch::IN1_INPUT+i, "CV for Step "+std::to_string(i+1));
+		}
+
+		configInput(TRIGUP_INPUT, "Up trigger" );
+		configInput(TRIGDN_INPUT, "Down trigger" );
+		configInput(TRIGRND_INPUT, "Random trigger" );
+		configInput(RESET_INPUT, "Reset trigger " );
+		configInput(POS_INPUT, "Step CV");
+		configOutput(OUT1_OUTPUT, "CV");
 
 		onReset(); 
 	};

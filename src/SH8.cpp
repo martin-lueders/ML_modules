@@ -64,6 +64,12 @@ struct SH8 : Module {
 
 	SH8() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+		for(int i=0; i<8; i++) {
+			configInput(IN_INPUT+i, "CV #"+std::to_string(i+1));
+			configInput(TRIG_INPUT+i, "Trigger #"+std::to_string(i+1));
+			configOutput(OUT_OUTPUT+i, "CV #"+std::to_string(i+1));
+		}
+
 		onReset(); 
 	};
 

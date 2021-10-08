@@ -26,8 +26,14 @@ struct Quant : Module {
 
 	Quant() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0);
-        configParam(Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0);
+        configParam(Quant::AMOUNT1_PARAM, -1.0, 1.0, 0.0, "Amount", "%", 0.0f, 100.f);
+        configParam(Quant::AMOUNT2_PARAM, -1.0, 1.0, 0.0, "Amount", "%", 0.0f, 100.f);
+
+		configInput(IN1_INPUT, "Pitch");
+		configOutput(OUT1_OUTPUT, "Quantized pitch");
+
+		configInput(IN2_INPUT, "Pitch");
+		configOutput(OUT2_OUTPUT, "Quantized pitch");
 	};
 
 	void process(const ProcessArgs &args) override;

@@ -37,11 +37,22 @@ struct ShiftRegister2 : Module {
 
 	ShiftRegister2() { 
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-		configParam(ShiftRegister2::NUM_STEPS_PARAM, 1.0, 16.0, 8.0);
-		configParam(ShiftRegister2::PROB1_PARAM, 0.0, 1.0, 0.0);
-		configParam(ShiftRegister2::PROB2_PARAM, 0.0, 1.0, 0.0);
-		configParam(ShiftRegister2::MIX1_PARAM, 0.0, 1.0, 1.0);
-		configParam(ShiftRegister2::AUX_OFFSET_PARAM, 1.0, 16.0, 1.0);
+
+		configInput(IN1_INPUT, "CV 1" );
+		configInput(IN2_INPUT, "CV 2" );
+		configInput(TRIGGER_INPUT, "Trigger" );
+		configInput(NUM_STEPS_INPUT, "Number of steps" );
+		configInput(PROB1_INPUT, "Probability" );
+		configInput(PROB2_INPUT, "Probability" );
+		configInput(MIX1_INPUT, "Mix" );
+
+		configParam(NUM_STEPS_PARAM, 1.0, 16.0, 8.0, "Number of steps" );
+		configParam(PROB1_PARAM, 0.0, 1.0, 0.0, "Probability", "%", 0.0f, 100.f );
+		configParam(PROB2_PARAM, 0.0, 1.0, 0.0, "Probability", "%", 0.0f, 100.f );
+		configParam(MIX1_PARAM, 0.0, 1.0, 1.0, "Mix", "%", 0.0f, 100.f );
+		configParam(AUX_OFFSET_PARAM, 1.0, 16.0, 1.0, "Offset");
+		getParamQuantity(AUX_OFFSET_PARAM)->snapEnabled = true;
+
 		onReset(); 
 	};
 
@@ -106,7 +117,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 					float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
 					if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
-					else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
+					else		values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
 				}
 
 			}
@@ -135,7 +146,7 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 					float a = params[MIX1_PARAM].getValue() + clamp(inputs[MIX1_INPUT].getNormalPolyVoltage(0.0f, c),-10.0f,10.0f)/10.0f;
 
 					if(replace) values[c] = a* (rnd2?new_in2:new_in1) + (1-a)*values[numSteps*PORT_MAX_CHANNELS + c];
-					else				values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
+					else		values[c] = values[numSteps*PORT_MAX_CHANNELS + c];
 
 				}
 			}
@@ -238,11 +249,7 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
-
-
-
 	const float column1 = 19, column2 = 74;
-
 
 	IntDisplayWidget *display = new IntDisplayWidget();
 	display->box.pos = Vec(65,46);
@@ -260,10 +267,10 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 
 
 	addInput(createInput<MLPort>(Vec(column1+3,  183), module, ShiftRegister2::PROB1_INPUT));
-  addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM));
+    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 176), module, ShiftRegister2::PROB1_PARAM));
 
 	addInput(createInput<MLPort>(Vec(column1+3,  229), module, ShiftRegister2::PROB2_INPUT));
-  addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM));
+    addParam(createParam<SmallBlueMLKnob>(Vec(column2, 222), module, ShiftRegister2::PROB2_PARAM));
 	
 	addInput(createInput<MLPort>(Vec(column1+3,  275), module, ShiftRegister2::MIX1_INPUT));
 	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  268), module, ShiftRegister2::MIX1_PARAM));

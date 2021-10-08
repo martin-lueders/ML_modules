@@ -15,6 +15,8 @@ struct Counter : Module {
 		GATE_INPUT,
 		START_INPUT,
 		STOP_INPUT,
+		START2_INPUT,
+		STOP2_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -29,9 +31,22 @@ struct Counter : Module {
 
 	Counter() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); 
-        configParam(Counter::MAX_PARAM, 0.0, 128.0, 8.0);
-        configParam(Counter::START_PARAM, 0.0, 10.0, 0.0);
-        configParam(Counter::STOP_PARAM, 0.0, 10.0, 0.0);
+
+		configInput(LENGTH_INPUT, "Length" );
+		configInput(GATE_INPUT, "Trigger" );
+		configInput(START_INPUT, "Start" );
+		configInput(START2_INPUT, "Start" );
+		configInput(STOP_INPUT, "Stop" );
+		configInput(STOP2_INPUT, "Stop" );
+		
+		configOutput(GATE_OUTPUT, "Trigger" );
+		configOutput(START_OUTPUT, "Start" );
+		configOutput(STOP_OUTPUT, "Stop" );
+
+        configParam(Counter::MAX_PARAM, 0.0, 128.0, 8.0, "Length");
+		getParamQuantity(Counter::MAX_PARAM)->snapEnabled = true;
+        configButton(Counter::START_PARAM, "Start" );
+        configButton(Counter::STOP_PARAM, "Stop" );
 
 		onReset(); };
 
@@ -64,13 +79,17 @@ void Counter::process(const ProcessArgs &args) {
 
 	if( inputs[LENGTH_INPUT].isConnected() ) max = max * clamp(inputs[LENGTH_INPUT].getVoltage()/10.0f,0.0f,1.0f);
 
-	if( startTrigger.process(inputs[START_INPUT].getNormalVoltage(0.0) + params[START_PARAM].getValue() )) {
+	if( startTrigger.process( inputs[START_INPUT].getNormalVoltage(0.0) +
+             		          inputs[START2_INPUT].getNormalVoltage(0.0) + 
+							  params[START_PARAM].getValue() )) {
 		state=true; 
 		counter=gateTrigger.isHigh()?1:0;
 		startPulse.trigger(0.001);
 	};
 
-	if( stopTrigger.process(inputs[STOP_INPUT].getNormalVoltage(0.0) + params[STOP_PARAM].getValue() ))   {
+	if( stopTrigger.process( inputs[STOP_INPUT].getNormalVoltage(0.0) +
+                             inputs[STOP2_INPUT].getNormalVoltage(0.0) + 
+	                         params[STOP_PARAM].getValue() ))   {
 		state=false; 
 		counter=0;
 		stopPulse.trigger(0.001);
@@ -131,12 +150,14 @@ CounterWidget::CounterWidget(Counter *module) {
 	addOutput(createOutput<MLPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
 
-	addInput(createInput<MLPort>(  Vec(13, 241), module, Counter::START_INPUT));
-	addOutput(createOutput<MLPort>(Vec(53, 241), module, Counter::START_OUTPUT));
+	addInput(createInput<MLPort>(  Vec( 6, 241), module, Counter::START_INPUT));
+	addInput(createInput<MLPort>(  Vec(31, 241), module, Counter::START2_INPUT));
+	addOutput(createOutput<MLPort>(Vec(60, 241), module, Counter::START_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM));
 
-	addInput(createInput<MLPort>(  Vec(13, 312), module, Counter::STOP_INPUT));
-	addOutput(createOutput<MLPort>(Vec(53, 312), module, Counter::STOP_OUTPUT));
+	addInput(createInput<MLPort>(  Vec( 6, 312), module, Counter::STOP_INPUT));
+	addInput(createInput<MLPort>(  Vec(31, 312), module, Counter::STOP2_INPUT));
+	addOutput(createOutput<MLPort>(Vec(60, 312), module, Counter::STOP_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM));
 
 	NumberDisplayWidget *display = new NumberDisplayWidget();

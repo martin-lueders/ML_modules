@@ -4,15 +4,12 @@
 
 struct ShiftRegister : Module {
 	enum ParamIds {
-		NUM_STEPS,
-		STEP1_PARAM,
-		NUM_PARAMS = STEP1_PARAM+8
+		NUM_PARAMS
 	};
+
 	enum InputIds {
 		IN_INPUT,
 		TRIGGER_INPUT,
-		TRIGUP_INPUT,
-		TRIGDN_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -35,6 +32,12 @@ struct ShiftRegister : Module {
 
 	ShiftRegister() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
+
+		configInput(IN_INPUT, "CV");
+		configInput(TRIGGER_INPUT, "Trigger");	
+		for(int i=0; i<8; i++) {
+			configOutput(OUT1_OUTPUT+i, "CV #"+std::to_string(i+1));
+		}
 
 		onReset(); 
 	};

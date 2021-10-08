@@ -25,10 +25,13 @@ struct Sum8mk2 : Module {
 	ChannelMask channelMask;
 	
 	Sum8mk2() { 
-		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ) ;
+		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
+
 		for(int i=0; i<8; i++) {
-		    configParam(Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0);
+			configInput(Sum8mk2::IN_INPUT+i, "CV");
+		    configSwitch(Sum8mk2::POLARITY_PARAM + i, 0.0, 1.0, 1.0, "Sign", {"-", "+"});
 		};
+		configOutput(OUT_OUTPUT, "CV Sum");
 	};
 
 

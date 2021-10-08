@@ -22,7 +22,7 @@ struct FreeVerb : Module {
 		NUM_OUTPUTS
 	};
 
-	enum LighIds {
+	enum LightIds {
 		FREEZE_LIGHT,
 		NUM_LIGHTS
 	};
@@ -37,9 +37,18 @@ struct FreeVerb : Module {
 
 	FreeVerb() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
-        configParam(FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5);
-        configParam(FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5);
-        configParam(FreeVerb::FREEZE_PARAM, 0.0, 10.0, 0.0);
+
+		configInput(IN_INPUT, "Audio" );
+		configInput(ROOMSIZE_INPUT, "Roomsize" );
+		configInput(DAMP_INPUT, "Damping" );
+		configInput(FREEZE_INPUT, "Freeze" );
+
+		configOutput(OUT1_OUTPUT, "Left");
+		configOutput(OUT2_OUTPUT, "Right");
+
+        configParam(FreeVerb::ROOMSIZE_PARAM, 0.0, 1.0, 0.5, "Roomsize" );
+        configParam(FreeVerb::DAMP_PARAM, 0.0, 1.0, 0.5, "Damping" );
+        configButton(FreeVerb::FREEZE_PARAM, "Freeze" );
 
 		float gSampleRate = APP->engine->getSampleRate();
 

@@ -27,7 +27,15 @@ struct OctaSwitch : Module {
 
 	OctaSwitch() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-		configParam(OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0);
+		configParam(OctaSwitch::THRESHOLD_PARAM, -5.0, 10.0, 1.0, "Threshold");
+		configInput(THRESHOLD_INPUT, "Threshold");
+
+		for(int i=0; i<8; i++) {
+			configInput(GATE_INPUT+i, "Gate #"+std::to_string(i+1) );
+			configInput(A_INPUT+i, "A #"+std::to_string(i+1) );
+			configInput(B_INPUT+i, "B #"+std::to_string(i+1) );
+			configOutput(OUT_OUTPUT+i, "#"+std::to_string(i+1) );
+		}
  
 	};
 
