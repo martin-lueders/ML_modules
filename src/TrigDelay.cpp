@@ -33,10 +33,21 @@ struct TrigDelay : Module {
 
 	TrigDelay() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS );
-        configParam(TrigDelay::DELAY1_PARAM, 0.0, 2.0, 0.0);
-        configParam(TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1);
-        configParam(TrigDelay::DELAY2_PARAM, 0.0, 2.0, 0.0);
-        configParam(TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1);
+
+		configInput(GATE1_INPUT, "Gate #1" );
+		configInput(GATE2_INPUT, "Gate #2" );
+		configInput(DELAY1_INPUT, "Delay #1" );
+		configInput(DELAY2_INPUT, "Delay #2" );
+		configInput(LENGTH1_INPUT, "Length #1" );
+		configInput(LENGTH2_INPUT, "Length #2" );
+
+		configOutput(OUT1_OUTPUT, "#1");
+		configOutput(OUT2_OUTPUT, "#2");
+
+        configParam(TrigDelay::DELAY1_PARAM,  0.0,       2.0, 0.0, "Delay #1", "s");
+        configParam(TrigDelay::LENGTH1_PARAM, minLength, 2.0, 0.1, "Length #1","s");
+        configParam(TrigDelay::DELAY2_PARAM,  0.0,       2.0, 0.0, "Delay #2", "s");
+        configParam(TrigDelay::LENGTH2_PARAM, minLength, 2.0, 0.1, "Length #2","s");
 
 
 		// minLength = 0.001;

@@ -27,15 +27,23 @@ struct TrigSwitch3 : Module {
 
 	TrigSwitch3() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-		for(int i=0; i<8; i++) configParam(TrigSwitch3::STEP_PARAM + i, 0.0, 1.0, 0.0);
+        for (int i=0; i<8; i++) {
+			configInput(TRIG_INPUT+i, "set #"+std::to_string(i+1));
+			configInput(CV1_INPUT+i,   "CV1 #"      +std::to_string(i+1));
+			configInput(CV2_INPUT+i,   "CV2 #"      +std::to_string(i+1));
+			configInput(CV3_INPUT+i,   "CV3 #"      +std::to_string(i+1));
+			configButton(STEP_PARAM + i, "set #"    +std::to_string(i+1));
+		}
+		configOutput(OUT1_OUTPUT, "CV1");
+		configOutput(OUT2_OUTPUT, "CV2");
+		configOutput(OUT3_OUTPUT, "CV3");
+
 		onReset(); 
 	};
 
 	void process(const ProcessArgs &args) override;
 
 	int position=0;
-
-
 
         const float in_min[4] = {0.0, 0.0, 0.0, -5.0};
         const float in_max[4] = {8.0, 6.0, 10.0, 5.0};

@@ -23,7 +23,13 @@ struct TrigSwitch2 : Module {
 
 	TrigSwitch2() {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
-		for(int i=0; i<8l; i++) configParam(TrigSwitch2::STEP_PARAM + i, 0.0, 1.0, 0.0);
+        for (int i=0; i<8; i++) {
+			configInput(TRIG_INPUT+i, "set #"+std::to_string(i+1));
+			configOutput(OUT_OUTPUT+i,   "CV #"      +std::to_string(i+1));
+			configButton(STEP_PARAM + i, "set #"+std::to_string(i+1));
+		}
+		configInput(CV_INPUT, "CV");
+
 		onReset(); 
 	};
 

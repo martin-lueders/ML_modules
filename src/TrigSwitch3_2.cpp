@@ -31,6 +31,18 @@ struct TrigSwitch3_2 : Module {
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
 		for(int i=0; i<8; i++) configParam(TrigSwitch3_2::STEP_PARAM + i, 0.0, 1.0, 0.0);
 
+        for (int i=0; i<8; i++) {
+			configInput(TRIG_INPUT+i, "set #"+std::to_string(i+1));
+			configOutput(OUT1_OUTPUT+i,   "CV1 #"      +std::to_string(i+1));
+			configOutput(OUT2_OUTPUT+i,   "CV2 #"      +std::to_string(i+1));
+			configOutput(OUT3_OUTPUT+i,   "CV3 #"      +std::to_string(i+1));
+			configButton(STEP_PARAM + i, "set #"+std::to_string(i+1));
+		}
+		configInput(CV1_INPUT, "CV1");
+		configInput(CV2_INPUT, "CV2");
+		configInput(CV3_INPUT, "CV3");
+
+
 		onReset(); 
 	};
 

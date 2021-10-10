@@ -42,8 +42,6 @@ void VoltMeter::process(const ProcessArgs &args) {
 		volts[i] = 0.9 * volts[i] + 0.1 * inputs[IN1_INPUT+i].getNormalVoltage(0.0);
 	};
 
-
-
 };
 
 struct VoltDisplayWidget : TransparentWidget {
