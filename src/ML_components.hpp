@@ -52,6 +52,27 @@ struct MLWhiteLight : ModuleLightWidget {
 };
 
 
+struct MLKnob : app::SvgKnob {
+	widget::SvgWidget* bg;
+//	widget::SvgWidget* fg;
+
+	MLKnob() {
+		minAngle = -0.83 * M_PI;
+		maxAngle = 0.83 * M_PI;
+
+		bg = new widget::SvgWidget;
+		fb->addChildBelow(bg, tw);
+
+//		fg = new widget::SvgWidget;
+//		fb->addChildAbove(fg, tw);
+	}
+};
+
+
+struct NewMLKnob : MLKnob {
+	NewMLKnob();
+};
+
 struct BlueMLKnob : RoundKnob {
         BlueMLKnob();
 };

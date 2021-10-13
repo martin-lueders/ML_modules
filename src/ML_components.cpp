@@ -50,6 +50,12 @@ MLWhiteLight::MLWhiteLight() {
 	addBaseColor(color::WHITE);
 }
 
+NewMLKnob::NewMLKnob() {
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/new-Knob.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/new-Knob-bg.svg")));
+};
+
+
 BlueMLKnob::BlueMLKnob() {
     setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
 };

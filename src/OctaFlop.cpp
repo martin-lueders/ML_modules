@@ -144,7 +144,7 @@ OctaFlopWidget::OctaFlopWidget(OctaFlop *module) {
 		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaFlop::TRIG1_INPUT+i));
 
 		// addParam(createParam<ML_SmallLEDButton>(Vec(row2 - 3, offset_y + 5 + i*delta_y), module, OctaFlop::TOGGLE_PARAM+i));
-        addChild(createLight<MLSmallLight<GreenLight>>(Vec(row2 +1, offset_y + 9 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(row2 +1, offset_y + 9 +   i*delta_y), module,  OctaFlop::STATE1_LIGHT+i));
 		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaFlop::OUT1_OUTPUT+i));
 	};
 

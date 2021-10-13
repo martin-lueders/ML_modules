@@ -37,6 +37,7 @@ struct ShiftRegister : Module {
 		configInput(TRIGGER_INPUT, "Trigger");	
 		for(int i=0; i<8; i++) {
 			configOutput(OUT1_OUTPUT+i, "CV #"+std::to_string(i+1));
+			configLight(STEP1_LIGHT+i, "Step "+std::to_string(i+1) + " (Channel 0)");
 		}
 
 		onReset(); 
@@ -57,7 +58,7 @@ struct ShiftRegister : Module {
 	void onReset() override {
 		position=0;
 		memset(channels, 0, 8*sizeof(int));
-		memset(values, 0, 8 * PORT_MAX_CHANNELS);
+		memset(values,   0, 8*PORT_MAX_CHANNELS*sizeof(float));
 		for(int i=0; i<8; i++) {
 			lights[i].value = 0.0;
 		};
@@ -98,7 +99,7 @@ void ShiftRegister::process(const ProcessArgs &args) {
 						channels[i] = MAX(channels[i-1], channels[i]);
 					}
 					channels[0] = inputs[IN_INPUT].getChannels();
-					values[c] = inputs[IN_INPUT].getVoltage(c);
+					values[c]   = inputs[IN_INPUT].getVoltage(c);
 				}
 			}
 			
@@ -108,9 +109,10 @@ void ShiftRegister::process(const ProcessArgs &args) {
 			outputs[OUT1_OUTPUT+i].setChannels(channels[i]);
 			outputs[OUT1_OUTPUT+i].writeVoltages(values+i*PORT_MAX_CHANNELS);
 
-			float value = outputs[OUT1_OUTPUT+i].getVoltageSum();
-			bool positive = value>0;
-			lights[STEP1_LIGHT+2*i].setBrightness(positive?value:0.0);
+//			float value = channels[i]>0?outputs[OUT1_OUTPUT+i].getVoltageSum():5.0f; //values[i*PORT_MAX_CHANNELS];
+			float value = values[i*PORT_MAX_CHANNELS];
+			bool positive = value>0.0f;
+			lights[STEP1_LIGHT+2*i  ].setBrightness(  positive?value:0.0   );
 			lights[STEP1_LIGHT+2*i+1].setBrightness( -(positive?0.0:value) );
 		} // i
 
@@ -149,7 +151,7 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) {
 	for( int i=0; i<8; i++) {
 
 		addOutput(createOutput<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), module, ShiftRegister::OUT1_OUTPUT+i));
-		addChild(createLight<MLSmallLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
+		addChild(createLight<MediumLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 
 
