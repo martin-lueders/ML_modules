@@ -69,13 +69,9 @@ struct Counter : Module {
 	dsp::PulseGenerator startPulse, stopPulse;
 };
 
-
-
 void Counter::process(const ProcessArgs &args) {
 
-
 	max = params[MAX_PARAM].getValue();
-
 
 	if( inputs[LENGTH_INPUT].isConnected() ) max = max * clamp(inputs[LENGTH_INPUT].getVoltage()/10.0f,0.0f,1.0f);
 
@@ -98,14 +94,11 @@ void Counter::process(const ProcessArgs &args) {
 	if( gateTrigger.process(inputs[GATE_INPUT].getNormalVoltage(0.0) ) ) {
 
 		if(state) counter++; 
-
-		if(counter > max) {
-			
+		if(counter > max) {	
 			counter = 0;
 			state   = false;
 			stopPulse.trigger(0.001);
 		};
-		
 	};
 
 
@@ -127,7 +120,10 @@ struct CounterWidget : ModuleWidget {
 };
 
 CounterWidget::CounterWidget(Counter *module) {
-		setModule(module);
+
+	const int num_digits=3;
+
+	setModule(module);
 	box.size = Vec(15*6, 380);
 
 	{
@@ -137,9 +133,6 @@ CounterWidget::CounterWidget(Counter *module) {
 		addChild(panel);
 	}
 
-
-	
-
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
@@ -147,29 +140,29 @@ CounterWidget::CounterWidget(Counter *module) {
 	addInput(createInput<MLPort>( Vec(53, 87), module, Counter::LENGTH_INPUT));
 
 	addInput(createInput<MLPort>(  Vec(13, 168), module, Counter::GATE_INPUT));
-	addOutput(createOutput<MLPort>(Vec(53, 168), module, Counter::GATE_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
 
 	addInput(createInput<MLPort>(  Vec( 6, 241), module, Counter::START_INPUT));
 	addInput(createInput<MLPort>(  Vec(31, 241), module, Counter::START2_INPUT));
-	addOutput(createOutput<MLPort>(Vec(60, 241), module, Counter::START_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(60, 241), module, Counter::START_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM));
 
 	addInput(createInput<MLPort>(  Vec( 6, 312), module, Counter::STOP_INPUT));
 	addInput(createInput<MLPort>(  Vec(31, 312), module, Counter::STOP2_INPUT));
-	addOutput(createOutput<MLPort>(Vec(60, 312), module, Counter::STOP_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(60, 312), module, Counter::STOP_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM));
 
-	NumberDisplayWidget *display = new NumberDisplayWidget();
+	NumberDisplayWidget<int> *display = new NumberDisplayWidget<int>(3);
 	display->box.pos = Vec(20,56);
-	display->box.size = Vec(50, 20);
+	//display->box.size = Vec(50, 20);
 	if(module) display->value = &module->max;
 	addChild(display);
 
 	
-	NumberDisplayWidget *display2 = new NumberDisplayWidget();
+	NumberDisplayWidget<int> *display2 = new NumberDisplayWidget<int>(3);
 	display2->box.pos = Vec(20,145);
-	display2->box.size = Vec(50, 20);
+	//display2->box.size = Vec(50, 20);
 	if(module) display2->value = &module->counter;
 	addChild(display2);
 

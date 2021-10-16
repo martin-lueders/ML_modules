@@ -107,25 +107,22 @@ PolySplitterWidget::PolySplitterWidget(PolySplitter *module) {
 
 	for( int i=0; i<4; i++) {
 		addInput(createInput<MLPort>(  Vec(row1, offset_y + i*delta_y ), module, PolySplitter::IN_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row2, offset_y + i*delta_y ), module, PolySplitter::OUT_A_OUTPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, PolySplitter::OUT_B_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row2, offset_y + i*delta_y ), module, PolySplitter::OUT_A_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row3, offset_y + i*delta_y ), module, PolySplitter::OUT_B_OUTPUT+i));
 	};
 
-	SmallNumberDisplayWidget *display_IN = new SmallNumberDisplayWidget();
-	display_IN->box.pos = Vec(10,126);
-	display_IN->box.size = Vec(30, 20);
+	NumberDisplayWidget<int> *display_IN = new NumberDisplayWidget<int>(2);
+	display_IN->box.pos = Vec(8,126);
 	if(module) display_IN->value = &module->channels;
 	addChild(display_IN);
 
-	SmallNumberDisplayWidget *display_A = new SmallNumberDisplayWidget();
-	display_A->box.pos = Vec(45,126);
-	display_A->box.size = Vec(30, 20);
+	NumberDisplayWidget<int> *display_A = new NumberDisplayWidget<int>(2);
+	display_A->box.pos = Vec(44,126);
 	if(module) display_A->value = &module->channels_A;
 	addChild(display_A);
 
-	SmallNumberDisplayWidget *display_B = new SmallNumberDisplayWidget();
+	NumberDisplayWidget<int> *display_B = new NumberDisplayWidget<int>(2);
 	display_B->box.pos = Vec(80,126);
-	display_B->box.size = Vec(30, 20);
 	if(module) display_B->value = &module->channels_B;
 	addChild(display_B);
 

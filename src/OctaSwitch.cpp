@@ -75,53 +75,6 @@ void OctaSwitch::process(const ProcessArgs &args) {
 	}
 };
 
-struct ThresholdDisplayWidget : TransparentWidget {
-
-  float  *value=0 ;
-
-  std::shared_ptr<Font> font;
-
-  ThresholdDisplayWidget() {
-    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
-
-  void draw(const DrawArgs &args) override {
-    // Background
-    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
-    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(args.vg);
-    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(args.vg, backgroundColor);
-    nvgFill(args.vg);
-    nvgStrokeWidth(args.vg, 1.0);
-    nvgStrokeColor(args.vg, borderColor);
-    nvgStroke(args.vg);
-
-    nvgFontSize(args.vg, 18);
-    nvgFontFaceId(args.vg, font->handle);
-    nvgTextLetterSpacing(args.vg, 1.0);
-
-    char display_string[10];
-
-    if(value) sprintf(display_string,"%5.1f",*value);
-
-    Vec textPos = Vec(3.0f, 17.0f);
-
-    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "~~~~", NULL);
-
-    textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\", NULL);
-
-	{
-	    textColor = nvgRGB(0xf0, 0x00, 0x00);
-		nvgFillColor(args.vg, textColor);
-		nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
-	};
-  }
-};
 
 struct OctaSwitchWidget : ModuleWidget {
 	OctaSwitchWidget(OctaSwitch *module);
@@ -157,12 +110,12 @@ OctaSwitchWidget::OctaSwitchWidget(OctaSwitch *module) {
 		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y ), module, OctaSwitch::A_INPUT+i));
 		addInput(createInput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaSwitch::B_INPUT+i));
 
-		addOutput(createOutput<MLPort>(Vec(row4, offset_y + i*delta_y ), module, OctaSwitch::OUT_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row4, offset_y + i*delta_y ), module, OctaSwitch::OUT_OUTPUT+i));
 	};
 
-	ThresholdDisplayWidget *display = new ThresholdDisplayWidget();
+	NumberDisplayWidget<float> *display = new NumberDisplayWidget<float>(3, 1);
 	display->box.pos = Vec(row3-3,330);
-	display->box.size = Vec(65, 20);
+//	display->box.size = Vec(65, 20);
 	if(module) display->value = &module->threshold;
 	addChild(display);
 

@@ -829,10 +829,10 @@ ArpeggiatorWidget::ArpeggiatorWidget(Arpeggiator* module) {
 	addInput(createInput<MLPort>( Vec(75, 175),       module, Arpeggiator::RESET_INPUT));
 	addInput(createInput<MLPort>( Vec(115, 175),      module, Arpeggiator::TRIG_INPUT));
 
-	addOutput(createOutput<MLPort>( Vec(115, 225),    module, Arpeggiator::PITCH_OUTPUT));
-	addOutput(createOutput<MLPort>( Vec(115, 260),    module, Arpeggiator::GATE_OUTPUT));
-	addOutput(createOutput<MLPort>( Vec(115, 295),    module, Arpeggiator::CV1_OUTPUT));
-	addOutput(createOutput<MLPort>( Vec(115, 330),    module, Arpeggiator::CV2_OUTPUT));
+	addOutput(createOutput<MLPortOut>( Vec(115, 225),    module, Arpeggiator::PITCH_OUTPUT));
+	addOutput(createOutput<MLPortOut>( Vec(115, 260),    module, Arpeggiator::GATE_OUTPUT));
+	addOutput(createOutput<MLPortOut>( Vec(115, 295),    module, Arpeggiator::CV1_OUTPUT));
+	addOutput(createOutput<MLPortOut>( Vec(115, 330),    module, Arpeggiator::CV2_OUTPUT));
 
 };
 

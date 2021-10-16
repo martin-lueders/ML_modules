@@ -286,7 +286,7 @@ SeqSwitchWidget::SeqSwitchWidget(SeqSwitch *module) {
 	addChild(createLight<MLMediumLight<GreenLight>>(Vec(93, offset_y + 7 + 3*delta_y), module, SeqSwitch::STEP8_LIGHT));
 
 	addInput( createInput<MLPort>( Vec(9,  318), module, SeqSwitch::POS_INPUT));
-	addOutput(createOutput<MLPort>(Vec(85, 318), module, SeqSwitch::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(85, 318), module, SeqSwitch::OUT1_OUTPUT));
 
 	addInput(createInput<MLPort>(Vec(47, 272), module, SeqSwitch::TRIGRND_INPUT));
 

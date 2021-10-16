@@ -109,53 +109,6 @@ struct ClonerModeItem : MenuItem {
 };
 
 
-struct ChannelDisplayWidget : TransparentWidget {
-
-  int *value=0;
-  std::shared_ptr<Font> font;
-
-  ChannelDisplayWidget() {
-    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
-
-  void draw(const DrawArgs &args) override {
-    // Background
-    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
-    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(args.vg);
-    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(args.vg, backgroundColor);
-    nvgFill(args.vg);
-    nvgStrokeWidth(args.vg, 1.0);
-    nvgStrokeColor(args.vg, borderColor);
-    nvgStroke(args.vg);
-
-    nvgFontSize(args.vg, 18);
-    nvgFontFaceId(args.vg, font->handle);
-    nvgTextLetterSpacing(args.vg, 2.5);
-
-    char displayStr[2];
-
-    if(value) {sprintf(displayStr, "%2u", (unsigned) *value);}
-
-    Vec textPos = Vec(6.0f, 17.0f);
-
-    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "~~", NULL);
-
-    textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "\\\\", NULL);
-
-    textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(args.vg, textColor);
-    nvgText(args.vg, textPos.x, textPos.y, displayStr,  NULL);
-  }
-};
-
-
-
 struct ClonerWidget : ModuleWidget {
 	ClonerWidget(Cloner *module);
 	json_t *dataToJsonData() ;
@@ -180,9 +133,9 @@ ClonerWidget::ClonerWidget(Cloner *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	ChannelDisplayWidget *display = new ChannelDisplayWidget();
-	display->box.pos = Vec(4,40);
-	display->box.size = Vec(37, 20);
+	NumberDisplayWidget<int> *display = new NumberDisplayWidget<int>(2, 0, 5.f);
+	display->box.pos = Vec(6,40);
+//	display->box.size = Vec(37, 20);
 	if(module) display->value = &(module->channels);
 	addChild(display);
 
@@ -197,7 +150,7 @@ ClonerWidget::ClonerWidget(Cloner *module) {
 
 
 	addInput(createInput<MLPort>(Vec(9, 264), module, Cloner::CV_INPUT));
-	addOutput(createOutput<MLPort>(Vec(9, 307), module, Cloner::CV_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(9, 307), module, Cloner::CV_OUTPUT));
 
 
 }

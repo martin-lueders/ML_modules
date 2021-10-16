@@ -150,7 +150,7 @@ ShiftRegisterWidget::ShiftRegisterWidget(ShiftRegister *module) {
 
 	for( int i=0; i<8; i++) {
 
-		addOutput(createOutput<MLPort>(Vec(offset_x+17, offset_y + i*delta_y  ), module, ShiftRegister::OUT1_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(offset_x+17, offset_y + i*delta_y  ), module, ShiftRegister::OUT1_OUTPUT+i));
 		addChild(createLight<MediumLight<GreenRedLight>>(Vec(offset_x, offset_y + 8 +   i*delta_y), module, ShiftRegister::STEP1_LIGHT+2*i));
 	};
 

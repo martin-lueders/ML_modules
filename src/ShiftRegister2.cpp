@@ -177,54 +177,6 @@ void ShiftRegister2::process(const ProcessArgs &args) {
 	outputs[AUX_OUTPUT].writeVoltages(values + offset*PORT_MAX_CHANNELS);
 };
 
-struct IntDisplayWidget : TransparentWidget {
-
-  int *value=0;
-  std::shared_ptr<Font> font;
-
-  IntDisplayWidget() {
-    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
-
-  void draw(const DrawArgs &args) override {
-    // Background
-    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
-    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(args.vg);
-    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(args.vg, backgroundColor);
-    nvgFill(args.vg);
-    nvgStrokeWidth(args.vg, 1.0);
-    nvgStrokeColor(args.vg, borderColor);
-    nvgStroke(args.vg);
-
-    nvgFontSize(args.vg, 18);
-    nvgFontFaceId(args.vg, font->handle);
-    nvgTextLetterSpacing(args.vg, 2.5);
-
-//    std::string to_display = std::to_string( (unsigned) *value);
-
-    char displayStr[3];
-//    while(to_display.length()<1) to_display = ' ' + to_display;
-
-    if(value) {sprintf(displayStr, "%2u", (unsigned) *value);}
-
-    Vec textPos = Vec(6.0f, 17.0f);
-
-    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "~~", NULL);
-
-    textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "\\\\", NULL);
-
-    textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(args.vg, textColor);
-    nvgText(args.vg, textPos.x, textPos.y, displayStr,  NULL);
-  }
-};
-
 
 struct ShiftRegister2Widget : ModuleWidget {
 	ShiftRegister2Widget(ShiftRegister2 *module);
@@ -251,9 +203,9 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 
 	const float column1 = 19, column2 = 74;
 
-	IntDisplayWidget *display = new IntDisplayWidget();
+	NumberDisplayWidget<int> *display = new NumberDisplayWidget<int>(2);
 	display->box.pos = Vec(65,46);
-	display->box.size = Vec(40, 20);
+//	display->box.size = Vec(40, 20);
 	if(module) display->value = &(module->numSteps);
 	addChild(display);
 
@@ -278,8 +230,8 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
   
 	addParam(createParam<Trimpot>(Vec(56,  318), module, ShiftRegister2::AUX_OFFSET_PARAM));
 
-	addOutput(createOutput<MLPort>(Vec(column1-2, 328 ), module, ShiftRegister2::OUT_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(column2+2, 328 ), module, ShiftRegister2::AUX_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(column1-2, 328 ), module, ShiftRegister2::OUT_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(column2+2, 328 ), module, ShiftRegister2::AUX_OUTPUT));
 }
 
 

@@ -200,14 +200,14 @@ TrigBufWidget::TrigBufWidget(TrigBuf *module) {
 
 	addInput(createInput<MLPort>(Vec(9, 62), module, TrigBuf::ARM1_INPUT));
 	addInput(createInput<MLPort>(Vec(9, 105), module, TrigBuf::GATE1_INPUT));
-	addOutput(createOutput<MLPort>(Vec(9, 150), module, TrigBuf::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(9, 150), module, TrigBuf::OUT1_OUTPUT));
 
 	addParam(createParam<ML_SmallLEDButton>(Vec(40,66), module, TrigBuf::ARM1_PARAM));
 	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 70), module, TrigBuf::ARM1_LIGHT));
 
 	addInput(createInput<MLPort>(Vec(9, 218), module, TrigBuf::ARM2_INPUT));
 	addInput(createInput<MLPort>(Vec(9, 263), module, TrigBuf::GATE2_INPUT));
-	addOutput(createOutput<MLPort>(Vec(9, 305), module, TrigBuf::OUT2_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(9, 305), module, TrigBuf::OUT2_OUTPUT));
 
 	addParam(createParam<ML_SmallLEDButton>(Vec(40,222), module, TrigBuf::ARM2_PARAM));
 	addChild(createLight<MLSmallLight<GreenLight>>(Vec(44, 226), module, TrigBuf::ARM2_LIGHT));

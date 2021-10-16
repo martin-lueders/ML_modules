@@ -117,11 +117,11 @@ QuantizerWidget::QuantizerWidget(Quant *module) {
 
 	addParam(createParam<SmallBlueMLKnob>(Vec(9,  60), module, Quant::AMOUNT1_PARAM));
 	addInput(createInput<MLPort>(Vec(9, 104), module, Quant::IN1_INPUT));
-	addOutput(createOutput<MLPort>(Vec(9, 150), module, Quant::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(9, 150), module, Quant::OUT1_OUTPUT));
 
 	addParam(createParam<SmallBlueMLKnob>(Vec(9, 203), module, Quant::AMOUNT2_PARAM));
 	addInput(createInput<MLPort>(Vec(9, 246), module, Quant::IN2_INPUT));
-	addOutput(createOutput<MLPort>(Vec(9, 292), module, Quant::OUT2_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(9, 292), module, Quant::OUT2_OUTPUT));
 }
 
 

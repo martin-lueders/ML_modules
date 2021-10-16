@@ -105,7 +105,7 @@ OctaPlusWidget::OctaPlusWidget(OctaPlus *module) {
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaPlus::IN_A_INPUT+i));
 		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaPlus::IN_B_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaPlus::OUT_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row3, offset_y + i*delta_y ), module, OctaPlus::OUT_OUTPUT+i));
 	};
 
 

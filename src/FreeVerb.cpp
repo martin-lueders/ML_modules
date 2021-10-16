@@ -156,8 +156,8 @@ FreeVerbWidget::FreeVerbWidget(FreeVerb *module) {
 
 
 
-	addOutput(createOutput<MLPort>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(11, 313), module, FreeVerb::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(55, 313), module, FreeVerb::OUT2_OUTPUT));
 }
 
 Model *modelFreeVerb = createModel<FreeVerb, FreeVerbWidget>("FreeVerb");

@@ -106,7 +106,7 @@ Sum8Widget::Sum8Widget(Sum8 *module) {
 	for( int i=0; i<8; i++) addInput(createInput<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), module, Sum8::IN1_INPUT+i));
 
 
-	addOutput(createOutput<MLPort>(Vec(offset_x, 320), module, Sum8::OUT_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(offset_x, 320), module, Sum8::OUT_OUTPUT));
 
 
 }

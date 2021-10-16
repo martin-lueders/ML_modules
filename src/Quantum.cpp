@@ -525,11 +525,11 @@ QuantumWidget::QuantumWidget(Quantum *module) {
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 	addInput(createInput<MLPort>(Vec(19, 42), module, Quantum::IN_INPUT));
-	addOutput(createOutput<MLPort>(Vec(75, 42), module, Quantum::OUT_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(75, 42), module, Quantum::OUT_OUTPUT));
 
 	addInput(createInput<MLPort>(Vec(75, 90), module, Quantum::TRANSPOSE_INPUT));
-	addOutput(createOutput<MLPort>(Vec(75, 140), module, Quantum::GATE_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(75, 180), module, Quantum::TRIGGER_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(75, 140), module, Quantum::GATE_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(75, 180), module, Quantum::TRIGGER_OUTPUT));
 
 	addInput(createInput<MLPort>(Vec(75, 226), module, Quantum::NOTE_INPUT));
 	addInput(createInput<MLPort>(Vec(75, 266), module, Quantum::SET_INPUT));

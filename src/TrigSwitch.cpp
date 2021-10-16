@@ -121,7 +121,7 @@ TrigSwitchWidget::TrigSwitchWidget(TrigSwitch *module) {
 		addInput(createInput<MLPort>(             Vec(row3, offset_y + i*delta_y), module, TrigSwitch::CV_INPUT + i));
 
 	}
-	addOutput(createOutput<MLPort>(Vec(row3, 320), module, TrigSwitch::OUT_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(row3, 320), module, TrigSwitch::OUT_OUTPUT));
 
 }
 

@@ -186,51 +186,6 @@ void BPMdetect::process(const ProcessArgs &args) {
 
 };
 
-struct NumberDisplayWidget2 : TransparentWidget {
-
-  float  *value=0;
-  std::shared_ptr<Font> font;
-
-  NumberDisplayWidget2() {
-    font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
-
-  void draw(const DrawArgs &args) {
-    // Background
-    NVGcolor backgroundColor = nvgRGB(0x20, 0x20, 0x20);
-    NVGcolor borderColor = nvgRGB(0x10, 0x10, 0x10);
-    nvgBeginPath(args.vg);
-    nvgRoundedRect(args.vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(args.vg, backgroundColor);
-    nvgFill(args.vg);
-    nvgStrokeWidth(args.vg, 1.0);
-    nvgStrokeColor(args.vg, borderColor);
-    nvgStroke(args.vg);
-
-    nvgFontSize(args.vg, 18);
-    nvgFontFaceId(args.vg, font->handle);
-    nvgTextLetterSpacing(args.vg, 2.5);
-
-    char display_string[10];
-
-    if(value) sprintf(display_string,"%6.1f",*value);
-
-    Vec textPos = Vec(6.0f, 17.0f);
-
-    NVGcolor textColor = nvgRGB(0xdf, 0xd2, 0x2c);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "~~~~~", NULL);
-
-    textColor = nvgRGB(0xda, 0xe9, 0x29);
-    nvgFillColor(args.vg, nvgTransRGBA(textColor, 16));
-    nvgText(args.vg, textPos.x, textPos.y, "\\\\\\\\\\", NULL);
-
-    textColor = nvgRGB(0xf0, 0x00, 0x00);
-    nvgFillColor(args.vg, textColor);
-    nvgText(args.vg, textPos.x, textPos.y, display_string, NULL);
-  }
-};
-
 
 
 struct BPMdetectWidget : ModuleWidget {
@@ -267,27 +222,26 @@ struct BPMdetectWidget : ModuleWidget {
 		addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
 		addInput(createInput<MLPort>(Vec(column1+5,  row1+2), module, BPMdetect::GATE_INPUT));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM));
-		addOutput(createOutput<MLPort>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
+  		addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM));
+		addOutput(createOutput<MLPortOut>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
 
-	  addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM));
-		addOutput(createOutput<MLPort>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
+	    addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM));
+  		addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM));
+		addOutput(createOutput<MLPortOut>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
 
-	  addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM));
-  	addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM));
-		addOutput(createOutput<MLPort>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
+	    addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM));
+  		addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM));
+		addOutput(createOutput<MLPortOut>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
 
-		addOutput(createOutput<MLPort>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
-		addOutput(createOutput<MLPort>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
+		addOutput(createOutput<MLPortOut>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
+		addOutput(createOutput<MLPortOut>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
 
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM));
-  	addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM));
-		addOutput(createOutput<MLPort>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
+  		addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM));
+  		addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM));
+		addOutput(createOutput<MLPortOut>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
 
-		NumberDisplayWidget2 *display = new NumberDisplayWidget2();
-		display->box.pos = Vec(25,40);
-		display->box.size = Vec(100, 20);
+		NumberDisplayWidget<float> *display = new NumberDisplayWidget<float>(3, 2);
+		display->box.pos = Vec(30,40);
 		if(module) display->value = &module->BPM;
 		addChild(display);
 	};

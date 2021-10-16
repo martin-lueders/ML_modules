@@ -170,7 +170,7 @@ TrigSwitch2Widget::TrigSwitch2Widget(TrigSwitch2 *module) {
 		addInput(createInput<MLPort>(             Vec(row1, offset_y + i*delta_y), module, TrigSwitch2::TRIG_INPUT + i));
 		addParam(createParam<ML_MediumLEDButton>(Vec(row2 , offset_y + i*delta_y +3 ), module, TrigSwitch2::STEP_PARAM + i));
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch2::STEP_LIGHT+i));
-		addOutput(createOutput<MLPort>(           Vec(row3, offset_y + i*delta_y), module, TrigSwitch2::OUT_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(           Vec(row3, offset_y + i*delta_y), module, TrigSwitch2::OUT_OUTPUT + i));
 
 	}
 	addInput(createInput<MLPort>(Vec(row3, 320), module, TrigSwitch2::CV_INPUT));

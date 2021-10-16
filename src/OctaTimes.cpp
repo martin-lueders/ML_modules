@@ -115,10 +115,10 @@ OctaTimesWidget::OctaTimesWidget(OctaTimes *module) {
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(row1, offset_y + i*delta_y  ), module, OctaTimes::IN_A_INPUT+i));
 		addInput(createInput<MLPort>(Vec(row2, offset_y + i*delta_y  ), module, OctaTimes::IN_B_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTimes::OUT_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row3, offset_y + i*delta_y ), module, OctaTimes::OUT_OUTPUT+i));
 	};
 	
-	addOutput(createOutput<MLPort>(Vec(row3, 330 ), module, OctaTimes::SUM_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(row3, 330 ), module, OctaTimes::SUM_OUTPUT));
 	addParam(createParam<CKSS>( Vec(row1 + 5, 330 ), module, OctaTimes::MULT_PARAM ));
 }
 

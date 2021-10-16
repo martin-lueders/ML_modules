@@ -166,7 +166,7 @@ TrigDelayWidget::TrigDelayWidget(TrigDelay *module) {
 	addInput(createInput<MLPort>(Vec(52, 113), module, TrigDelay::LENGTH1_INPUT));
 
 	addInput(createInput<MLPort>(Vec(12, 164), module, TrigDelay::GATE1_INPUT));
-	addOutput(createOutput<MLPort>(Vec(52, 164), module, TrigDelay::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(52, 164), module, TrigDelay::OUT1_OUTPUT));
 
     addParam(createParam<SmallBlueMLKnob>(Vec(12,  153 + 69),  module, TrigDelay::DELAY2_PARAM));
 	addInput(createInput<MLPort>(Vec(52, 152 + 71), module, TrigDelay::DELAY2_INPUT));
@@ -175,7 +175,7 @@ TrigDelayWidget::TrigDelayWidget(TrigDelay *module) {
 	addInput(createInput<MLPort>(Vec(52, 152 + 114), module, TrigDelay::LENGTH2_INPUT));
 
 	addInput(createInput<MLPort>(Vec(12, 152 + 165), module, TrigDelay::GATE2_INPUT));
-	addOutput(createOutput<MLPort>(Vec(52, 152 + 165), module, TrigDelay::OUT2_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(52, 152 + 165), module, TrigDelay::OUT2_OUTPUT));
 
 }
 

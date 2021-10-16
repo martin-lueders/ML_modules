@@ -120,9 +120,9 @@ OctaTrigWidget::OctaTrigWidget(OctaTrig *module) {
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(  Vec(row1, offset_y + i*delta_y ), module, OctaTrig::IN_INPUT+i));
 
-		addOutput(createOutput<MLPort>(Vec(row2, offset_y + i*delta_y ), module, OctaTrig::UP_OUTPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, OctaTrig::DN_OUTPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row4, offset_y + i*delta_y ), module, OctaTrig::SUM_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row2, offset_y + i*delta_y ), module, OctaTrig::UP_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row3, offset_y + i*delta_y ), module, OctaTrig::DN_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row4, offset_y + i*delta_y ), module, OctaTrig::SUM_OUTPUT+i));
 	};
 
 

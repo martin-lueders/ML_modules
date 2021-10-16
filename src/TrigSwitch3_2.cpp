@@ -216,9 +216,9 @@ TrigSwitch3_2Widget::TrigSwitch3_2Widget(TrigSwitch3_2 *module) {
 		addChild(createLight<MLMediumLight<GreenLight>>( Vec(row2 + 4, offset_y + i*delta_y + 7), module, TrigSwitch3_2::STEP_LIGHT+i));
 
 
-		addOutput(createOutput<MLPort>(             Vec(row3, offset_y + i*delta_y),    module, TrigSwitch3_2::OUT1_OUTPUT + i));
-		addOutput(createOutput<MLPort>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3_2::OUT2_OUTPUT + i));
-		addOutput(createOutput<MLPort>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3_2::OUT3_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(             Vec(row3, offset_y + i*delta_y),    module, TrigSwitch3_2::OUT1_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(             Vec(row3+32, offset_y + i*delta_y), module, TrigSwitch3_2::OUT2_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(             Vec(row3+64, offset_y + i*delta_y), module, TrigSwitch3_2::OUT3_OUTPUT + i));
 
 	}
 	addInput(createInput<MLPort>(Vec(row3,    320), module, TrigSwitch3_2::CV1_INPUT));

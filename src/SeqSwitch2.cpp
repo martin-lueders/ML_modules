@@ -227,15 +227,15 @@ SeqSwitch2Widget::SeqSwitch2Widget(SeqSwitch2 *module) {
 
 	const float offset_y = 118, delta_y=38;
 
-	addOutput(createOutput<MLPort>(Vec(32, offset_y + 0*delta_y), module, SeqSwitch2::OUT1_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(32, offset_y + 1*delta_y), module, SeqSwitch2::OUT2_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(32, offset_y + 2*delta_y), module, SeqSwitch2::OUT3_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(32, offset_y + 3*delta_y), module, SeqSwitch2::OUT4_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(32, offset_y + 0*delta_y), module, SeqSwitch2::OUT1_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(32, offset_y + 1*delta_y), module, SeqSwitch2::OUT2_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(32, offset_y + 2*delta_y), module, SeqSwitch2::OUT3_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(32, offset_y + 3*delta_y), module, SeqSwitch2::OUT4_OUTPUT));
 
-	addOutput(createOutput<MLPort>(Vec(62, offset_y + 0*delta_y), module, SeqSwitch2::OUT5_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(62, offset_y + 1*delta_y), module, SeqSwitch2::OUT6_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(62, offset_y + 2*delta_y), module, SeqSwitch2::OUT7_OUTPUT));
-	addOutput(createOutput<MLPort>(Vec(62, offset_y + 3*delta_y), module, SeqSwitch2::OUT8_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(62, offset_y + 0*delta_y), module, SeqSwitch2::OUT5_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(62, offset_y + 1*delta_y), module, SeqSwitch2::OUT6_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(62, offset_y + 2*delta_y), module, SeqSwitch2::OUT7_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(62, offset_y + 3*delta_y), module, SeqSwitch2::OUT8_OUTPUT));
 
 	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 0*delta_y), module, SeqSwitch2::STEP1_PARAM));
 	addParam(createParam<ML_MediumLEDButton>(Vec(11, offset_y + 3 + 1*delta_y), module, SeqSwitch2::STEP2_PARAM));

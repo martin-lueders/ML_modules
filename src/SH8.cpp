@@ -187,7 +187,7 @@ SH8Widget::SH8Widget(SH8 *module) {
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(  Vec(row1, offset_y + i*delta_y ), module, SH8::IN_INPUT+i));
 		addInput(createInput<MLPort>(  Vec(row2, offset_y + i*delta_y ), module, SH8::TRIG_INPUT+i));
-		addOutput(createOutput<MLPort>(Vec(row3, offset_y + i*delta_y ), module, SH8::OUT_OUTPUT+i));
+		addOutput(createOutput<MLPortOut>(Vec(row3, offset_y + i*delta_y ), module, SH8::OUT_OUTPUT+i));
 	};
 
 }

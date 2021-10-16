@@ -134,8 +134,8 @@ ConstantsWidget::ConstantsWidget(Constants *module) {
 
 	for(int i=0; i<7; i++) {
 
-		addOutput(createOutput<MLPort>(Vec(offset_xR, offset_y + i*delta_y), module, Constants::P_1_OUTPUT + i));
-		addOutput(createOutput<MLPort>(Vec(offset_xL, offset_y + i*delta_y), module, Constants::M_1_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(Vec(offset_xR, offset_y + i*delta_y), module, Constants::P_1_OUTPUT + i));
+		addOutput(createOutput<MLPortOut>(Vec(offset_xL, offset_y + i*delta_y), module, Constants::M_1_OUTPUT + i));
 
 	};
 

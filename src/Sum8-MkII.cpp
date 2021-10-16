@@ -106,7 +106,7 @@ Sum8mk2Widget::Sum8mk2Widget(Sum8mk2 *module) {
 	}
 
 
-	addOutput(createOutput<MLPort>(Vec(offset_x, 320), module, Sum8mk2::OUT_OUTPUT));
+	addOutput(createOutput<MLPortOut>(Vec(offset_x, 320), module, Sum8mk2::OUT_OUTPUT));
 
 
 }
