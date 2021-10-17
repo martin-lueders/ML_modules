@@ -776,16 +776,19 @@ struct ArpeggiatorWidget:ModuleWidget {
 ArpeggiatorWidget::ArpeggiatorWidget(Arpeggiator* module) {
 
 	setModule(module);
+	setPanel(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Arpeggiator.svg")));
+	
 	arp = module;
 
-	box.size = Vec(15*10, 380);
+	// box.size = Vec(15*10, 380);
 	
 	{
-		SvgPanel *panel = new SvgPanel();
-		panel->box.size = box.size;
-		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Arpeggiator.svg")));
-		addChild(panel);
+		//SvgPanel *panel = new SvgPanel();
+		//panel->box.size = box.size;
+		//setPanel(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Arpeggiator.svg")));
+		//addChild(panel);
 	}
+	
 	
 	if(arp) {
 		ArpDisplayWidget* display = new ArpDisplayWidget();
@@ -794,11 +797,13 @@ ArpeggiatorWidget::ArpeggiatorWidget(Arpeggiator* module) {
 		addChild(display);
 	}
 	
-	addChild(createWidget<MLScrew>(Vec(15, 0)));
+	addChild(createWidget<MLScrew>(Vec(15.0, 0.0)));
+//	addChild(createWidget<MLScrew>(mm2px(Vec(20.0, 20.0))));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 	addChild(createWidget<MLScrew>(Vec(box.size.x-30, 365)));
 
+	
 	addParam(createParam<MLSmallButton>( Vec( 7, 35), module, Arpeggiator::ORDER_PARAM));
 	addParam(createParam<MLSmallButtonUp>( Vec( 7, 60), module, Arpeggiator::RANGE_UP_PARAM));
 	addParam(createParam<MLSmallButtonDn>( Vec( 7, 80), module, Arpeggiator::RANGE_DN_PARAM));
@@ -833,6 +838,7 @@ ArpeggiatorWidget::ArpeggiatorWidget(Arpeggiator* module) {
 	addOutput(createOutput<MLPortOut>( Vec(115, 260),    module, Arpeggiator::GATE_OUTPUT));
 	addOutput(createOutput<MLPortOut>( Vec(115, 295),    module, Arpeggiator::CV1_OUTPUT));
 	addOutput(createOutput<MLPortOut>( Vec(115, 330),    module, Arpeggiator::CV2_OUTPUT));
+	
 
 };
 
