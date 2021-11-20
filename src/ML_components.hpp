@@ -7,25 +7,10 @@
 
 using namespace rack;
 
-#define MAX(a,b) a>b?a:b
-#define MIN(a,b) a>b?b:a
 
 
 extern Plugin *pluginInstance;
 
-/*
-struct MLSVGSwitch : SvgSwitch {
-
-	// CircularShadow *shadow;
-
-	// std::vector<std::shared_ptr<Svg>> frames;
-	// SvgWidget *sw;
-
-	MLSVGSwitch();
-	// Adds an SVG file to represent the next switch position 
-	// void addFrame(std::shared_ptr<Svg> svg);
-};
-*/
 
 
 template <typename BASE>
@@ -253,7 +238,6 @@ void NumberDisplayWidget<T>::drawLayer(const DrawArgs &args, int layer)  {
 
   Vec textPos = Vec(margin, 17.0f);
   
-  char display_string[10], fmt_string[6];
   std::stringstream to_display;
 	std::string bg = "";
   int extra=0;
@@ -324,4 +308,18 @@ struct MLSmallButtonUp : SvgSwitch {
 
 struct MLSmallButtonDn : SvgSwitch {
 	MLSmallButtonDn();
+};
+
+struct NKK2 : SvgSwitch { //Toggle
+	NKK2() {
+		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_0.svg")));
+		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_2.svg")));
+	}
+};
+
+struct POLSWITCH : SvgSwitch { //Toggle
+	POLSWITCH() {
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_0.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_1.svg")));
+	}
 };

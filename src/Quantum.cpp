@@ -201,7 +201,6 @@ struct Quantum : Module {
 void Quantum::process(const ProcessArgs &args) {
 
 	int channels = inputs[IN_INPUT].getChannels();
-	int channels_padded = channels + (4-channels%4);
 
 	outputs[OUT_OUTPUT].setChannels(channels);
 	outputs[GATE_OUTPUT].setChannels(channels);

@@ -57,7 +57,6 @@ struct ShiftRegister2 : Module {
 	};
 
 
-
 	void process(const ProcessArgs &args) override;
 
 	int numSteps;
@@ -79,9 +78,7 @@ struct ShiftRegister2 : Module {
 
 void ShiftRegister2::process(const ProcessArgs &args) {
 
-
 	numSteps = roundf(clamp(params[NUM_STEPS_PARAM].getValue() * clamp(inputs[NUM_STEPS_INPUT].getNormalVoltage(5.0f),0.0f,5.0f)/5.0f,1.0f,16.0f));
-
 
 	if( inputs[TRIGGER_INPUT].isConnected() ) {
 
@@ -205,15 +202,14 @@ ShiftRegister2Widget::ShiftRegister2Widget(ShiftRegister2 *module) {
 
 	NumberDisplayWidget<int> *display = new NumberDisplayWidget<int>(2);
 	display->box.pos = Vec(65,46);
-//	display->box.size = Vec(40, 20);
+
 	if(module) display->value = &(module->numSteps);
 	addChild(display);
 
 	addInput(createInput<MLPort>(Vec(column1,  44), module, ShiftRegister2::TRIGGER_INPUT));
 	addInput(createInput<MLPort>(Vec(column1, 96), module, ShiftRegister2::NUM_STEPS_INPUT));
         
-//	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM));
-	addParam(createParam<NewMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM));
+	addParam(createParam<RedSnapMLKnob>(Vec(65,  86), module, ShiftRegister2::NUM_STEPS_PARAM));
 
 	addInput(createInput<MLPort>(Vec(column1+8,  135), module, ShiftRegister2::IN1_INPUT));
 	addInput(createInput<MLPort>(Vec(column2-8,  135), module, ShiftRegister2::IN2_INPUT));

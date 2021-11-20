@@ -12,14 +12,9 @@
 using namespace rack;
 using namespace dsp;
 
-#define MAX(a,b) (a>b)?a:b
-#define MIN(a,b) (a<b)?a:b
-
-#define PORT_MAX_CHANNELS 16
 
 #define DISPLAY_WIDTH  60
 #define DISPLAY_HEIGHT 120
-
 
 
 enum NoteOrder {

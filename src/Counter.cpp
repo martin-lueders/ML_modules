@@ -121,8 +121,6 @@ struct CounterWidget : ModuleWidget {
 
 CounterWidget::CounterWidget(Counter *module) {
 
-	const int num_digits=3;
-
 	setModule(module);
 	box.size = Vec(15*6, 380);
 
@@ -143,12 +141,12 @@ CounterWidget::CounterWidget(Counter *module) {
 	addOutput(createOutput<MLPortOut>(Vec(53, 168), module, Counter::GATE_OUTPUT));
 
 
-	addInput(createInput<MLPort>(  Vec( 6, 241), module, Counter::START_INPUT));
+	addInput(createInput<MLPort>(  Vec( 3, 241), module, Counter::START_INPUT));
 	addInput(createInput<MLPort>(  Vec(31, 241), module, Counter::START2_INPUT));
 	addOutput(createOutput<MLPortOut>(Vec(60, 241), module, Counter::START_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 222), module, Counter::START_PARAM));
 
-	addInput(createInput<MLPort>(  Vec( 6, 312), module, Counter::STOP_INPUT));
+	addInput(createInput<MLPort>(  Vec( 3, 312), module, Counter::STOP_INPUT));
 	addInput(createInput<MLPort>(  Vec(31, 312), module, Counter::STOP2_INPUT));
 	addOutput(createOutput<MLPortOut>(Vec(60, 312), module, Counter::STOP_OUTPUT));
 	addParam(createParam<MLSmallButton>(   Vec(58, 293), module, Counter::STOP_PARAM));

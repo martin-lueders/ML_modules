@@ -2,54 +2,16 @@
 
 #include "rack.hpp"
 
-//#ifdef v_dev
-//#define Davies1900hSmallBlackKnob SmallMLKnob
-//#endif
+
+#define MAX(a,b) a>b?a:b
+#define MIN(a,b) a>b?b:a
 
 using namespace rack;
 
 extern Plugin *pluginInstance;
 
-struct NKK2 : SvgSwitch { //Toggle
-	NKK2() {
-		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_0.svg")));
-		addFrame(APP->window->loadSvg(asset::system("res/ComponentLibrary/NKK_2.svg")));
-	}
-};
-
-struct POLSWITCH : SvgSwitch { //Toggle
-	POLSWITCH() {
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_0.svg")));
-		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/CKSS_1.svg")));
-	}
-};
 
 
-/*
-struct MLKnob : RoundKnob {
-	MLKnob() {
-		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
-	}
-};
-
-struct RedMLKnob : RoundKnob {
-	RedMLKnob() {
-		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
-	}
-};
-
-struct SmallMLKnob : RoundKnob {
-	SmallMLKnob() {
-		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
-	}
-};
-
-struct SmallRedMLKnob : RoundKnob {
-	SmallRedMLKnob() {
-		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
-	}
-};
-*/
 
 
 extern Model *modelQuantizer;
