@@ -1,7 +1,9 @@
 #include "ML_modules.hpp"
+#include "SettingsHandler.hpp"
 
 
 struct TrigBuf : Module {
+
 	enum ParamIds {
 		ARM1_PARAM,
 		ARM2_PARAM,
@@ -25,8 +27,10 @@ struct TrigBuf : Module {
 		NUM_LIGHTS
 	};
 
-
 	TrigBuf() {
+
+		defaults.setModule("TrigBuf");
+
 		config( NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS ); 
 
 		configInput(ARM1_INPUT, "Arm" );
@@ -39,8 +43,12 @@ struct TrigBuf : Module {
     	configButton(TrigBuf::ARM1_PARAM, "Arm");
     	configButton(TrigBuf::ARM2_PARAM, "Arm");
 
+		armOnLoad = defaults.getBool("ArmOnLoad");
+
 		onReset(); 
 	};
+
+	SettingsHandler defaults;
 
 
 	void process(const ProcessArgs &args) override;
@@ -50,6 +58,8 @@ struct TrigBuf : Module {
 
 	bool gate1[PORT_MAX_CHANNELS],    gate2[PORT_MAX_CHANNELS];
 	bool delayed1[PORT_MAX_CHANNELS], delayed2[PORT_MAX_CHANNELS];
+
+	bool armOnLoad;
 
 	dsp::SchmittTrigger armTrigger1[PORT_MAX_CHANNELS],  armTrigger2[PORT_MAX_CHANNELS];
 	dsp::SchmittTrigger gateTrigger1[PORT_MAX_CHANNELS], gateTrigger2[PORT_MAX_CHANNELS];
@@ -65,8 +75,55 @@ struct TrigBuf : Module {
 		memset(gate2, 0, PORT_MAX_CHANNELS*sizeof(bool));
 		memset(delayed1, 0, PORT_MAX_CHANNELS*sizeof(bool));
 		memset(delayed2, 0, PORT_MAX_CHANNELS*sizeof(bool));	
-	
+
+		if(armOnLoad) {
+			for (int i=0; i<PORT_MAX_CHANNELS; i++) {
+				arm1[i] = 10.0;
+				arm2[i] = 10.0;
+			};
+		};
 	};
+
+    json_t *dataToJson() override {
+        json_t *rootJ = json_object();
+
+        json_t *armPolyJ = json_array();
+            for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
+                    json_t *arm1J = json_real( arm1[i]);
+                    json_array_append_new(armPolyJ, arm1J);
+                    json_t *arm2J = json_real( arm2[i]);
+                    json_array_append_new(armPolyJ, arm2J);
+            }
+
+		json_object_set_new(rootJ, "armOnLoad", json_integer(armOnLoad));
+		json_object_set_new(rootJ, "armPoly", armPolyJ);
+
+        return rootJ;
+    }
+
+    void dataFromJson(json_t *rootJ) override {
+        json_t *armOnLoadJ = json_object_get(rootJ, "armOnLoad");
+        if(armOnLoadJ) armOnLoad = !!json_integer_value(armOnLoadJ);
+
+        json_t *armPolyJ = json_object_get(rootJ, "armPoly");
+		if(armPolyJ) {
+	        for (int i = 0; i < PORT_MAX_CHANNELS; i++) {
+	            json_t *arm1J = json_array_get(armPolyJ, 2*i);
+	            arm1[i] = json_real_value(arm1J);
+	            json_t *arm2J = json_array_get(armPolyJ, 2*i+1);
+	            arm2[i] = json_real_value(arm2J);
+	        }
+		}
+
+		if(armOnLoad) {
+			for (int i=0; i<PORT_MAX_CHANNELS; i++) {
+				arm1[i] = 10.0;
+				arm2[i] = 10.0;
+			};
+		};
+
+
+    }
 
 private:
 
@@ -95,8 +152,8 @@ void TrigBuf::process(const ProcessArgs &args) {
 	int gate1_channels = inputs[GATE1_INPUT].getChannels();
 	int gate2_channels = inputs[GATE2_INPUT].getChannels();
 
-	int channels_1 = arm1_channels==1?gate1_channels:MIN(arm1_channels, gate1_channels);
-	int channels_2 = arm2_channels==1?gate2_channels:MIN(arm2_channels, gate2_channels);
+	int channels_1 = arm1_channels==1?gate1_channels:MIN(arm1_channels, gate1_channels); channels_1 = MAX(1, channels_1);
+	int channels_2 = arm2_channels==1?gate2_channels:MIN(arm2_channels, gate2_channels); channels_2 = MAX(1, channels_2);
 
 	memcpy(gate1_in, inputs[GATE1_INPUT].getVoltages(), gate1_channels*sizeof(float) );
 	if(inputs[GATE2_INPUT].isConnected()) {
@@ -111,12 +168,14 @@ void TrigBuf::process(const ProcessArgs &args) {
 	// if armX_channels == 1: use same arm for all channels
 	// if both > 1 channels_X = MIN(gateX_channels, armX_Channels) (other channels will never be triggered)
 
+	float button1 = params[ARM1_PARAM].getValue();
+
 	for(int c=0; c < channels_1; c++) {
 
 		gateTrigger1[c].process(gate1_in[c]);
 		gate1[c] = gateTrigger1[c].isHigh();
 
-		if( armTrigger1[c].process(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c) + params[ARM1_PARAM].getValue() ) ) { 
+		if( armTrigger1[c].process(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c) + button1 ) ) { 
 			if (!gate1[c]) {arm1[c] = 10.0;}
 			else { delayed1[c] = true;}
 		}
@@ -138,14 +197,14 @@ void TrigBuf::process(const ProcessArgs &args) {
 
 	}
 
-
+	float button2 = params[ARM2_PARAM].getValue();
 
 	for(int c=0; c < channels_2; c++) {
 
 		gateTrigger2[c].process(gate2_in[c]);
 		gate2[c] = gateTrigger2[c].isHigh();
 	
-		if( armTrigger2[c].process(inputs[ARM2_INPUT].getNormalPolyVoltage(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c), c) + params[ARM2_PARAM].getValue() ) ) { 
+		if( armTrigger2[c].process(inputs[ARM2_INPUT].getNormalPolyVoltage(inputs[ARM1_INPUT].getNormalPolyVoltage(0.0f, c), c) + button2 ) ) { 
 			if (!gate2[c]) {arm2[c] = 10.0f;}
 			else {delayed2[c] = true;};
 		};
@@ -178,9 +237,52 @@ void TrigBuf::process(const ProcessArgs &args) {
 };
 
 
+struct TrigBufDefaultItem : MenuItem {
+
+        TrigBuf *trigBuf;
+    
+        void onAction(const event::Action &e) override {
+                trigBuf->armOnLoad = !trigBuf->armOnLoad;
+				trigBuf->defaults.setBool("ArmOnLoad", trigBuf->armOnLoad);
+        };
+
+        void step() override {
+                rightText = (trigBuf->armOnLoad == true)? "✔" : "";
+        };
+
+};
+
+struct TrigBufWriteDefaultItem : MenuItem {
+    TrigBuf *trigBuf;
+    
+    void onAction(const event::Action &e) override {
+        trigBuf->defaults.setBool("ArmOnLoad", trigBuf->armOnLoad);
+    };
+};
+
 
 struct TrigBufWidget : ModuleWidget {
 	TrigBufWidget(TrigBuf *module);
+	void appendContextMenu(Menu *) override;
+};
+
+void TrigBufWidget::appendContextMenu(Menu *menu) {
+
+        TrigBuf *trigBuf = dynamic_cast<TrigBuf*>(module);
+        assert(trigBuf);
+
+        menu->addChild(construct<MenuLabel>());
+
+        TrigBufDefaultItem *armOnLoad_Item = new TrigBufDefaultItem();
+        armOnLoad_Item->text = "Arm on Load";
+        armOnLoad_Item->trigBuf = trigBuf;
+        menu->addChild(armOnLoad_Item);
+
+        TrigBufWriteDefaultItem *writeDefault_Item = new TrigBufWriteDefaultItem();
+        writeDefault_Item->text = "Save Default";
+        writeDefault_Item->trigBuf = trigBuf;
+        menu->addChild(writeDefault_Item);
+
 };
 
 TrigBufWidget::TrigBufWidget(TrigBuf *module) {

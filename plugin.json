@@ -203,7 +203,7 @@
       "slug": "Arpeggiator",
       "name": "Arpeggiator",
       "description": "multi-channel arpeggiator",
-      "tags": ["Sequencer", "Polyphonic"],
+      "tags": ["Sequencer", "Polyphonic", "Arpeggiator"],
       "manualUrl": "https://github.com/martin-lueders/ML_modules/wiki/PolyArp"
     }
   ]

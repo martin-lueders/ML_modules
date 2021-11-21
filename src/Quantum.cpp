@@ -425,8 +425,6 @@ struct QuantumToggleModeItem : MenuItem {
 
 struct QuantumWidget : ModuleWidget {
 	QuantumWidget(Quantum *module);
-	json_t *dataToJsonData() ;
-	void dataFromJsonData(json_t *root) ;
 	void appendContextMenu(Menu *) override;
 };
 
