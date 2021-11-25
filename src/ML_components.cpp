@@ -8,43 +8,6 @@ using namespace rack;
 extern Plugin *pluginInstance;
 
 
-/*
-MLSVGSwitch::MLSVGSwitch() {
-
-	SvgSwitch();
-	
-    shadow = new CircularShadow();
-    addChild(shadow);
-    shadow->box.size = Vec();
-
-	sw = new SvgWidget();
-	addChild(sw);
-	
-}
-*/
-
-/*
-void MLSVGSwitch::addFrame(std::shared_ptr<Svg> svg) {
-	frames.push_back(svg);
-	// If this is our first frame, automatically set SVG and size
-	if (!sw->svg) {
-		sw->setSvg(svg);
-		box.size = sw->box.size;
-	}
-}
-*/
-
-/*
-void MLSVGSwitch::onChange(const event::Change &e) {
-	assert(frames.size() > 0);
-	float valueScaled = rescale(value, minValue, maxValue, 0, frames.size() - 1);
-	int index = clamp((int) roundf(valueScaled), 0, (int) frames.size() - 1);
-	sw->setSVG(frames[index]);
-	dirty = true;
-	ParamWidget::onChange(e);
-}
-*/
-
 
 MLWhiteLight::MLWhiteLight() {
 	addBaseColor(color::WHITE);
