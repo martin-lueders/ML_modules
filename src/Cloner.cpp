@@ -143,7 +143,7 @@ ClonerWidget::ClonerWidget(Cloner *module) {
 	addParam(createParam<SmallBlueSnapMLKnob>(Vec(9, 75), module, Cloner::CHANNELS_PARAM));
 	addInput(createInput<MLPort>(Vec(9, 110), module, Cloner::CHANNELS_INPUT));
 
-	addParam(createParam<SmallBlueMLKnob>(Vec(9, 155), module, Cloner::SPREAD_PARAM));
+	addParam(createParam<NewMLKnob>(Vec(9, 155), module, Cloner::SPREAD_PARAM));
 	addInput(createInput<MLPort>(Vec(9, 190), module, Cloner::SPREAD_INPUT));
 
     addParam(createParam<CKSS>(   Vec(9, 225), module, Cloner::CENTER_PARAM));

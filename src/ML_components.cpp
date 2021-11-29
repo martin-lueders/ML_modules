@@ -51,8 +51,8 @@ MLWhiteLight::MLWhiteLight() {
 }
 
 NewMLKnob::NewMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/new-Knob.svg")));
-	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/new-Knob-bg.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewKnob_28.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_28_bg.svg")));
 };
 
 
