@@ -134,7 +134,7 @@ CounterWidget::CounterWidget(Counter *module) {
 	addChild(createWidget<MLScrew>(Vec(15, 0)));
 	addChild(createWidget<MLScrew>(Vec(15, 365)));
 
-	addParam(createParam<SmallBlueMLKnob>(Vec(12,  85), module, Counter::MAX_PARAM));
+	addParam(createParam<RedSnapMLKnob>(Vec(12,  80), module, Counter::MAX_PARAM));
 	addInput(createInput<MLPort>( Vec(53, 87), module, Counter::LENGTH_INPUT));
 
 	addInput(createInput<MLPort>(  Vec(13, 168), module, Counter::GATE_INPUT));

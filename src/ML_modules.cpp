@@ -19,6 +19,7 @@ void init(rack::Plugin *p) {
 	pluginInstance->addModel(modelFreeVerb);
 	pluginInstance->addModel(modelSum8);
 	pluginInstance->addModel(modelSum8mk2);
+	pluginInstance->addModel(modelSum8mk3);
 	pluginInstance->addModel(modelSH8);
 	pluginInstance->addModel(modelConstants);
 	pluginInstance->addModel(modelCounter);

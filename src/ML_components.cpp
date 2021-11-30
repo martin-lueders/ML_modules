@@ -13,46 +13,50 @@ MLWhiteLight::MLWhiteLight() {
 	addBaseColor(color::WHITE);
 }
 
-NewMLKnob::NewMLKnob() {
+
+
+BlueMLKnob::BlueMLKnob() {
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewKnob_36.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_36_bg.svg")));
+};
+
+SmallBlueMLKnob::SmallBlueMLKnob() {
     setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewKnob_28.svg")));
 	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_28_bg.svg")));
 };
 
-
-BlueMLKnob::BlueMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
-};
-
-SmallBlueMLKnob::SmallBlueMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
-};
-
 BlueSnapMLKnob::BlueSnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewKnob_36.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_36_bg.svg")));
 	snap = true;
 };
 
 SmallBlueSnapMLKnob::SmallBlueSnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Knob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewKnob_28.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_28_bg.svg")));
 	snap = true;
 };
 
 
 RedMLKnob::RedMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_36.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_36_bg.svg")));
 };
 
 SmallRedMLKnob::SmallRedMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_28.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewRedKnob_28_bg.svg")));
 };
 
 RedSnapMLKnob::RedSnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_36.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_36_bg.svg")));
 	snap = true;
 };
 
 SmallRedSnapMLKnob::SmallRedSnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/RedKnob_28.svg")));
+    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_28.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewRedKnob_28_bg.svg")));
 	snap = true;
 };
 

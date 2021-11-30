@@ -131,6 +131,13 @@
       "manualUrl": "https://github.com/martin-lueders/ML_modules/wiki/Mixer#sum"
     },
     {
+      "slug": "Sum8mk3",
+      "name": "Sum8 MkIII",
+      "description": "Summer with selectable sign",
+      "tags": ["Mixer", "Polyphonic"],
+      "manualUrl": "https://github.com/martin-lueders/ML_modules/wiki/Mixer#sum"
+    },
+    {
       "slug": "Sum8",
       "name": "Sum8",
       "description": "simple summer",

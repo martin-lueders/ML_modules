@@ -8,13 +8,13 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="28"
-   height="28"
-   viewBox="0 0 7.4083332 7.4083336"
+   width="36"
+   height="36"
+   viewBox="0 0 9.5249998 9.5250003"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="NewKnob_28_bg.svg">
+   sodipodi:docname="NewKnob_36_bg.svg">
   <defs
      id="defs2">
     <linearGradient
@@ -35,10 +35,10 @@
        id="linearGradient4337"
        x1="1.0583336"
        y1="292.36978"
-       x2="8.4666669"
+       x2="8.4666672"
        y2="292.36978"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.96551722,-296.99999,-277.52556)" />
+       gradientTransform="matrix(1.2857143,0,0,1.2413793,-299.41904,-357.12096)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -87,6 +87,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -96,11 +97,11 @@
      id="layer1"
      transform="translate(-1.0583337,-288.53332)">
     <circle
-       style="fill:url(#linearGradient4337);fill-opacity:1;stroke:none;stroke-width:0.26617"
+       style="fill:url(#linearGradient4337);fill-opacity:1;stroke:none;stroke-width:0.342218"
        id="path4249"
-       cx="-292.23749"
-       cy="4.7625003"
-       r="3.7041667"
-       transform="rotate(-90)" />
+       cx="-293.29581"
+       cy="5.8208337"
+       transform="rotate(-90)"
+       r="4.7624998" />
   </g>
 </svg>

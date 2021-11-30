@@ -225,19 +225,19 @@ struct BPMdetectWidget : ModuleWidget {
   		addParam(createParam<SmallBlueMLKnob>(Vec(column2,   row1), module, BPMdetect::SMOOTH_PARAM));
 		addOutput(createOutput<MLPortOut>(Vec(column3-5,row1+2), module, BPMdetect::TRIG1_OUTPUT));
 
-	    addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM));
+	    addParam(createParam<SmallRedSnapMLKnob>(Vec(column1,  row2),    module, BPMdetect::MULT2_PARAM));
   		addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row2),    module, BPMdetect::SWING2_PARAM));
 		addOutput(createOutput<MLPortOut>(Vec(column3, row2+2), module, BPMdetect::TRIG2_OUTPUT));
 
-	    addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM));
+	    addParam(createParam<SmallRedSnapMLKnob>(Vec(column1,  row3),    module, BPMdetect::MULT3_PARAM));
   		addParam(createParam<SmallBlueMLKnob>(Vec(column2,  row3),    module, BPMdetect::SWING3_PARAM));
 		addOutput(createOutput<MLPortOut>(Vec(column3, row3+2), module, BPMdetect::TRIG3_OUTPUT));
 
 		addOutput(createOutput<MLPortOut>(Vec(column1, row4), module, BPMdetect::LFO_OUTPUT));
 		addOutput(createOutput<MLPortOut>(Vec(column3, row4), module, BPMdetect::SEQ_OUTPUT));
 
-  		addParam(createParam<SmallBlueSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM));
-  		addParam(createParam<SmallBlueSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM));
+  		addParam(createParam<SmallRedSnapMLKnob>(Vec(column1,  row5), module, BPMdetect::DELAY1_PARAM));
+  		addParam(createParam<SmallRedSnapMLKnob>(Vec(column2,  row5), module, BPMdetect::DELAY2_PARAM));
 		addOutput(createOutput<MLPortOut>(Vec(column3, row5), module, BPMdetect::DELAY_OUTPUT));
 
 		NumberDisplayWidget<float> *display = new NumberDisplayWidget<float>(3, 2);

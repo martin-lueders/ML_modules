@@ -101,7 +101,7 @@ PolySplitterWidget::PolySplitterWidget(PolySplitter *module) {
 
 	const float offset_y = 188, delta_y = 32, row1=15, row2 = 48, row3 = 80;
 
-	addParam(createParam<SmallBlueSnapMLKnob>(  Vec(row2-5,  50), module, PolySplitter::SPLIT_PARAM));
+	addParam(createParam<RedSnapMLKnob>(  Vec(row2-5,  50), module, PolySplitter::SPLIT_PARAM));
 
 
 

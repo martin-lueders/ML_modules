@@ -8,25 +8,19 @@
 using namespace rack;
 
 
-
 extern Plugin *pluginInstance;
-
-
-
 template <typename BASE>
 struct MLLargeLight : BASE {
 	MLLargeLight() {
 		this->box.size = Vec(16.0, 16.0);
 	}
 };
-
 template <typename BASE>
 struct MLMediumLight : BASE {
 	MLMediumLight() {
 		this->box.size = Vec(12.0, 12.0);
 	}
 };
-
 
 template <typename BASE>
 struct MLSmallLight : BASE {
@@ -39,10 +33,8 @@ struct MLWhiteLight : ModuleLightWidget {
 	MLWhiteLight();
 };
 
-
 struct MLKnob : app::SvgKnob {
 	widget::SvgWidget* bg;
-//	widget::SvgWidget* fg;
 
 	MLKnob() {
 		minAngle = -0.83 * M_PI;
@@ -50,16 +42,9 @@ struct MLKnob : app::SvgKnob {
 
 		bg = new widget::SvgWidget;
 		fb->addChildBelow(bg, tw);
-
-//		fg = new widget::SvgWidget;
-//		fb->addChildAbove(fg, tw);
 	}
 };
 
-
-struct NewMLKnob : MLKnob {
-	NewMLKnob();
-};
 
 struct BlueMLKnob : RoundKnob {
         BlueMLKnob();
@@ -77,7 +62,6 @@ struct SmallBlueSnapMLKnob : RoundKnob {
         SmallBlueSnapMLKnob();
 };
 
-
 struct RedMLKnob : RoundKnob {
         RedMLKnob();
 };
@@ -94,8 +78,6 @@ struct SmallRedSnapMLKnob : RoundKnob {
         SmallRedSnapMLKnob();
 };
 
-
-
 struct GreyMLKnob : RoundKnob {
         GreyMLKnob();
 };
@@ -103,7 +85,6 @@ struct GreyMLKnob : RoundKnob {
 struct SmallGreyMLKnob : RoundKnob {
         SmallGreyMLKnob();
 };
-
 
 struct GreySnapMLKnob : RoundKnob {
         GreySnapMLKnob();

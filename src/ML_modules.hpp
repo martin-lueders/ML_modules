@@ -24,6 +24,7 @@ extern Model *modelShiftRegister2;
 extern Model *modelFreeVerb;
 extern Model *modelSum8;
 extern Model *modelSum8mk2;
+extern Model *modelSum8mk3;
 extern Model *modelSH8;
 extern Model *modelConstants;
 extern Model *modelCounter;
