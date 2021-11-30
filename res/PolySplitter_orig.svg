@@ -2,24 +2,24 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="120"
    height="380"
    viewBox="0 0 31.75 100.54167"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="PolySplitter_orig.svg"
    inkscape:export-filename="E:\Users\Martin\Documents\Rack_Source\Rack\plugins\ML-modules\res\Quantum.png"
    inkscape:export-xdpi="96"
-   inkscape:export-ydpi="96">
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -28,8 +28,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="44.5"
-     inkscape:cy="218.48549"
+     inkscape:cx="44.75"
+     inkscape:cy="218.25"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -321,50 +321,45 @@
        id="text989"
        y="20.637499"
        x="19.050001"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222247px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.26458335"
-         y="23.179628"
-         x="19.050001"
-         id="tspan987"
-         sodipodi:role="line" /></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve" />
     <text
        id="text914-6"
        y="6.8791432"
        x="16.249443"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52777791px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan860"
          x="16.249443"
          y="6.8791432">Poly Splitter</tspan></text>
     <path
-       style="fill:url(#linearGradient929);fill-opacity:1;stroke:none;stroke-width:1.75;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       style="fill:url(#linearGradient929);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        d="m 14,186 c -2.216,0 -4,1.784 -4,4 v 22 c 0,2.216 1.784,4 4,4 h 92 c 2.216,0 4,-1.784 4,-4 v -22 c 0,-2.216 -1.784,-4 -4,-4 z"
        transform="scale(0.26458334)"
        id="path872"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:url(#linearGradient929);fill-opacity:1;stroke:none;stroke-width:1.75;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       style="fill:url(#linearGradient929);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        d="m 14,218 c -2.216,0 -4,1.784 -4,4 v 22 c 0,2.216 1.784,4 4,4 h 92 c 2.216,0 4,-1.784 4,-4 v -22 c 0,-2.216 -1.784,-4 -4,-4 z"
        transform="scale(0.26458334)"
        id="path870"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:url(#linearGradient929);fill-opacity:1;stroke:none;stroke-width:1.75;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       style="fill:url(#linearGradient929);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        d="m 14,250 c -2.216,0 -4,1.784 -4,4 v 22 c 0,2.216 1.784,4 4,4 h 92 c 2.216,0 4,-1.784 4,-4 v -22 c 0,-2.216 -1.784,-4 -4,-4 z"
        transform="scale(0.26458334)"
        id="path868"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:url(#linearGradient929);fill-opacity:1;stroke:none;stroke-width:1.75;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       style="fill:url(#linearGradient929);fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
        d="m 14,282 c -2.216,0 -4,1.784 -4,4 v 22 c 0,2.216 1.784,4 4,4 h 92 c 2.216,0 4,-1.784 4,-4 v -22 c 0,-2.216 -1.784,-4 -4,-4 z"
        transform="scale(0.26458334)"
        id="rect826"
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="4.7625022"
        y="47.062786"
        id="text854-2"><tspan
@@ -374,7 +369,7 @@
          y="47.062786">In</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="20.769791"
        y="47.127556"
        id="text854-2-5"
@@ -386,7 +381,7 @@
          y="47.127556">Out B</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#fafafa;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="10.434505"
        y="47.031094"
        id="text854-2-4"><tspan
@@ -396,7 +391,7 @@
          y="47.031094">Out A</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222223px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458335"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="9.376173"
        y="29.03941"
        id="text854-2-4-9"><tspan

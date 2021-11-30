@@ -8,7 +8,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
-   sodipodi:docname="Sum8mk2_orig.svg"
+   sodipodi:docname="Sum8mk3_orig.svg"
    inkscape:export-filename="E:\Users\Martin\Documents\Rack_Source\rack\plugins\ML_modules\res\TrigBuf.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
@@ -176,7 +176,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -299,14 +298,12 @@
      transform="translate(0.26458305,-196.45831)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583;font-variant-east-asian:normal"
        x="9.9532843"
        y="203.33748"
        id="text3757"><tspan
          sodipodi:role="line"
-         id="tspan865"
-         x="9.9532833"
-         y="203.33748">Sum Mk II</tspan></text>
+         id="tspan882">Sum Mk III</tspan></text>
     <rect
        style="fill:url(#linearGradient890);fill-opacity:1;stroke-width:0.079375;stroke:#000000;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        id="rect4778"
