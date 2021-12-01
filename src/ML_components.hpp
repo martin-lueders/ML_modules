@@ -78,22 +78,6 @@ struct SmallRedSnapMLKnob : RoundKnob {
         SmallRedSnapMLKnob();
 };
 
-struct GreyMLKnob : RoundKnob {
-        GreyMLKnob();
-};
-
-struct SmallGreyMLKnob : RoundKnob {
-        SmallGreyMLKnob();
-};
-
-struct GreySnapMLKnob : RoundKnob {
-        GreySnapMLKnob();
-};
-
-struct SmallGreySnapMLKnob : RoundKnob {
-        SmallGreySnapMLKnob();
-};
-
 
 struct MLPort : SvgPort {
 	MLPort();

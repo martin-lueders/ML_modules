@@ -45,7 +45,7 @@ RedMLKnob::RedMLKnob() {
 
 SmallRedMLKnob::SmallRedMLKnob() {
     setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_28.svg")));
-	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewRedKnob_28_bg.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_28_bg.svg")));
 };
 
 RedSnapMLKnob::RedSnapMLKnob() {
@@ -56,30 +56,12 @@ RedSnapMLKnob::RedSnapMLKnob() {
 
 SmallRedSnapMLKnob::SmallRedSnapMLKnob() {
     setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/NewRedKnob_28.svg")));
-	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewRedKnob_28_bg.svg")));
+	bg->setSvg(APP->window->loadSvg(asset::plugin(pluginInstance, "res/NewKnob_28_bg.svg")));
 	snap = true;
 };
 
 
 
-GreyMLKnob::GreyMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
-};
-
-SmallGreyMLKnob::SmallGreyMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
-};
-
-
-GreySnapMLKnob::GreySnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob.svg")));
-	snap = true;
-};
-
-SmallGreySnapMLKnob::SmallGreySnapMLKnob() {
-    setSvg(APP->window->loadSvg(asset::plugin(pluginInstance,"res/GreyKnob_28.svg")));
-	snap = true;
-};
 
 
 
