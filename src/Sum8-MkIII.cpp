@@ -87,7 +87,7 @@ Sum8mk3Widget::Sum8mk3Widget(Sum8mk3 *module) {
 	{
 		SvgPanel *panel = new SvgPanel();
 		panel->box.size = box.size;
-		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Sum8mk2.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance,"res/Sum8mk3.svg")));
 
 		addChild(panel);
 	}
@@ -102,7 +102,7 @@ Sum8mk3Widget::Sum8mk3Widget(Sum8mk3 *module) {
 
 	for( int i=0; i<8; i++) {
 		addInput(createInput<MLPort>(Vec(offset_x, offset_y + i*delta_y  ), module, Sum8mk3::IN_INPUT+i));
-        addParam(createParam<CKSSThreeHorizontal>( Vec(offset_x + 32, offset_y + i*delta_y +5), module, Sum8mk3::POLARITY_PARAM + i));
+        addParam(createParam<MLSliderHoriz3>( Vec(offset_x + 32, offset_y + i*delta_y +5), module, Sum8mk3::POLARITY_PARAM + i));
 	}
 
 
