@@ -243,8 +243,7 @@ void Quantum::process(const ProcessArgs &args) {
 				if( setTrigger[0].process( inputs[SET_INPUT].getVoltage() ) ) {
 
 					float n=inputs[NOTE_INPUT].getNormalVoltage(0.0);
-					int semi_n = round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0);
-					if(semi_n<0) semi_n+=12;
+					int semi_n = modulo(round( 12.0f*(n - 1.0f*round(n)) ) - (transpose_select?semi_t:0), 12);
 
 					semiState[semi_n] = !semiState[semi_n];
 					semiLight[semi_n] = semiState[semi_n]?1.0:0.0;
