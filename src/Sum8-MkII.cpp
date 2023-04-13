@@ -47,7 +47,7 @@ void Sum8mk2::process(const ProcessArgs &args) {
 	float_4 in[4];
 
 	int channels[8];
-	int max_channels = 0;
+	int max_channels = 1;
 
 	for(int i=0; i<8; i++) {
 		int c = channels[i] = inputs[IN_INPUT+i].getChannels();
@@ -56,7 +56,7 @@ void Sum8mk2::process(const ProcessArgs &args) {
 
 	memset(out, 0, sizeof(out));
 
-	outputs[OUT_OUTPUT].setChannels(std::max(1,max_channels));
+	outputs[OUT_OUTPUT].setChannels(max_channels);
 
 	for(int i=0; i<8; i++) {
 		if(inputs[IN_INPUT+i].isConnected()) {

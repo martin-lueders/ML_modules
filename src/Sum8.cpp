@@ -53,14 +53,14 @@ void Sum8::process(const ProcessArgs &args) {
 	float_4 in[4];
 
 	int channels[8];
-	int max_channels = 0;
+	int max_channels = 1;
 
 	for(int i=0; i<8; i++) {
 		int c = channels[i] = inputs[IN1_INPUT+i].getChannels();
 		max_channels = c>max_channels?c:max_channels;
 	}
 
-	outputs[OUT_OUTPUT].setChannels(std::max(1,max_channels));
+	outputs[OUT_OUTPUT].setChannels(max_channels);
 
 	memset(out, 0, sizeof(out));
 

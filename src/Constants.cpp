@@ -49,7 +49,7 @@ struct Constants : Module {
 	configOutput(M_7_OUTPUT,  "-  7");
 	configOutput(M_12_OUTPUT, "- 12");
 
-	double semi = 1.0/12.0;
+	const double semi = 1.0/12.0;
 
 	for(int i=0; i<NUM_OUTPUTS; i++) outputs[i].setChannels(1);
 
@@ -73,14 +73,14 @@ struct Constants : Module {
 
 	void process(const ProcessArgs &args) override;
 
+
 };
 
 
 
 void Constants::process(const ProcessArgs &args) {
 
-
-	double semi = 1.0/12.0;
+	const double semi = 1.0/12.0;
 
 	for(int i=0; i<NUM_OUTPUTS; i++) outputs[i].setChannels(1);
 
@@ -99,7 +99,6 @@ void Constants::process(const ProcessArgs &args) {
 	outputs[M_5_OUTPUT].setVoltage(- 5*semi);
 	outputs[M_7_OUTPUT].setVoltage(- 7*semi);
 	outputs[M_12_OUTPUT].setVoltage(- 1.0);
-	
 
 };
 
